@@ -1,0 +1,119 @@
+<%- include('../partials/admin/header') %> 
+ 
+<section>
+        <div class="container mt-5">
+            <h1 style="font-weight: bold; font-size:1.25rem ;">Customer List</h1>
+            <div class="row mt-5">
+                <a href="/admin/customer/add" class="btn btn-success mx-3 " 
+                style="width: auto; background-color: #946B88;border: none;">
+                Add User
+            </a>
+            </div>
+            <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/customer">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search by name or email" style="width: 300px;"
+                    value="<%= search %>" aria-label="Search">
+            
+                <button class="btn btn-outline-success me-2" type="submit">Search</button>
+            
+                <% if (search && search.trim() !== "") { %>
+                    <a href="/admin/customer" class="btn btn-outline-danger">Clear</a>
+                <% } %>
+            </form>
+
+            <table class="table  table-hover text-center mt-5" style="border-color: #946B88;;">
+                <thead style="background-color:#DAADCC; color: white;">
+                    <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Email</th>
+                        <th scope="col" class="text-center">Phone No</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% customers.forEach(customer=> { %>
+                        <tr>
+                            <td>
+                                <%= serialNumber++ %>
+                            </td>
+                            <td>
+                                <%= customer.name %>
+                            </td>
+                            <td>
+                                <%= customer.email %>
+                            </td>
+                            <td>
+                                <%= customer.phone %>
+                            </td>
+                            <td>
+                                <%if(customer.isBlocked){%>
+                                    <a href="/admin/unblockCustomer?id=<%= customer._id %>"
+                                        class="btn btn-primary mx-auto me-2" style="width:80px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
+                                        onclick="return confirm('Are you sure to block?')">
+                                        
+                                        Unblock
+                                    </a>
+                                    <%} else {%>
+                                        <a href="/admin/blockCustomer?id=<%= customer._id %>"
+                                            class="btn btn-danger mx-auto " style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
+                                            onclick="return confirm('Do you really want to unblock?')">
+                                            Block
+                                        </a>
+                                        <%}%>
+
+                            </td>
+                        </tr>
+
+
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="/admin/customer?page=<%= currentPage - 1 %>">
+                    <i class="fa-solid fa-backward"></i>
+                </a>
+            <% } %>
+        
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <a href="/admin/customer?page=<%= i %>" 
+                   class="<%= currentPage === i ? 'active' : '' %>"><%= i %>
+                </a>
+            <% } %>
+        
+            <% if (currentPage < totalPages) { %>
+                <a href="/admin/customer?page=<%= currentPage + 1 %>">
+                    <i class="fa-solid fa-forward"></i>
+                </a>
+            <% } %>
+        </div>
+        </div>
+
+    </section>
+    
+    <style>
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;        }
+        .pagination a {
+            padding:10px;
+            margin: 4px;
+            text-decoration: none;
+            background-color:white;
+            color:black;
+            font-weight: bold;
+            border-radius: 50%;
+            align-items: center;
+        }
+        .pagination a i{
+            padding : 4px;
+        }
+        .pagination a.active {
+            background-color: #DAADCC;
+            font-weight: bold;
+        }
+    </style>
+<%- include('../partials/admin/footer') %> 

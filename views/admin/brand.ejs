@@ -1,0 +1,203 @@
+<%- include('../partials/admin/header') %>
+
+    <section>
+        <div class="container mt-5">
+            <h1 style="font-weight: bold; font-size:1.25rem ;">Brand List</h1>
+            <div class="row mt-5">
+               
+                <!-- Add brand Button to Open Modal -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBrandModal"
+                    style="width: auto; background-color: #946B88;border: none;">
+                    Add Brand
+                </button>
+
+            </div>
+            <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/brand">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search by brand name"
+                    style="width: 300px;" value="<%= search %>" aria-label="Search">
+
+                <button class="btn btn-outline-success me-2" type="submit">Search</button>
+
+                <% if (search && search.trim() !=="" ) { %>
+                    <a href="/admin/brand" class="btn btn-outline-danger">Clear</a>
+                    <% } %>
+            </form>
+
+            <table class="table  table-hover text-center mt-5" style="border-color: #946B88; font-size: 12px;">
+                <thead style="background-color:#DAADCC; color: white;">
+                    <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">Logo</th>
+                        <th scope="col" class="text-center">Brand</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% brands.forEach(brand=> { %>
+                        <tr>
+                            <td>
+                                <%= serialNumber++ %>
+                            </td>
+                            <td>
+
+                                <img src="/uploads/re-image/<%= brand.image %>" alt="Brand Logo" width="40px" height="40px">
+
+                            </td>
+                            <td>
+                                <%= brand.name %>
+                            </td>
+                            <td>
+                                <%= brand.status%>
+                            </td>
+
+                            <td>
+                                <%if(brand.isBlocked){%>
+                                    <a href="/admin/unblockBrand?id=<%= brand._id %>"
+                                        class="btn btn-primary mx-auto me-2"
+                                        style="width:80px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
+                                        onclick="return confirm('Are you sure to block?')">
+
+                                        Unblock
+                                    </a>
+                                    <%} else {%>
+                                        <a href="/admin/blockBrand?id=<%= brand._id %>"
+                                            class="btn btn-danger mx-auto "
+                                            style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
+                                            onclick="return confirm('Do you really want to unblock?')">
+                                            Block
+                                        </a>
+                                        <%}%>
+
+                                            <a href="/admin/brand/delete/<%= brand._id %>"
+                                                class="btn btn-danger mx-auto "  
+                                                style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
+                                                onclick="return confirm('Are you sure to Delete?')">
+                                                Delete
+                                            </a>
+
+
+                            </td>
+
+                        </tr>
+
+
+
+
+
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (currentPage> 1) { %>
+                    <a href="/admin/brand=<%= currentPage - 1 %>">
+                        <i class="fa-solid fa-backward"></i>
+                    </a>
+                    <% } %>
+
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <a href="/admin/brand=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="/admin/brand=<%= currentPage + 1 %>">
+                                        <i class="fa-solid fa-forward"></i>
+                                    </a>
+                                    <% } %>
+            </div>
+        </div>
+
+        <!-- Bootstrap Modal for Adding Brands -->
+        <div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addBrandLabel">Add Brand</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addBrandForm" enctype="multipart/form-data" method="POST" action="/admin/brand/add">
+                            <div class="mb-3">
+                                <label for="brandName" class="form-label">Brand Name</label>
+                                <input type="text" class="form-control" id="brandName" name="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="brandStatus" class="form-label">Brand Status</label>
+                                <select class="form-select" id="brandStatus">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <!-- Brand Image -->
+                            <div class="mb-3">
+                                <label for="brandImage" class="form-label" name="image">Brand Image</label>
+                               <input type="file" class="form-control" id="brandImage" name="image">  
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Brand</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </section>
+
+    <style>
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination a {
+            padding: 10px;
+            margin: 4px;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            font-weight: bold;
+            border-radius: 50%;
+            align-items: center;
+        }
+
+        .pagination a i {
+            padding: 4px;
+        }
+
+        .pagination a.active {
+            background-color: #DAADCC;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        document.getElementById("addBrandForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this); // Use FormData for file uploads
+
+            fetch("/admin/brand/add", {
+                method: "POST",
+                body: formData, // No need to modify
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Brand added successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error adding brand:", error));
+        });
+
+    </script>
+
+    <%- include('../partials/admin/footer') %>

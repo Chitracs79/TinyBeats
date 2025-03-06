@@ -1,0 +1,135 @@
+*{
+	padding:0px;
+	margin:0px;
+}
+body{
+		background:black;
+	}
+.st0{font-family:'FootlightMTLight';}
+.st1{font-size:83.0285px;}
+.st2{fill:gray;}
+
+svg{
+  width: 500px;
+    height: 400px;
+    text-align: center;
+    fill: #946B88;
+}
+path#XMLID_5_ {
+   
+    fill: #946B88;
+    filter: url(#blurFilter4);
+}
+path#XMLID_11_ ,path#XMLID_2_ {
+    fill: #946B88;
+}
+.circle{
+  animation: out 2s infinite ease-out;
+  fill: #946B88;
+}
+
+#container{
+  text-align:center;
+}
+.red_button
+{
+	display: -webkit-inline-box;
+	display: -moz-inline-box;
+	display: -ms-inline-flexbox;
+	display: -webkit-inline-flex;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: auto;
+	height: 40px;
+	background: #946B88;
+	border-radius: 3px;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+.red_button:hover
+{
+	background: #946B88 !important;
+}
+.red_button a
+{
+	display: block;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	font-size: 14px;
+	font-weight: 500;
+	text-align: center;
+	line-height: 40px;
+	width: 100%;
+}
+.shop_now_button
+{
+	width: 140px;
+	margin-top: 32px;
+}
+.message{
+	color:#946B88;
+}
+.message:after{
+	content:"]";
+}
+.message:before{
+	content:"[";
+}
+
+.message:after, .message:before {
+  
+  color: #946B88;
+  font-size: 20px;
+  -webkit-animation-name: opacity;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-name: opacity;
+          animation-name: opacity;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+          margin:0 50px;
+}
+
+@-webkit-keyframes opacity {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes opacity {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes out {
+  0% {r:1;  opacity: 0.9 ;}
+  25%{r:5;  opacity: 0.3 ;}
+  50%{r:10; opacity: 0.2 ;}
+  75%{r:15;opacity:0.1;}
+ 	100% {r:20;opacity:0;}
+}
+
+
+
+
+
+
+
+
+
+  
+  	

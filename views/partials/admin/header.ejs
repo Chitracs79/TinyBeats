@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard Sidebar</title>
+
+    <!-- stylesheets -->
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/addProduct.css">
+
+    <script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- sidebar -->
+        <aside id="sidebar" class="sidebar-toggle">
+            <div class="sidebar-logo">
+               
+                <a href="#"><img src="/images/tinybeats.png" alt="logo" style="width:100px;height:100px;padding: 10px;"></a>
+            </div>
+
+            <!-- sidebar Navigation -->
+            <ul class="sidebar-nav p-0">
+
+                <li class="sidebar-header">
+                    Menu
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="/admin/dashboard" class="sidebar-link">
+                        <i class="fa-solid fa-house"></i>
+                        <span> Dashboard </span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="fa-solid fa-hexagon-nodes"></i>
+                        <span> Sales</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-header">
+                    Management
+                </li>
+                <li class="sidebar-item">
+                    <a href="/admin/products" class="sidebar-link">
+                        <span>Product </span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="/admin/customer" class="sidebar-link">
+                        <span>Customer</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="/admin/category" class="sidebar-link">
+                        <span>Category</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="/admin/brand" class="sidebar-link">
+                        <span>Brands</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <span>Offers </span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <span>Coupons</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <span>Inventory</span>
+                    </a>
+                </li>
+            </ul>
+             <!-- Sidebar Navigation Ends -->
+
+             <div class="sidebar-footer">
+                <a href="" class="sidebar-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Setting</span>
+                </a>
+             </div>
+             <div class="sidebar-footer">
+                <a href="/admin/logout" class="sidebar-link">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+             </div>
+        </aside>
+          <!-- Sidebar Ends -->
+          <div class="main">
+            <nav class ="navbar nav-expand border-bottom">
+                <button class="toggler-btn" type="button">
+                    <i class="fa-solid fa-align-left"></i>
+                </button>   
+            </nav>
+            

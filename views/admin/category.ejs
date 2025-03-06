@@ -1,0 +1,245 @@
+<%- include('../partials/admin/header') %>
+
+    <section>
+        <div class="container mt-5">
+            <h1 style="font-weight: bold; font-size:1.25rem ;">Category List</h1>
+            <div class="row mt-5 mx-3">
+                <!-- Add Category Button to Open Modal -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal"
+                    style="width: auto; background-color: #946B88;border: none;">
+                    Add Category
+                </button>
+
+            </div>
+            <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/category">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search by category name" style="width: 300px;"
+                    value="<%= search %>" aria-label="Search">
+            
+                <button class="btn btn-outline-success me-2" type="submit">Search</button>
+            
+                <% if (search && search.trim() !== "") { %>
+                    <a href="/admin/category" class="btn btn-outline-danger">Clear</a>
+                <% } %>
+            </form>
+
+            <table class="table  table-hover text-center mt-5" style="border-color: #946B88; font-size: 12px;">
+                <thead style="background-color:#DAADCC; color: white;">
+                    <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Description</th>
+                        <th scope="col" class="text-center">Parent Category</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% categories.forEach(category=> { %>
+                        <tr>
+                            <td >
+                                <%= serialNumber++ %>
+                            </td>
+                            <td>
+                                <%= category.name %>
+                            </td>
+                            <td style="max-width: 200px; font-size: 12px;" >
+                                <%= category.description %>
+                            </td>
+                            <td>
+                                <%= category.parentCategory ? category.parentCategory.name : 'None' %>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editCategoryModal<%= category._id %>">
+                                    Edit
+                                </button>
+
+                                    <a href="/admin/category/delete/<%= category._id %>" class="btn btn-danger mx-auto " style="width:80px"
+                                        onclick="return confirm('Are you sure to Delete?')">
+                                        Delete
+                                    </a>
+
+
+                            </td>
+
+                        </tr>
+
+                     
+
+                        <!-- Bootstrap Modal for Editing Category -->
+                        <div class="modal fade" id="editCategoryModal<%= category._id %>" tabindex="-1"
+                            aria-labelledby="editCategoryLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Category</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="edit-category-form" data-id="<%= category._id %>">
+                                            <div class="mb-3">
+                                                <label for="categoryName<%= category._id %>" class="form-label">Category
+                                                    Name</label>
+                                                <input type="text" class="form-control"
+                                                    id="categoryName<%= category._id %>" name="name"
+                                                    value="<%= category.name %>" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="categoryDescription<%= category._id %>"
+                                                    class="form-label">Category Description</label>
+                                                <textarea class="form-control""
+                                                    id="categoryDescription<%= category._id %>" name="description"
+                                                    required><%= category.description %></textarea>
+                                            </div>
+                                            
+                                            <button type="submit" class="btn btn-primary">Update Category</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (currentPage> 1) { %>
+                    <a href="/admin/category?page=<%= currentPage - 1 %>">
+                        <i class="fa-solid fa-backward"></i>
+                    </a>
+                    <% } %>
+
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <a href="/admin/category?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="/admin/category?page=<%= currentPage + 1 %>">
+                                        <i class="fa-solid fa-forward"></i>
+                                    </a>
+                                    <% } %>
+            </div>
+        </div>
+
+        <!-- Bootstrap Modal for Adding Category -->
+        <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryLabel">Add Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addCategoryForm">
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="categoryDescription" class="form-label">Category Description</label>
+                                <textarea class="form-control" id="categoryDescription" name="description" 
+                                    required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <select class="form-control" id="categoryParent" name="parentCategory">
+                                    <option value="">None</option> <!-- ✅ If no parent category -->
+                                    <% categories.forEach(category => { %>
+                                        <option value="<%= category._id %>"><%= category.name %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Category</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+
+    </section>
+
+    <style>
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination a {
+            padding: 10px;
+            margin: 4px;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            font-weight: bold;
+            border-radius: 50%;
+            align-items: center;
+        }
+
+        .pagination a i {
+            padding: 4px;
+        }
+
+        .pagination a.active {
+            background-color: #DAADCC;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        document.getElementById("addCategoryForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent page refresh
+
+            const formData = new FormData(this);
+            fetch("/admin/category/add", {
+                method: "POST",
+                body: new URLSearchParams(formData), // Convert FormData to URL-encoded format
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Category added successfully!");
+                        location.reload(); // Reload to update the category list
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error adding category:", error));
+        });
+    </script>
+    <script>
+        document.querySelectorAll(".edit-category-form").forEach(form => {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const categoryId = this.getAttribute("data-id"); // Get category ID
+                const formData = new FormData(this);
+
+                fetch(`/admin/category/edit/${categoryId}`, {
+                    method: "POST",
+                    body: new URLSearchParams(formData),
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Category updated successfully!");
+                            location.reload(); // Reload the page to update category list
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error updating category:", error);
+                        alert("Error: Could not reach the server.");
+                    });
+            });
+        });
+    </script>
+    <%- include('../partials/admin/footer') %>

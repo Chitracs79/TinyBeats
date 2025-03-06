@@ -1,0 +1,88 @@
+*{
+    font-family: 'Poppins', sans-serif;
+    margin:0 px;
+    padding:0 px;
+    box-sizing: border-box;
+}
+
+body{
+
+    background: #F6ECF3;
+    color:aliceblue;
+  
+}
+
+form{
+    width:20%;
+    background:whitesmoke;
+    color:black;
+    border-radius: 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, .2), 0 10px 10px rgba(0, 0, 0, .2);
+    padding: 50px;
+    display: block;
+    left      : 50%;
+    top       : 50%;
+    position  : absolute;
+    transform : translate(-50%, -50%);
+}
+
+form h2{
+    color: #7C095A; 
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    
+ }
+
+ form h5{
+    color:#db0001;
+    font-style: italic;
+    font-size: 14px;
+
+ }
+
+ form h4{
+    color:#008000;
+    font-style: normal;
+    font-size: 14px;
+    
+ }
+ .form-control{
+    
+    border: none;
+    box-shadow: none!important;
+    border-bottom: 1.5px solid;
+    border-bottom-color: rgba(0,0,0,.42);
+    color:rgba(0,0,0,.98);
+    border-radius: 4px 4px 0 0;
+    background-color: whitesmoke
+ }
+ .form-label{
+    color: rgb(60, 63, 77); 
+ }
+ .form-text{
+    font-size: 14px;
+ }
+
+.btn-primary{
+    border-radius: 20px;
+    width:100%;
+    display: block;
+    background:#7C095A;
+    border:none;
+    cursor: pointer;    
+}
+
+.newAccount{
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+
+@media only screen and (max-width:600px){
+    form{
+        width:100% !important;
+        padding:10px;
+    }
+}

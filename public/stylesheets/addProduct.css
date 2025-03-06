@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family:'Poppins', sans-serif;
+    background: #f6f5f7;   
+}
+h5 {
+    font-weight: 600;
+}
+
+.form-label{
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.form-control{
+   border-radius: 10px;
+   border:none;
+   outline : solid 1px #DAADCC;
+}
+.form-select{
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 10px;
+    border:none;
+    outline : solid 1px #DAADCC;
+    color:dimgray;
+}
+.sub-container{
+    border : solid 1px #dfdddd;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    background-color:#fff;
+    border-radius: 25px;
+}
+.image-container{
+  
+   
+    background-color:#fff;
+    padding:20px;
+    border-radius: 25px;
+}
+.image-subcontainer {
+    border-radius :25px;
+    background-color: #DAADCC;
+    width:100%;
+    height:300px;
+
+}
+.img-thumbnail{
+    width:80px;
+    height : 80px;
+    margin:5px;
+}
+.addbtn{
+    width:auto;
+    background-color: #7c0945;
+    color:#fff;
+    border : none;
+    outline:none;
+    font-weight: bold;
+    border-radius: 25px;
+    
+}

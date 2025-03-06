@@ -1,0 +1,193 @@
+<%- include('../partials/admin/header') %>
+
+    <section>
+        <div class="container mt-5">
+            <h1 style="font-weight: bold; font-size:1.25rem ;">Product List</h1>
+            <div class="row mt-5 mx-3 d-flex mt-5">
+                <!-- Add Product Button to open add Product Page -->
+                <div class="row mt-5">
+                    <a href="/admin/addProduct" class="btn btn-success " 
+                    style="width: auto; background-color: #946B88;border: none;">
+                    Add Product
+                </a>
+                </div>            
+                   
+            </div>
+            <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/products">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search by product name"
+                 style="width: 300px;"
+                value="<%= search %>" aria-label="Search">
+            
+                <button class="btn btn-outline-success me-2" type="submit" >Search</button>
+            
+                <% if (search && search.trim() !== "") { %>
+                    <a href="/admin/products" class="btn btn-outline-danger">Clear</a>
+                <% } %>
+            </form> 
+
+            <table class="table  table-hover text-center mt-5" style="border-color: #946B88; font-size: 12px;">
+                <thead style="background-color:#DAADCC; color: white;">
+                    <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">Image</th>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Category</th>
+                        <th scope="col" class="text-center">Price</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.forEach(product=> { %>
+                        <tr>
+                            <td >
+                                <%= serialNumber++ %>
+                            </td>
+                            <td>
+                                <%= product.image %>
+                            </td>
+                            <td>
+                                <%= product.name %>
+                            </td>
+                            <td>
+                                <%= product.description %>
+                            </td>
+                            <td>
+                                <%= product.category%>
+                            </td>
+                            <td>
+                                <%= product.price%>
+                            </td>
+                            
+                            <td>
+                                <button class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editProductModal<%= product._id %>">
+                                    Edit
+                                </button>
+
+                                    <a href="/admin/products/delete/<%= product._id %>" class="btn btn-danger mx-auto " style="width:80px"
+                                        onclick="return confirm('Are you sure to Delete?')">
+                                        Delete
+                                    </a>
+
+
+                            </td>
+
+                        </tr>
+
+                     
+
+                        
+
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (currentPage> 1) { %>
+                    <a href="/admin/products=<%= currentPage - 1 %>">
+                        <i class="fa-solid fa-backward"></i>
+                    </a>
+                    <% } %>
+
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <a href="/admin/products=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="/admin/products=<%= currentPage + 1 %>">
+                                        <i class="fa-solid fa-forward"></i>
+                                    </a>
+                                    <% } %>
+            </div>
+        </div>
+
+        <!-- Bootstrap Modal for Adding Products -->
+        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryLabel">Add Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addCategoryForm">
+                            <div class="mb-3">
+                                <label for="productName" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="productName" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productCategory" class="form-label">Product Category</label>
+                                <input type="text" class="form-control" id="productCategory" name="category" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productPrice" class="form-label">Product Price</label>
+                                <input type="text" class="form-control" id="productPrice" name="price" required>
+                            </div>
+                            
+                          
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+
+    </section>
+
+    <style>
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination a {
+            padding: 10px;
+            margin: 4px;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            font-weight: bold;
+            border-radius: 50%;
+            align-items: center;
+        }
+
+        .pagination a i {
+            padding: 4px;
+        }
+
+        .pagination a.active {
+            background-color: #DAADCC;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        document.getElementById("addProductForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent page refresh
+
+            const formData = new FormData(this);
+            fetch("/admin/product/add", {
+                method: "POST",
+                body: new URLSearchParams(formData), // Convert FormData to URL-encoded format
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Product added successfully!");
+                        location.reload(); // Reload to update the category list
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error adding products:", error));
+        });
+    </script>
+   
+    <%- include('../partials/admin/footer') %>

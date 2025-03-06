@@ -1,0 +1,157 @@
+<link rel="stylesheet" href="styles/signup_styles.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<div class="container" id="container">
+
+    <div class="form-container sign-in-container">
+        <form method="" action="/verifyOtp" onsubmit="return validateOTPForm()">
+
+            <span>Enter the OTP received in your registered email.</span>
+            <span class="input-fields">
+                <span class="inputs">
+                    <input type="text" class=input required pattern="[0-9]*" maxlength="1">
+                    <input type="text" class=input required pattern="[0-9]*" maxlength="1">
+                    <input type="text" class=input required pattern="[0-9]*" maxlength="1">
+                    <input type="text" class=input required pattern="[0-9]*" maxlength="1">
+                    <input type="text" class=input required pattern="[0-9]*" maxlength="1">
+                    <input type="text" class=input required pattern="[0-9]*" maxlength="1">
+                </span>
+                <div class="timer">
+                    <span>Didn't receive code</span>
+                    <button type="button" id="resend" class="resend-btn" >Click to resent OTP</button>
+                    <span id="time"></span>
+                </div>
+            </span>
+            <button type="submit" class="btn"> Verify OTP </button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+
+            <div class="overlay-panel overlay-right">
+                <h1>OTP VERIFICATION</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    function timerCountdown(time) {
+        document.getElementById("resend").disabled = true;
+
+        const countdownInterval = setInterval(() => {
+            if (time == 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("resend").disabled = false;
+                return;
+            }
+
+            time = time - 1;
+            document.getElementById("time").innerText = time;
+
+
+        }, 1000);
+
+    }
+
+    timerCountdown(30);
+
+    document.getElementById('resend').onclick = function () {
+        timerCountdown(30);
+        $.ajax({
+            type:"POST",
+            url:"/resendOtp",
+            success:function(response){
+                if(response.success){
+                    Swal.fire({
+                        icon:"success",
+                        title:"OTP Resend successfully",
+                        showConfirmButton:false,
+                        timer:1500,
+                    })
+                }else{
+                    Swal.fire({
+                        icon:"error",
+                        title:"Resend Error",
+                        text:"Error occured while resending OTP, Please send again",
+                        pending:false,
+                    })
+                }
+            }
+        })
+    }
+
+    let inputs = document.querySelectorAll(".input");
+    inputs.forEach((input) => { 
+
+        input.addEventListener("keyup",(e) => {
+            let key = e.key;
+            if(Number.isInteger(Number(key))){
+                if(input.nextElementSibling){
+                    input.nextElementSibling.focus();
+                }
+            }
+        });
+
+        input.addEventListener("keydown",(e) => {
+            let key = e.key; 
+            if(input.value == "" && key === "Backspace"){
+                if(input.previousElementSibling){
+                    input.previousElementSibling.focus();
+                }
+            }
+        })
+
+    })
+
+
+    function validateOTPForm() {
+
+        let otpArray = Array.from(document.querySelectorAll(".inputs input")).map(input => input.value);
+        let otp = otpArray.join(""); // Convert array to a single string
+      
+
+        $.ajax({
+            type: "POST",
+            url: "verifyOtp",
+            data: { otp: otp },
+
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "OTP verified successfully",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        window.location.href = response.redirectUrl;
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message
+                    })
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid OTP",
+                    text: "Please try again."
+                })
+            }
+        })
+        return false;
+
+    }
+
+   
+
+
+</script>
