@@ -16,7 +16,7 @@ const categorySchema = new mongoose.Schema({
     },
     parentCategory : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "Category",
+        ref : "category",
         default : null,
     },
     isDeleted : {
@@ -30,5 +30,5 @@ const categorySchema = new mongoose.Schema({
 
 })
 
-const Category = mongoose.model("Category", categorySchema);
-module.exports = Category;
+const category = mongoose.model("category", categorySchema);
+module.exports = category;

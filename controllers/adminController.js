@@ -25,7 +25,7 @@ const login = async(req,res) => {
       if(admin){
         const passwordMatch =  await bcrypt.compare(password, admin.password);
         if(passwordMatch){
-            req.session.admin = true;
+            req.session.admin = admin._id.toString();
             return res.redirect('/admin');
         } else {
             return res.redirect('/login');
@@ -53,7 +53,7 @@ const loadDashboard = async(req,res) => {
 }
 //---------------------------------------------------------------------------------------
 const loadPageError = async(req,res) =>{
-    res.render("admin/PageError");
+    res.render("admin/pageError");
 }
 
 

@@ -1,0 +1,84 @@
+<!-- sidebar -->
+<aside id="sidebar" class="sidebar-toggle">
+
+
+    <!-- sidebar Navigation -->
+    <div class="sidebar-profileImage">
+        <img src="<%= user.profileImage? user.profileImage : 'images/single_2_thumb.jpg' %>" alt="" class="profile-img">
+
+        <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
+            <input type="file" class="inputFile" name="profileImage" required>
+            <button type="submit" class="upload-btn"><i class="fa-solid fa-upload"></i></button>
+        </form>
+    </div>
+    <div class="sidebar-username">
+        <h3>
+            <%=user.name%>
+        </h3>
+    </div>
+    <ul class="sidebar-nav p-0">
+
+        <li class="sidebar-header">
+            Orders
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/userProfile" class="sidebar-link">
+                <i class="fa-solid fa-house"></i>
+                <span> Dashboard </span>
+            </a>
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/orders" class="sidebar-link">
+                <i class="fa fa-shopping-cart"></i>
+                <span> Orders</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/wishlist" class="sidebar-link">
+                <i class="fa fa-heart"></i>
+                <span>Wishlist</span>
+            </a>
+        </li>
+
+        <li class="sidebar-header">
+            Personal
+        </li>
+        <li class="sidebar-item">
+            <a href="/wallet" class="sidebar-link">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/address" class="sidebar-link">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Address</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/userProfile" class="sidebar-link">
+                <i class="fa fa-user"></i>
+                <span>My Profile</span>
+            </a>
+        </li>
+
+    </ul>
+    <!-- Sidebar Navigation Ends -->
+
+    <div class="sidebar-footer">
+        <a href="" class="sidebar-link">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/logout" class="sidebar-link">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</aside>
+<!-- Sidebar Ends -->

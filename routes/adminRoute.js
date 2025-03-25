@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const multer  = require("multer");
-const uploads = require("../helpers/multer"); // ✅ Correctly importing multer
+const uploads = require("../helpers/multer"); 
 
 
 const adminController = require('../controllers/adminController');
@@ -10,10 +10,11 @@ const customerController = require('../controllers/customerController');
 const categoryController = require('../controllers/categoryController');
 const brandController = require('../controllers/brandController');
 const productController = require('../controllers/productController');
+const bannerController = require('../controllers/bannerController');
 const {userAuth,adminAuth} = require("../middlewares/auth");
 
 // Error Management
-router.get("/pageError",adminController.loadPageError);
+router.get("/pageError",adminAuth,adminController.loadPageError);
 
 // Login Management
 router.get('/',adminController.loadLogin);
@@ -39,7 +40,20 @@ router.get('/blockBrand',adminAuth,brandController.brandBlocked);
 router.get('/unblockBrand',adminAuth,brandController.brandUnblocked);
 
 // product Management
-router.get('/products',adminAuth,productController.loadProductpage);
+router.get('/products',productController.loadProductpage);
 router.get('/addProduct',adminAuth,productController.addProductpage);
-router.post("/addProduct",adminAuth, uploads.array("images", 4), productController.addProduct);
+router.post("/addProduct",adminAuth, uploads.array('images',5), productController.addProduct);
+router.post('/addProductOffer',adminAuth,productController.addProductOffer);
+router.post('/removeProductOffer',adminAuth,productController.removeProductOffer);
+router.get('/editProduct',productController.loadEditProductPage);
+router.post('/product',uploads.array('images',5),productController.editProduct);
+router.delete('/deleteImage',productController.deleteSingleImage);
+router.get('/blockProduct',adminAuth,productController.productBlocked);
+router.get('/unblockProduct',adminAuth,productController.productUnblocked);
+router.get('/products/delete/:id',adminAuth,productController.softDeleteProducts)
+
+//banner Management
+router.get('/banner',adminAuth,bannerController.loadBannerpage);
+router.post('/banner/add',adminAuth,uploads.single("image"),bannerController.addBanner);
+router.get("/banner/delete",adminAuth, bannerController.deleteBanner);
 module.exports = router;

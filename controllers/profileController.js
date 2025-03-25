@@ -1,9 +1,12 @@
 const userModel = require("../models/userModel");
+const addressModel = require("../models/addressModel");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const nodemailer = require("nodemailer");
 const mongoose = require('mongoose');
 const session = require('express-session');
+const fs = require('fs');
+const path = require('path');
 
 // Function to generate a 6-digit OTP
 function generateOtp(length = 6) {
@@ -41,43 +44,43 @@ async function sendVerificationEmail(email, otp) {
         return false;
     }
 }
-
-const loadForgotPasswordPage = async (req,res) => {
+//-----------------loading forgot password page-------------------------------------------
+const loadForgotPasswordPage = async (req, res) => {
     try {
-        res.render('users/forgotPassword',{ user: null });
+        res.render('users/forgotPassword', { user: null });
     } catch (error) {
         res.redirect("/pageNotFound");
     }
 }
 
-const forgotEmailValid = async(req,res) => {
+const forgotEmailValid = async (req, res) => {
     try {
-    const {email} = req.body;
-    console.log("Email entered is ",email);
-    const findUser = await userModel.findOne({email:email});
+        const { email } = req.body;
+        console.log("Email entered is ", email);
+        const findUser = await userModel.findOne({ email: email });
 
-    if(findUser){
-        const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email, otp);
-        if(emailSent){
-            req.session.userOtp = otp;
-            req.session.email = email;
-            res.render("users/verifyForgotPassOtp"); 
-            console.log("OTP Send", otp) 
+        if (findUser) {
+            const otp = generateOtp();
+            const emailSent = await sendVerificationEmail(email, otp);
+            if (emailSent) {
+                req.session.userOtp = otp;
+                req.session.email = email;
+                res.render("users/verifyForgotPassOtp");
+                console.log("OTP Send", otp)
 
+            } else {
+                return res.json({ success: false, message: "Failed to send OTP ,Please try again" });
+            }
         } else {
-            return res.json({success:false,message:"Failed to send OTP ,Please try again"});
+            return res.redirect(`/forgotPassword?error=User does not exist`);
+
         }
-    } else {
-        return res.redirect(`/forgotPassword?error=User does not exist`);
-       
-    }
     } catch (error) {
-       res.redirect('/pageNotFound'); 
+        res.redirect('/pageNotFound');
     }
 }
 
-// OTP Verification
+//--------------------------- OTP Verification----------------------------------------------------------
 const loadVerifyOtp = async (req, res) => {
     try {
         return res.render('users/verifyForgotPassOtp')
@@ -89,9 +92,9 @@ const verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body;
         console.log(otp);
-        
-        if(otp === req.session.userOtp) {
-           res.json({success:true,redirectUrl:'/resetPassword'})
+
+        if (otp === req.session.userOtp) {
+            res.json({ success: true, redirectUrl: '/resetPassword' })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
         }
@@ -101,7 +104,7 @@ const verifyOtp = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error " });
     }
 }
-
+//----------------------------------Resend OTP-----------------------------------------------------------
 const resendOtp = async (req, res) => {
     try {
         const { email } = req.session.userData;
@@ -128,14 +131,14 @@ const resendOtp = async (req, res) => {
 
 }
 //--------------------------loading reset password page---------------------------
- const loadResetPasswordPage = async(req,res)=>{
+const loadResetPasswordPage = async (req, res) => {
     try {
         res.render('users/resetPassword');
     } catch (error) {
-        
+
         res.redirect('/pageNotFound');
     }
- }
+}
 //------------------------reset Password----------------------------------------------
 const securePassword = async (password) => {
     try {
@@ -147,32 +150,391 @@ const securePassword = async (password) => {
     }
 }
 
-const resetPassword = async(req,res) =>{
+const resetPassword = async (req, res) => {
     try {
-      const {password, confirmPassword} = req.body;
-      console.log(password, confirmPassword);
-      const email = req.session.email;
-      if(password === confirmPassword){
-        const passwordHash = await securePassword(password);
-        await userModel.updateOne(
-            {email:email},
-            {$set:{password:passwordHash}}
-        )
-        res.redirect('/signin')
-      } else {
-        res.render('users/resetPassword', {message:"password doesnot match"});
-      }
+        const { password, confirmPassword } = req.body;
+        const email = req.session.email;
+
+        if (password === confirmPassword) {
+            const passwordHash = await securePassword(password);
+            await userModel.updateOne(
+                { email: email },
+                { $set: { password: passwordHash } }
+            )
+
+            res.redirect('/signin')
+        } else {
+            res.render('users/resetPassword', { message: "password doesnot match" });
+        }
+    } catch (error) {
+        res.redirect('/pageNotFound');
+    }
+}
+//-------------------------------Load user profile page ----------------------------------------------
+const loadProfilePage = async (req, res) => {
+    try {
+        const userid = req.session.user;
+        if (mongoose.isValidObjectId(userid)) {
+            const userData = await userModel.findOne({ _id: userid });
+            const addressData = await addressModel.findOne({ userId: userid });
+            res.render("users/userProfile", {
+                user: userData,
+                userAddress: addressData,
+            });
+        }
+
+    } catch (error) {
+        res.redirect("/pageNotFound");
+    }
+}
+//-------------------------------upload profile image--------------------------------------------------------
+
+const uploadProfile = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return res.status(400).send("No file uploaded.");
+        }
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            req.session.user._id,
+            { profileImage: '/uploads/re-image/' + req.file.filename },
+            { new: true }
+        );
+        if (!updatedUser) {
+            return next(new Error("User not found."));
+        }
+        res.redirect('/userProfile');
+
+    } catch (error) {
+        next(error);
+    }
+}
+//------------------------------Load Edit Profile Page------------------------------------
+
+const loadEditProfilePage = async (req, res, next) => {
+    try {
+        const userid = req.session.user;
+        if (mongoose.isValidObjectId(userid)) {
+            const userData = await userModel.findOne({ _id: userid });
+            const addressData = await addressModel.findOne({ userId: userid });
+            res.render("users/editProfile", {
+                user: userData,
+                userAddress: addressData,
+            });
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
+
+
+
+//----------------------------change email--------------------------------------------------
+const changeEmail = async (req, res) => {
+    try {
+        const userid = req.session.user;
+        const { currentEmail, newEmail } = req.body;
+
+        const user = await userModel.findById(userid);
+        console.log("user in changeEmail is ", user);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.email !== currentEmail) {
+            return res.status(400).json({ message: "Email doesnot match" });
+        }
+
+        user.email = newEmail;
+        await user.save();
+        res.status(200).json({ message: "Email updated successfully" });
+    } catch (error) {
+        console.log("Error updating user email");
+        res.status(500).json({ error: "Failed to update email" });
+    }
+}
+//--------------------------------Load change password page---------------------------------------
+const loadChangePassword = async (req, res) => {
+    try {
+        res.render('users/changePassword');
+    } catch (error) {
+        res.redirect('pageNotFound');
+    }
+}
+//---------------------------------Change Password Functionality----------------------------------
+
+const changePassword = async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body;
+        console.log(password, confirmPassword);
+
+        const userId = req.session.user;
+        console.log(userId);
+
+
+        if (password === confirmPassword) {
+            const passwordHash = await securePassword(password);
+            await userModel.updateOne(
+                { _id: userId },
+                { $set: { password: passwordHash } }
+            )
+            console.log("userId,password", userId, password)
+            res.redirect('/signin')
+        } else {
+            res.render('users/changePassword', { message: "password doesnot match" });
+        }
     } catch (error) {
         res.redirect('/pageNotFound');
     }
 }
 
-module.exports ={
-    loadForgotPasswordPage, 
+const emailValid = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log("Email entered is ", email);
+        const findUser = await userModel.findOne({ email: email });
+
+        if (findUser) {
+            const otp = generateOtp();
+            const emailSent = await sendVerificationEmail(email, otp);
+            if (emailSent) {
+                req.session.userOtp = otp;
+                req.session.email = email;
+                res.render("users/verifyForgotPassOtp");
+                console.log("OTP Send", otp)
+
+            } else {
+                return res.json({ success: false, message: "Failed to send OTP ,Please try again" });
+            }
+        } else {
+            return res.redirect(`/forgotPassword?error=User does not exist`);
+
+        }
+    } catch (error) {
+        res.redirect('/pageNotFound');
+    }
+}
+
+//--------------------Load Address Page ------------------------------------------------------------
+const loadAddressPage = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        if (mongoose.isValidObjectId(userId)) {
+            const userData = await userModel.findOne({ _id: userId });
+            const addressData = await addressModel.findOne({ userId: userId });
+            res.render("users/address", {
+                user: userData,
+                userAddress: addressData,
+            });
+        }
+    } catch (error) {
+        res.redirect("/pageNotFound");
+    }
+}
+//-------------------------------Load Add Address Page------------------------------------------------
+const loadAddAddressPage = async (req, res) => {
+    try {
+        const userid = req.session.user;
+
+        res.render('users/addAddress', { user: userid });
+    } catch (error) {
+        res.redirect('/pageNotFound');
+    }
+}
+
+//-----------------------------------Add address----------------------------------------------------
+
+const addAddressPage = async (req, res) => {
+    try {
+        const userId = req.session.user;
+
+        if (mongoose.isValidObjectId(userId)) {
+            const userData = await userModel.findOne({ _id: userId });
+            const { addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone } = req.body;
+            console.log(req.body);
+            const userAddress = await addressModel.findOne({ userId: userData._id });
+            if (!userAddress) {
+                const newAddress = new addressModel({
+                    userId: userData._id,
+                    address: [{
+                        addressType,
+                        name,
+                        apartment,
+                        building,
+                        street,
+                        city,
+                        landmark,
+                        state,
+                        country,
+                        zip,
+                        phone,
+                        altPhone
+                    }]
+                });
+                await newAddress.save();
+                console.log("Address Saved!");
+            } else {
+                userAddress.address.push({ addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone });
+                await userAddress.save();
+                console.log("Appended Address saved!")
+            }
+
+            res.redirect("/address");
+        }
+
+
+    } catch (error) {
+        console.log("Error Adding address :", error);
+        res.redirect('/pageNotFound');
+    }
+}
+//-------------------------------load Edit Address Page--------------------------------------------
+
+const loadEditAddress = async (req, res) => {
+    try {
+        const addressId = req.query.id;
+
+        const user = req.session.user;
+
+
+        if (mongoose.isValidObjectId(addressId)) {
+            const currentAddress = await addressModel.findOne({ "address._id": addressId });
+
+            if (!currentAddress) {
+                return res.status(404).send("Address not found");
+            }
+
+            const addressData = currentAddress.address.find(addr => addr._id == addressId);
+            console.log(addressData);
+            if (!addressData) {
+                return res.status(404).send("Address not found");
+            }
+
+            res.render('users/editAddress', { user, address: addressData });
+
+        }
+    } catch (error) {
+        console.error("Error fetching address:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+//-------------------------------Edit Address------------------------------------------------------
+const editAddress = async (req, res) => {
+    try {
+        const addressId = req.query.id; 
+        const user = req.session.user;   
+        const updatedData = req.body;   
+
+        if (!addressId) {
+            return res.status(400).json({ message: "Address ID is required" });
+        }
+
+        if (!mongoose.isValidObjectId(addressId)) {
+            return res.status(400).json({ message: "Invalid address ID" });
+        }
+
+        if (!updatedData || Object.keys(updatedData).length === 0) {
+            return res.status(400).json({ message: "No update data provided" });
+        }
+
+        // Find the user address document
+        const addressDocument = await addressModel.findOne({ "address._id": addressId });
+
+        if (!addressDocument) {
+            return res.status(404).json({ message: "Address not found" });
+        }
+
+        // Update the specific address inside the array
+        const updatedAddress = await addressModel.updateOne(
+            { "address._id": addressId },
+            {
+                $set: {
+                    "address.$.addressType": updatedData.addressType,
+                    "address.$.name": updatedData.name,
+                    "address.$.apartment": updatedData.apartment,
+                    "address.$.building": updatedData.building,
+                    "address.$.street": updatedData.street,
+                    "address.$.city": updatedData.city,
+                    "address.$.landmark": updatedData.landmark,
+                    "address.$.state": updatedData.state,
+                    "address.$.country": updatedData.country,
+                    "address.$.zip": updatedData.zip,
+                    "address.$.phone": updatedData.phone,
+                    "address.$.altPhone": updatedData.altPhone,
+                }
+            }
+        );
+
+        if (updatedAddress.modifiedCount === 0) {
+            return res.status(400).json({ message: "No changes were made" });
+        }
+
+        console.log("Address updated successfully");
+        res.status(200).json({ message: "Address updated successfully!" });
+
+    } catch (error) {
+        console.error(" Error editing address:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+//------------------------Delete Address--------------------------------------------------------------
+
+const deleteAddress = async(req,res,next)=>{
+    try {
+        
+        const addressId = req.query.id;
+        
+        if (!addressId) {
+            return res.status(400).json({ message: "Address ID is required" });
+        }
+        const updatedDocument = await addressModel.findOneAndUpdate(
+            {"address._id":addressId},
+            {$pull:{address:{_id:addressId}}},
+            {new:true},
+        )
+        
+        if (!updatedDocument) {
+            return res.status(404).json({ message: "Address not found" });
+        }
+
+        console.log("Address deleted successfully");
+        res.status(200).json({ message: "Address deleted successfully!" });
+
+
+    } catch (error) {
+        console.error(" Error deleting address:", error);
+        next(error);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+//------------------------Exporting modules---------------------------------------------------------
+module.exports = {
+    loadForgotPasswordPage,
     forgotEmailValid,
     loadVerifyOtp,
     verifyOtp,
     resendOtp,
     loadResetPasswordPage,
-    resetPassword
+    resetPassword,
+    loadProfilePage, uploadProfile,
+    loadEditProfilePage, changeEmail,
+    loadChangePassword, changePassword, emailValid,
+    loadAddressPage, loadAddAddressPage, addAddressPage,
+    loadEditAddress, editAddress,deleteAddress,
+
 }

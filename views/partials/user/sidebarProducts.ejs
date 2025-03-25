@@ -1,0 +1,104 @@
+<!-- Sidebar -->
+
+<div class="sidebar">
+    <div class="sidebar_section">
+        <div class="sidebar_title">
+            <h5>Categories</h5>
+        </div>
+        <ul class="sidebar_categories">
+            <% categories.forEach(category =>{ %>
+            <li class="<%= selectedCategory === category._id.toString() ? 'active' : '' %>">
+                <a href="/filter?category=<%= category._id %>"><%= category.name %></a>
+            </li> 
+          
+            <!-- <li class="active"><a href="#"><span><i class="fa fa-angle-double-right" aria-hidden="true"></i></span>Essentials</a></li> -->
+            
+            <% }) %>
+        </ul>
+    </div>
+    <div class="sidebar_section">
+        <div class="sidebar_title">
+            <h5>Brands</h5>
+        </div>
+        <ul class="sidebar_categories">
+            <% brands.forEach(brand =>{ %>
+            <li class="<%= selectedBrand === brand._id.toString() ? 'active' : '' %>">
+                <a href="/filter?brand=<%= brand._id %>"><%= brand.name %></a></li>
+            <!-- <li class="active"><a href="#"><span><i class="fa fa-angle-double-right" aria-hidden="true"></i></span>Tiny Toes</a></li> -->
+           
+            <% }) %>
+        </ul>
+    </div>
+
+    <!-- Price Range Filtering -->
+    <div class="sidebar_section">
+        <div class="sidebar_title">
+            <h5>Filter by Price</h5>
+        </div>
+        <form action="" id = "price-filter-form">
+            <div class="price-option" >
+                <a href="/filterPrice?gt=0&lt=100">  <button class="price-btn" type="button" style =" padding:2px;border:none;background: transparent;color:rgb(81, 84, 95);cursor: pointer;"> under AED 100 </button></a>
+                <a href="/filterPrice?gt=100&lt=200"><button class="price-btn" type="button"> AED 100 - AED 200 </button></a>
+                <a href="/filterPrice?gt=200&lt=300"><button class="price-btn" type="button"> AED 200 - AED 300  </button></a>
+                <a href="/filterPrice?gt=300&lt=400"><button class="price-btn" type="button"> AED 300 - AED 400 </button></a>
+                <a href="/filterPrice?gt=400&lt=500"><button class="price-btn" type="button"> AED 400 - AED 500</button></a>
+            </div>
+        </form>
+
+        <!-- <p>
+            <p id="priceRangeText">Price: $<span id="minPriceText">0</span> - $<span id="maxPriceText">1000</span></p>
+            <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        </p>
+       
+        <div id="slider-range"></div>
+        <div class="filter_button"><span>filter</span></div> -->
+    </div>
+
+    <!-- Sizes -->
+    <!-- <div class="sidebar_section">
+        <div class="sidebar_title">
+            <h5>Sizes</h5>
+        </div>
+        <ul class="checkboxes">
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>S</span></li>
+            <li class="active"><i class="fa fa-square" aria-hidden="true"></i><span>M</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>L</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>XL</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>XXL</span></li>
+        </ul>
+    </div> -->
+
+    <!-- Color -->
+    <!-- <div class="sidebar_section">
+        <div class="sidebar_title">
+            <h5>Color</h5>
+        </div>
+        <ul class="checkboxes">
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Black</span></li>
+            <li class="active"><i class="fa fa-square" aria-hidden="true"></i><span>Pink</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>White</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Blue</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Orange</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>White</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Blue</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Orange</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>White</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Blue</span></li>
+            <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Orange</span></li>
+        </ul>
+        <div class="show_more">
+            <span><span>+</span>Show More</span>
+        </div>
+    </div> -->
+
+</div>
+<style>
+ .price-btn{
+  padding:5px 0px;
+  border:none;
+  background:transparent;
+  color:rgb(81, 84, 95);
+  cursor: pointer;
+  margin-left: 20px;
+ }
+</style>

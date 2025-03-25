@@ -1,0 +1,84 @@
+<%- include('../../views/partials/user/header',{user:user}) %>
+    <link rel="stylesheet" href="/styles/userprofile_style.css">
+
+
+    <section>
+
+        <body>
+            <div class="d-flex pt-5">
+                <%- include('../../views/partials/user/sidebar',{user:user}) %>
+                    <!-- Main Content -->
+                    <div class="main">
+                        <nav class="navbar nav-expand border-bottom">
+                            <button class="toggler-btn" type="button">
+                                <i class="fa-solid fa-align-left"></i>
+                            </button>
+                        </nav>
+
+                        <div class="content"
+                           >
+                            <h4 class="pb-3">My Profile</h4>
+
+                            <div class="container mt-4">
+
+                                <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="userName" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="name" value="<%=user.name%>"
+                                        placeholder="">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" value="<%=user.email%>"
+                                        placeholder="">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone No</label>
+                                    <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
+                                        placeholder="">
+                                </div>
+                               
+                                <!-- Address part -->
+                                <div class="row mt-4">
+                                    <% if (userAddress) { %>
+                                        <% userAddress.address.forEach((addr)=> { %>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title"><%= addr.addressType %> Address</h5>
+                                                        <p class="card-text">
+                                                            <strong>Name:</strong> <%= addr.name %> <br>
+                                                            <strong>Apartment:</strong> <%= addr.apartment %> <br>
+                                                            <strong>Building:</strong> <%= addr.building %> <br>
+                                                            <strong>Street:</strong> <%= addr.street %> <br>
+                                                            <strong>City:</strong> <%= addr.city %> <br>
+                                                            <strong>Landmark:</strong><%= addr.landmark %> <br>
+                                                            <strong>State:</strong> <%= addr.state %> <br>
+                                                            <strong>Country:</strong> <%= addr.country %> <br>
+                                                            <strong>ZIP:</strong> <%= addr.zip %> <br>
+                                                            <strong>Phone:</strong> <%= addr.phone %> <br>
+                                                            <strong>Alternative Phone:</strong> <%= addr.altPhone %> 
+                                                        </p> 
+                                                                                                      
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p>No addresses found. Please add one.</p>
+                                    <% } %>
+                                </div>
+
+                            </div>
+
+                            <a href="/editProfile" class="btn btn-primary btn-sm">Edit Profile</a>
+                        </div>
+                    </div>
+    </section>
+
+
+    
+
+    <%- include('../../views/partials/user/footer') %>

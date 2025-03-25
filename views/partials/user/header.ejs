@@ -8,7 +8,9 @@
 <meta name="description" content="Colo Shop Template">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+<link rel="stylesheet" href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link href="plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
 <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
 <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
@@ -60,7 +62,7 @@
 								</li>
 								<li class="account">
 									<a href="#">
-										<% if (user) { %>
+										<% if (typeof user !== 'undefined' && user)  { %>
 											<%= user.name %> <!-- Show user name when logged in -->
 										<% } else { %>
 											My Account
@@ -69,11 +71,11 @@
 									</a>
 									<ul class="account_selection">
 									
-										<% if (user) { %>
+										<% if (typeof user !== 'undefined' && user)  { %>
 											<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
 											<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
 										<% } else { %>
-											<li><a href="/signup"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+											<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
 											<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
 										<% } %>
 										
@@ -97,20 +99,20 @@
 						</div>
 						<nav class="navbar">
 							<ul class="navbar_menu">
+								<li><a href="/shop">Shop</a></li>
 								<li><a href="#">Clothes</a></li>
 								<li><a href="#">Essentials</a></li>
 								<li><a href="#">Feeding</a></li>
 								<li><a href="#">Playtime</a></li>
 								<li><a href="#">Travel</a></li>
-                                <li><a href="#">Maternity</a></li>
 								<li><a href="contact.html">contact</a></li>
 							</ul>
 							<ul class="navbar_user">
 								<li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
-								<li><a href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                                <li><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+								<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                                <li><a href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
 								<li class="checkout">
-									<a href="#">
+									<a href="/cart">
 										<i class="fa fa-shopping-cart" aria-hidden="true"></i>
 										<span id="checkout_items" class="checkout_items">2</span>
 									</a>
@@ -134,14 +136,13 @@
 			<ul class="menu_top_nav">
 				<li class="menu_item has-children">
 					<a href="#">
-						usd
+						aed
 						<i class="fa fa-angle-down"></i>
 					</a>
 					<ul class="menu_selection">
-						<li><a href="#">cad</a></li>
-						<li><a href="#">aud</a></li>
+						<li><a href="#">inr</a></li>
+						<li><a href="#">usd</a></li>
 						<li><a href="#">eur</a></li>
-						<li><a href="#">gbp</a></li>
 					</ul>
 				</li>
 				<li class="menu_item has-children">
@@ -150,8 +151,8 @@
 						<i class="fa fa-angle-down"></i>
 					</a>
 					<ul class="menu_selection">
+						<li><a href="#">Arabic</a></li>
 						<li><a href="#">French</a></li>
-						<li><a href="#">Italian</a></li>
 						<li><a href="#">German</a></li>
 						<li><a href="#">Spanish</a></li>
 					</ul>
@@ -162,16 +163,16 @@
 						<i class="fa fa-angle-down"></i>
 					</a>
 					<ul class="menu_selection">
-						<li><a href="#"><i class="fa fa-sign-in" aria-hidden="true"></i>Login In</a></li>
+						<li><a href="#"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
 						<li><a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
 					</ul>
 				</li>
+				<li class="menu_item"><a href="/shop">Shop</a></li>
 				<li class="menu_item"><a href="#">Clothes</a></li>
 				<li class="menu_item"><a href="#">Essentials</a></li>
 				<li class="menu_item"><a href="#">Feeding</a></li>
 				<li class="menu_item"><a href="#">Playtime</a></li>
-				<li class="menu_item"><a href="#">Travel</a></li>
-                <li class="menu_item"><a href="#">Materity</a></li>
+				<li class="menu_item"><a href="#">Travel</a></li>              
 				<li class="menu_item"><a href="#">Contact</a></li>
 			</ul>
 		</div>

@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema({
         unique:true,
         sparse:true,
         default:null,
-
     },
     password: {
         type: String,
@@ -36,7 +35,19 @@ const userSchema = new mongoose.Schema({
     isBlocked:{
         type:Boolean,
        default:false,
-    }
+    },
+    profileImage: { 
+        type: String, 
+        default: "/images/default-profile.png" 
+    },
+    wishlist:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Wishlist",
+    }],
+    cart:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Cart"
+    }]
 });
 
 module.exports = mongoose.model('users',userSchema);

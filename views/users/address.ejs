@@ -1,0 +1,144 @@
+<%- include('../../views/partials/user/header',{user:user}) %>
+    <link rel="stylesheet" href="/styles/userprofile_style.css">
+
+
+    <section>
+
+        <body>
+            <div class="d-flex pt-5">
+                <%- include('../../views/partials/user/sidebar',{user:user}) %>
+                    <!-- Main Content -->
+                    <div class="main">
+                        <nav class="navbar nav-expand border-bottom">
+                            <button class="toggler-btn" type="button">
+                                <i class="fa-solid fa-align-left"></i>
+                            </button>
+                        </nav>
+
+                        <div class="content">
+                            <h4 class="pb-3">My Address</h4>
+
+                            <div class="container mt-4">
+
+
+                                <div class="row">
+                                    <% if (userAddress) { %>
+                                        <% userAddress.address.forEach((addr)=> { %>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            <%= addr.addressType %> Address
+                                                        </h5>
+                                                        <p class="card-text">
+                                                            <strong>Name:</strong>
+                                                            <%= addr.name %> <br>
+                                                                <strong>Apartment:</strong>
+                                                                <%= addr.apartment %> <br>
+                                                                    <strong>Building:</strong>
+                                                                    <%= addr.building %> <br>
+                                                                        <strong>Street:</strong>
+                                                                        <%= addr.street %> <br>
+                                                                            <strong>City:</strong>
+                                                                            <%= addr.city %> <br>
+                                                                                <strong>Landmark:</strong>
+                                                                                <%= addr.landmark %> <br>
+                                                                                    <strong>State:</strong>
+                                                                                    <%= addr.state %> <br>
+                                                                                        <strong>Country:</strong>
+                                                                                        <%= addr.country %> <br>
+                                                                                            <strong>ZIP:</strong>
+                                                                                            <%= addr.zip %> <br>
+                                                                                                <strong>Phone:</strong>
+                                                                                                <%= addr.phone %> <br>
+                                                                                                    <strong>Alternative
+                                                                                                        Phone:</strong>
+                                                                                                    <%= addr.altPhone %>
+                                                        </p>
+                                                        <div class="d-flex justify-content-between">
+                                                            <a href="/editAddress?id=<%=addr._id%>"
+                                                                class="btn btn-warning btn-sm">
+                                                                <i class="fa-solid fa-pen-to-square"></i>
+                                                            </a>
+                                                            <a href="/deleteAddress?id=<%=addr._id%>"
+                                                                data-id="<%= addr._id %>"
+                                                                class="btn btn-danger btn-sm delete-btn">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <p>No addresses found. Please add one.</p>
+                                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div>
+                                <a href="/addAddress" class="btn btn-primary btn-sm">Add Address</a>
+                            </div>
+                        </div>
+
+
+
+
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".delete-btn").forEach(button => {
+                button.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    const addressId = e.target.closest(".delete-btn").getAttribute("data-id");
+
+                    if (!addressId) {
+                        console.error("Address ID not found");
+                        return;
+                    }
+
+                    // Confirm before deleting
+                    const result = await Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this address!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!",
+                 });
+                    if(result.isConfirmed){
+                        try {
+                            const response = await fetch(`/deleteAddress?id=${addressId}`, {
+                                method: "DELETE",
+                                headers: { "Content-Type": "application/json" }
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                Swal.fire("Success", data.message, "success").then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(data.error);
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                        Swal.fire("Something went wrong. Please try again.");
+                        }
+                    }
+                });
+            });
+        });
+   
+    </script>
+
+
+
+
+    <%- include('../../views/partials/user/footer') %>

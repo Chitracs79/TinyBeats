@@ -1,0 +1,162 @@
+body {
+    font-family: "Poppins","sans-serif";
+}
+li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+}
+.content{
+    width: 1300px;
+    min-height: 100vh;
+    padding:50px;
+    margin:150px;
+    border-radius: 25px;
+    
+}
+.main-content{
+    padding:30px
+}
+.main{
+    min-height:100vh;
+    width: 100%;
+    overflow: hidden;
+    background-color: #faf9f9;   
+}
+
+#sidebar{
+    max-width : 224px;
+    min-width : 224px;
+    transition: all 0.35s ease-in-out;
+    background: linear-gradient(180deg, rgb(51, 37, 39) 3%, #fe4c50 50%, #FE7C7F 100%);
+    display: flex;
+    flex-direction: column; 
+    height: 1300px;  
+    margin-right: 10px;
+
+}
+
+
+#sidebar.collapsed{
+    margin-left:-224px;
+}
+
+.toggler-btn{
+    background-color:transparent;
+    cursor: pointer;
+    border: 0;
+   
+}
+.toggler-btn i {
+    font-size: 1.5rem;
+    color:#E210A3; 
+    font-weight: bold;
+   
+}
+.navbar{
+    padding: 1.15rem 1.5rem;
+}
+.sidebar-nav {
+    flex:1 1 auto;
+}
+.sidebar-logo{
+    padding:1.15rem 1.5rem;
+    text-align: center;
+    margin-bottom :40px;
+}
+
+.sidebar-logo a {
+    color:#fff;
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+.sidebar-username h3{
+
+    color:white;
+    margin-top: 20px;
+    text-align: left;
+    padding:0px 20px;
+
+}
+.sidebar-header {
+    color:#fff;
+    font-size: 1rem;
+    font-weight: bold;
+    padding:1.5rem 1.5rem .375rem;
+    
+}
+
+a.sidebar-link{
+    padding:.625rem 1.625rem;
+    color:#fff; 
+    position:relative;
+    transition: all 0.35s;
+    display: block;
+    border-radius: 15px;
+}
+
+a.sidebar-link:hover{
+    background-color: #b61c24;
+}
+
+.form-control,.form-select{
+    outline:#f3dcdc;
+    line-height: 2;
+    width :470px;
+}
+
+.form-control-address{
+    height: 200px;
+}
+.btn{
+   margin-right: 5px;
+}
+.btn-primary{
+    background-color: #fe4c50 ;
+    border:#fe4c50 ;
+}
+
+.btn-outline-primary{
+    outline-color: black;
+    color:black;
+    border-color: black;
+}
+.error{
+    color:#db0001;
+    font-size: 11px;
+    font-weight: bold;
+}
+.profile-img{
+    width:120px;
+    height:120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    margin-top: 120px;
+    margin-left: 50px;
+    margin-bottom: 10px;
+   
+}
+.upload-btn{
+    background: transparent;
+    color : white;
+    padding: 10px;
+    border: none;
+}
+.inputFile{
+    background: transparent;
+    color:white;
+    width:100px;
+    display: inline-flex;
+    
+}
+/* Screen size less than 768px */
+@media(max-width:769px){
+    .sidebar-toggle{
+        margin-left:-264px;
+    }
+    #sidebar.collapsed{
+        margin-left:0px;
+    }
+}

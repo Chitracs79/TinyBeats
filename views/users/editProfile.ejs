@@ -1,0 +1,122 @@
+<%- include('../../views/partials/user/header',{user:user}) %>
+    <link rel="stylesheet" href="/styles/userprofile_style.css">
+
+
+    <section>
+
+        <body>
+            <div class="d-flex pt-5">
+                <%- include('../../views/partials/user/sidebar',{user:user}) %>
+                    <!-- Main Content -->
+                    <div class="main">
+                        <nav class="navbar nav-expand border-bottom">
+                            <button class="toggler-btn" type="button">
+                                <i class="fa-solid fa-align-left"></i>
+                            </button>
+                        </nav>
+
+                        <div class="content">
+                            <h4 class="pb-3">Edit Profile</h4>
+
+                            <div class="container mt-4">
+
+                                <div class="row">
+                                    <div class="mb-3">
+                                        <label for="userName" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="name" value="<%=user.name%>"
+                                            placeholder="" readonly>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="text" class="form-control" id="email" value="<%=user.email%>"
+                                            placeholder="" readonly>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Phone No</label>
+                                        <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
+                                            placeholder="" readonly>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- Add Category Button to Open Modal -->
+                            <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailChangeModal">
+                                Change Email
+                            </button> -->
+                            <a href="/changePassword" class="btn btn-primary btn-sm m-3">Change Password</a>
+                        </div>
+                    </div>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="emailChangeModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Change Email</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="emailUpdateForm">
+                                        <div class="mb-3">
+                                            <label for="currentEmail" class="form-label">Current Email</label>
+                                            <input type="email" class="form-control" id="currentEmail"
+                                                name="currentEmail" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="newEmail" class="form-label">New Email</label>
+                                            <input type="email" class="form-control" id="newEmail" name="newEmail"
+                                                required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Update Email</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.querySelector("#emailUpdateForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const currentEmail = document.querySelector("#currentEmail").value.trim();
+            const newEmail = document.querySelector("#newEmail").value.trim();
+
+            //form validation
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!currentEmail || !newEmail) {
+                Swal.fire("Both emails are required");
+                return;
+            }
+
+            if (!emailRegex.test(currentEmail) || !emailRegex.test(newEmail)) {
+                Swal.fire("Enter a valid email address");
+                return;
+            }
+            if (currentEmail === newEmail) {
+                Swal.fire("Enter a new email other than the current email");
+                return;
+            }
+            const response = await fetch('/changeEmail', {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentEmail, newEmail }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                Swal.fire("Success", data.message, "success").then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire(data.error);
+            }
+        });
+    </script>
+
+    <%- include('../../views/partials/user/footer') %>

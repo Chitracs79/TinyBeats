@@ -8,7 +8,7 @@ const categoryInfo = async(req, res) => {
         //search
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
-        const limit = 4 ;
+        const limit = 6 ;
         const skip = (page -1) * limit;
         let serialNumber = (page - 1) * limit + 1;
         
@@ -56,7 +56,7 @@ const addCategory = async(req,res) => {
         }
        
         const newCategory = new categoryModel({
-            name, description,parentCategory: parentCategory || null
+            name, description,parentCategory: new mongoose.Types.ObjectId(parentCategory) || null
         })
         console.log("new category before save",newCategory)
         await newCategory.save();
@@ -109,10 +109,12 @@ const softDeleteCategory = async(req,res) => {
         }
 
         await categoryModel.findByIdAndUpdate(categoryId,{isDeleted:true});
-        return res.json({success:true, message:"Category deleted successfully!"});
+        return res.redirect('/admin/category?message=Category deleted successfully');
+        // return res.json({success:true, message:"Category deleted successfully!"});
     } catch (error) {
         console.error("Error soft deleting category",error);
-        return res.status(500).json({success:false,message:"Failed to delete category."})
+        return res.redirect('/admin/category?error=Failed to delete category');
+        // return res.status(500).json({success:false,message:"Failed to delete category."})
     }
 }
 

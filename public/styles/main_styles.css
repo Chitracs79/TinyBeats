@@ -456,6 +456,7 @@ section
 	display: inline-block;
 	position: relative;
 	min-width: 50px;
+	width:150px;
 	padding-left: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -472,7 +473,7 @@ section
 }
 .account > a > i
 {
-	margin-left: 8px;
+	margin-left: 7px;
 }
 .account:hover .account_selection
 {
@@ -1010,7 +1011,7 @@ section
 }
 .product-item
 {
-	width: 20%;
+	width: 80%;
 	height: 380px;
 	cursor: pointer;
 }
@@ -1045,7 +1046,7 @@ section
 }
 .product_image
 {
-	width: 100%;
+	width:100%;
 }
 .product_image img
 {
@@ -1336,7 +1337,7 @@ section
 }
 .product_slider_item .product-item
 {
-	width: 100% !important;
+	width: 200px !important;
 }
 
 /*********************************

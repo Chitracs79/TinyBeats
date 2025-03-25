@@ -1,0 +1,116 @@
+<%- include('../../views/partials/user/header',{user:user}) %>
+    <link rel="stylesheet" href="/styles/userprofile_style.css">
+
+
+    <section>
+
+        <body>
+            <div class="d-flex pt-5">
+             
+                <!-- Main Content -->
+                <div class="main">
+                  
+
+                    <div class="content">
+                        <h4 class="pb-3">Add User Address</h4>
+
+                        <form class="row g-3"  id="address-Form" method="post" action="/checkoutAddress">
+                            
+                          <div class="col-md-6">
+                            <label for="addressType" class="form-label">Address Type</label>
+                            <input type="text" class="form-control" id="addressType"name="addressType" value="<%=address.addressType%>" onkeyup="validateAddressType()">
+                            <span class="error" id="addressType-error"></span>
+                          </div>
+
+
+                            <div class="col-md-6">
+                              <label for="userName" class="form-label">Name</label>
+                              <input type="text" class="form-control" id="name" name="name" onkeyup="validateName()">
+                              <span class="error" id="name-error"></span>
+                            </div>
+                           
+                            
+                            <div class="col-md-6">
+                              <label for="apartment" class="form-label">Apartment</label>
+                              <input type="text" class="form-control" id="apartment" name="apartment" onkeyup="validateApartment()" >
+                              <span class="error" id="apartment-error"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                              <label for="building" class="form-label">Building</label>
+                              <input type="text" class="form-control" id="building" name="building" onkeyup="validateBuilding()">
+                              <span class="error" id="building-error"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Street" class="form-label">Street</label>
+                                <input type="text" class="form-control" id="street" name="street" onkeyup="validateStreet()">
+                                <span class="error" id="street-error"></span>
+                              </div>
+
+                            <div class="col-md-6">
+                              <label for="city" class="form-label">City</label>
+                              <input type="text" class="form-control" id="city" name="city" onkeyup="validateCity()">
+                              <span class="error" id="city-error"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="landmark" class="form-label">Landmark</label>
+                                <input type="text" class="form-control" id="landmark" name="landmark" onkeyup="validateLandmark()">
+                                <span class="error" id="landmark-error"></span>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label for="state" class="form-label" >State</label>
+                                <input type="text" id="state" class="form-control" name="state" onkeyup="validateState()">
+                                <span class="error" id="state-error"></span>
+                              </div>
+
+                            <div class="col-md-6">
+                              <label for="country" class="form-label">Country</label>
+                              <input type="text" id="country" class="form-control" name="country" onkeyup="validateCountry()">
+                              <span class="error" id="country-error"></span>
+                            </div>
+
+                            <div class="col-md-6 ">
+                              <label for="zip" class="form-label">Zip</label>
+                              <input type="text" class="form-control" id="zip" name="zip" onkeyup="validateZip()">
+                              <span class="error" id="zip-error"></span>
+                            </div>
+
+                            <div class="col-md-6 ">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" onkeyup="validatePhone()">
+                                <span class="error" id="phone-error"></span>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label for="alternativePhone" class="form-label">Alternative Phone</label>
+                                <input type="text" class="form-control" id="alternativePhone" name="altPhone" onkeyup="validateAlternativePhone()">
+                                <span class="error" id="altphone-error"></span>
+                              </div>
+                            
+                            <div class="col-12">
+                              <button type="submit" class="btn btn-primary" onclick="return validateForm()">Save</button>
+                              <span class="error" id="submit-error"></span>
+                            </div>
+
+                            <% if(locals.message && message.length > 0) { %>
+                                <span style="color: crimson; font-size: 12px; font-weight: bold; padding: 20px;"><%= message %></span>
+                             <% } %> 
+
+                          </form>
+                </div>
+
+               
+                
+
+    </section>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
+    <script src="valAddress.js"></script>
+   
+
+    <%- include('../../views/partials/user/footer') %>

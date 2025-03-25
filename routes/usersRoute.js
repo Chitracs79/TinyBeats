@@ -1,16 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/usersController');
-const profileContoller = require('../controllers/profileController');
+const profileController = require('../controllers/profileController');
+const wishlistController = require('../controllers/wishlistController');
+const cartController = require('../controllers/cartController');
+const checkoutController = require('../controllers/checkoutController');
 const passport = require('passport');
+const {userAuth,redirect,isBlocked} = require("../middlewares/auth");
+const multer  = require("multer");
+const uploads = require("../helpers/multer"); 
 
 
+// HomePage
+router.get('/',isBlocked, userController.loadHomePage);
 
-// loading homepage
-router.get('/', userController.loadHomePage)
+//ShopPage
+router.get('/shop',userAuth,userController.loadShoppingPage);
+router.get('/filter',userAuth,userController.filter);
+router.get('/filterPrice',userAuth,userController.filterPrice);
+router.post('/search',userAuth,userController.search);
+router.get('/clear',userAuth,userController.clear);
+router.get('/sort',userAuth,userController.sort);
+router.get('/details',userAuth,userController.details);
 
 //loading signup page
-router.get('/signup',userController.loadSignupPage)
+router.get('/signup',redirect,userController.loadSignupPage)
 router.post('/signup',userController.signup);
 
 //OTP verification page
@@ -20,28 +34,62 @@ router.post('/resendOtp',userController.resendOtp)
 
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.get(
-    "/auth/google/callback",
+    "/auth/google/callback",redirect,
     passport.authenticate("google", { failureRedirect: "/signup" }),
-    (req, res) => {
-      res.redirect("/"); // Redirect after successful login
-    }
+    userController.googleSession,
+    
+   
   );
 //loading signin page
-router.get('/signin',userController.loadSigninPage);
+router.get('/signin', redirect,userController.loadSigninPage);
 router.post('/signin',userController.signin);
 
-//profile management
-router.get('/forgotPassword',profileContoller.loadForgotPasswordPage);
-router.post('/forgotEmailValid', profileContoller.forgotEmailValid);
+
+//Profile management
+router.get('/forgotPassword',profileController.loadForgotPasswordPage);
+router.post('/forgotEmailValid', profileController.forgotEmailValid);
+router.get('/userProfile',userAuth,profileController.loadProfilePage);
+router.post('/uploadProfile',userAuth,uploads.single('profileImage'),profileController.uploadProfile);
+router.get('/editProfile',userAuth,profileController.loadEditProfilePage);
+router.put('/changeEmail',userAuth,profileController.changeEmail);
+router.get('/changePassword',userAuth,profileController.loadChangePassword);
+router.post('/changePassword',userAuth,profileController.changePassword);
+router.post('/EmailValid', userAuth, profileController.emailValid);
+
+//wishlist management
+router.get('/wishlist',userAuth,wishlistController.wishlist);
+router.post('/wishlist',userAuth,wishlistController.addToWishlist);
+router.delete('/wishlist',wishlistController.removeFromWishlist);
+
+//Cart management
+router.post('/cart/:productId',userAuth,cartController.addToCart);
+router.get('/cart',userAuth,cartController.loadCart);
+router.put('/cart',userAuth,cartController.changeQuantity);
+router.delete('/cart',userAuth,cartController.removeFromCart);
 
 // Forgot Password OTP verification page
-router.get("/verifyForgotPassOtp", profileContoller.loadVerifyOtp);
-router.post("/verifyForgotPassOtp", profileContoller.verifyOtp);
-router.post('/resendOtp',profileContoller.resendOtp)
+router.get("/verifyForgotPassOtp", profileController.loadVerifyOtp);
+router.post("/verifyForgotPassOtp", profileController.verifyOtp);
+router.post('/resendOtp',profileController.resendOtp)
 
 //Reset Password
-router.get('/resetPassword',profileContoller.loadResetPasswordPage);
-router.post('/resetPassword',profileContoller.resetPassword);
+router.get('/resetPassword',profileController.loadResetPasswordPage);
+router.post('/resetPassword',profileController.resetPassword);
+
+//Address Management
+router.get("/address",userAuth,profileController.loadAddressPage);
+router.get('/addAddress',userAuth,profileController.loadAddAddressPage);
+router.post('/addAddress',userAuth,profileController.addAddressPage);
+router.get('/editAddress', userAuth, profileController.loadEditAddress);
+router.put('/editAddress',userAuth,profileController.editAddress);
+router.delete('/deleteAddress',userAuth,profileController.deleteAddress);
+
+
+//checkout
+router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
+router.get('/checkoutAddress',userAuth,checkoutController.loadCheckoutAddressPage)
+router.post('/checkoutAddress',userAuth,checkoutController.saveCheckoutAddress)
+
 
 //logout routing
 router.get('/logout',userController.logout);

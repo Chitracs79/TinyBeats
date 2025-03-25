@@ -6,77 +6,123 @@
             <div class="row mt-5 mx-3 d-flex mt-5">
                 <!-- Add Product Button to open add Product Page -->
                 <div class="row mt-5">
-                    <a href="/admin/addProduct" class="btn btn-success " 
-                    style="width: auto; background-color: #946B88;border: none;">
-                    Add Product
-                </a>
-                </div>            
-                   
+                    <a href="/admin/addProduct" class="btn btn-success "
+                        style="width: auto; background-color: #946B88;border: none;">
+                        Add Product
+                    </a>
+                </div>
+
             </div>
             <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/products">
                 <input class="form-control me-2" type="search" name="search" placeholder="Search by product name"
-                 style="width: 300px;"
-                value="<%= search %>" aria-label="Search">
-            
-                <button class="btn btn-outline-success me-2" type="submit" >Search</button>
-            
-                <% if (search && search.trim() !== "") { %>
-                    <a href="/admin/products" class="btn btn-outline-danger">Clear</a>
-                <% } %>
-            </form> 
+                    style="width: 300px;" value="<%= search %>" aria-label="Search">
 
-            <table class="table  table-hover text-center mt-5" style="border-color: #946B88; font-size: 12px;">
+                <button class="btn btn-outline-success me-2" type="submit">Search</button>
+
+                <% if (search && search.trim() !=="" ) { %>
+                    <a href="/admin/products" class="btn btn-outline-danger">Clear</a>
+                    <% } %>
+            </form>
+
+            <table class="table  table-hover text-center mt-5"
+                style="table-layout: fixed; width: 100%; border-color: #946B88; font-size: 12px;">
                 <thead style="background-color:#DAADCC; color: white;">
                     <tr>
-                        <th scope="col" class="text-center">#</th>
-                        <th scope="col" class="text-center">Image</th>
-                        <th scope="col" class="text-center">Name</th>
-                        <th scope="col" class="text-center">Category</th>
-                        <th scope="col" class="text-center">Price</th>
-                        <th scope="col" class="text-center">Action</th>
+                        <th style="width: 50px;" scope="col" class="text-center">#</th>
+                        <th style="width: 250px;" scope="col" class="text-center">Name</th>
+                        <th style="width: 100px;" scope="col" class="text-center">Brand</th>
+                        <th style="width: 100px;" scope="col" class="text-center">Category</th>
+                        <th style="width: 100px;" scope="col" class="text-center">BasePrice</th>
+                        <th style="width: 100px;" scope="col" class="text-center">SalesPrice</th>
+                        <th style="width: 100px;" scope="col" class="text-center">Discount</th>
+                        <th style="width: 80px;" scope="col" class="text-center">Offer</th>
+                        <th style="width: 80px;" scope="col" class="text-center">Stock</th>
+                        <th style="width: 80px;" scope="col" class="text-center"></th>
+                        <th style="width: 80px;" scope="col" class="text-center">Action</th>
+                        <th style="width: 80px;" scope="col" class="text-center"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <% products.forEach(product=> { %>
                         <tr>
-                            <td >
-                                <%= serialNumber++ %>
-                            </td>
                             <td>
-                                <%= product.image %>
+                                <%= serialNumber++ %>
                             </td>
                             <td>
                                 <%= product.name %>
                             </td>
                             <td>
-                                <%= product.description %>
+                                <%= product.brand.name %>
                             </td>
                             <td>
-                                <%= product.category%>
+                                <%= product.category ? product.category.name : "No Category" %>
                             </td>
                             <td>
-                                <%= product.price%>
+                                <%= product.basePrice %>
                             </td>
-                            
                             <td>
-                                <button class="btn btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#editProductModal<%= product._id %>">
-                                    Edit
-                                </button>
+                                <%= product.salesPrice %>
+                            </td>
+                            <td id="discount-<%= product._id %>">
+                                <% if(product.discount) {%>
+                                    <%= product.discount %>
+                                        <% } else { %>
+                                            <%= '0%' %>
+                                                <% } %>
+                            </td>
+                            <td>
+                                <% if(product.discount === 0) { %>
+                                    <button class="btn btn-outline-success" onclick="addOffer('<%= product._id %>')"
+                                        style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#048504">
+                                        Add
+                                    </button>
+                                    <% } else { %>
+                                        <button class="btn btn-outline-danger"
+                                            onclick="removeOffer('<%= product._id %>')"
+                                            style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#db0001;">
+                                            Remove
+                                        </button>
+                                        <% } %>
+                            </td>
+                            <td>
+                                <%= product.stock %>
+                            </td>
+                            <td>
+                                <%if(product.isBlocked){%>
+                                    <a href="/admin/unblockProduct?id=<%= product._id %>"
+                                        class="btn btn-primary mx-auto me-2"
+                                        style="width:70px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
+                                        onclick="return confirm('Do you really want to block ?')">
 
-                                    <a href="/admin/products/delete/<%= product._id %>" class="btn btn-danger mx-auto " style="width:80px"
-                                        onclick="return confirm('Are you sure to Delete?')">
-                                        Delete
+                                        Unblock
                                     </a>
-
-
+                                    <%} else {%>
+                                        <a href="/admin/blockProduct?id=<%= product._id %>"
+                                            class="btn btn-danger mx-auto "
+                                            style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
+                                            onclick="return confirm('Are you sure to unblock it?')">
+                                            Block
+                                        </a>
+                                        <%}%>
                             </td>
+
+                            <td>
+                                <a href="/admin/editProduct?id=<%= product._id %>" class="btn btn-warning mx-auto "
+                                    style="width:70px; padding:5px; font-size: 12px; font-weight: bold; color:white">
+                                   Edit
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/admin/products/delete/<%= product._id %>" class="btn btn-danger mx-auto "
+                                    style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
+                                    onclick="return confirm('Are you sure to Delete?')">
+                                    Delete
+                                </a>
+                            </td>
+
+
 
                         </tr>
-
-                     
-
-                        
 
                         <% }); %>
                 </tbody>
@@ -85,58 +131,25 @@
             <!-- Pagination -->
             <div class="pagination">
                 <% if (currentPage> 1) { %>
-                    <a href="/admin/products=<%= currentPage - 1 %>">
+                    <a href="/admin/products?page=<%= currentPage - 1 %>">
                         <i class="fa-solid fa-backward"></i>
                     </a>
                     <% } %>
 
                         <% for (let i=1; i <=totalPages; i++) { %>
-                            <a href="/admin/products=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                            <a href="/admin/products?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
                                 <%= i %>
                             </a>
                             <% } %>
 
                                 <% if (currentPage < totalPages) { %>
-                                    <a href="/admin/products=<%= currentPage + 1 %>">
+                                    <a href="/admin/products?page=<%= currentPage + 1 %>">
                                         <i class="fa-solid fa-forward"></i>
                                     </a>
                                     <% } %>
             </div>
         </div>
 
-        <!-- Bootstrap Modal for Adding Products -->
-        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addCategoryLabel">Add Product</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addCategoryForm">
-                            <div class="mb-3">
-                                <label for="productName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="productName" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="productCategory" class="form-label">Product Category</label>
-                                <input type="text" class="form-control" id="productCategory" name="category" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="productPrice" class="form-label">Product Price</label>
-                                <input type="text" class="form-control" id="productPrice" name="price" required>
-                            </div>
-                            
-                          
-                            <button type="submit" class="btn btn-primary">Add Product</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-       
 
     </section>
 
@@ -167,27 +180,79 @@
             font-weight: bold;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.getElementById("addProductForm").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent page refresh
 
-            const formData = new FormData(this);
-            fetch("/admin/product/add", {
-                method: "POST",
-                body: new URLSearchParams(formData), // Convert FormData to URL-encoded format
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        async function addOffer(productId) {
+            const { value: amount } = await Swal.fire({
+                title: 'Offer in percentage',
+                input: 'number',
+                inputLabel: 'Percentage',
+                inputPlaceholder: '%'
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Product added successfully!");
-                        location.reload(); // Reload to update the category list
+
+            $.ajax({
+                url: '/admin/addProductOffer',
+                method: 'POST',
+                data: {
+                    percentage: amount,
+                    productId: productId,
+                },
+                success: (response) => {
+                    if (response.status === true) {
+                        Swal.fire('Success!', `Offer of ${amount}% added.`, 'success').then(() => {
+                            location.reload();
+                        });
                     } else {
-                        alert("Error: " + data.message);
+                        Swal.fire('Error', response.message || 'Failed to add offer', 'error');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    Swal.fire('Error', 'Something went wrong! Try again later.', 'error');
+                    console.error('AJAX Error:', error);
+                }
+            })
+        }
+
+        async function removeOffer(productId) {
+            try {
+                Swal.fire({
+                    title: 'Remove Offer',
+                    text: 'Are you sure to remove this offer',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes,remove it!',
+                    timer: 5000,
+                    timerProgressBar: true,
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/removeProductOffer',
+                            method: 'POST',
+                            data: {
+                                productId: productId,
+                            },
+                            success: (response) => {
+                                if (response.status === true) {
+                                    Swal.fire("Removed", 'The offer has been removed', 'success');
+                                    location.reload();
+                                } else {
+                                    Swal.fire('Error', 'Failed to remove offer', 'error');
+                                }
+                            }
+                        })
                     }
                 })
-                .catch(error => console.error("Error adding products:", error));
-        });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        
+
     </script>
-   
+
     <%- include('../partials/admin/footer') %>

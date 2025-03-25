@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
     name : {
         type : String,
         required : true,
-        unique : false,
+        unique : true,
     },
     description: {
         type:String,
@@ -16,11 +16,12 @@ const productSchema = new mongoose.Schema({
     },
     brand : {
          type : mongoose.Schema.Types.ObjectId,
+         ref : "brand",
          required : true,
     },
     category : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "Category",
+        ref : "category",
         default : null,
     },
     color : {

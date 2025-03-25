@@ -146,13 +146,15 @@
                                     required></textarea>
                             </div>
                             <div class="mb-3">
-                                <select class="form-control" id="categoryParent" name="parentCategory">
-                                    <option value="">None</option> <!-- ✅ If no parent category -->
-                                    <% categories.forEach(category => { %>
-                                        <option value="<%= category._id %>"><%= category.name %></option>
-                                    <% }) %>
+                                <label for="parentCategory" class="form-label">Parent Category</label>
+                                <select class="form-select" id="parentCategory" name="parentCategory">
+                                  <option value="">None</option>
+                                  <% categories.filter(category => !category.parentCategory).forEach(parentCategory => { %>
+                                    <option value="<%= parentCategory._id %>"><%= parentCategory.name %></option>
+                                  <% }) %>
                                 </select>
-                            </div>
+                              </div>
+                           
                             <button type="submit" class="btn btn-primary">Add Category</button>
                         </form>
                     </div>
@@ -241,5 +243,22 @@
                     });
             });
         });
+    </script>
+    <!-- Soft Deletion Message -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get("message");
+        const error = urlParams.get("error");
+
+        if (message) {
+            alert(message); // Show success alert
+        }
+        if (error) {
+            alert(error); // Show error alert
+        }
+    });
+
+
     </script>
     <%- include('../partials/admin/footer') %>

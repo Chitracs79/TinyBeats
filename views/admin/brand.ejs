@@ -1,10 +1,10 @@
 <%- include('../partials/admin/header') %>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <section>
         <div class="container mt-5">
             <h1 style="font-weight: bold; font-size:1.25rem ;">Brand List</h1>
             <div class="row mt-5">
-               
+
                 <!-- Add brand Button to Open Modal -->
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBrandModal"
                     style="width: auto; background-color: #946B88;border: none;">
@@ -29,7 +29,6 @@
                         <th scope="col" class="text-center">#</th>
                         <th scope="col" class="text-center">Logo</th>
                         <th scope="col" class="text-center">Brand</th>
-                        <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -42,14 +41,12 @@
                             <td>
 
                                 <img src="/uploads/re-image/<%= brand.image %>" alt="Brand Logo" width="40px" height="40px">
-
+                                   
                             </td>
                             <td>
                                 <%= brand.name %>
                             </td>
-                            <td>
-                                <%= brand.status%>
-                            </td>
+                           
 
                             <td>
                                 <%if(brand.isBlocked){%>
@@ -61,8 +58,7 @@
                                         Unblock
                                     </a>
                                     <%} else {%>
-                                        <a href="/admin/blockBrand?id=<%= brand._id %>"
-                                            class="btn btn-danger mx-auto "
+                                        <a href="/admin/blockBrand?id=<%= brand._id %>" class="btn btn-danger mx-auto "
                                             style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
                                             onclick="return confirm('Do you really want to unblock?')">
                                             Block
@@ -70,7 +66,7 @@
                                         <%}%>
 
                                             <a href="/admin/brand/delete/<%= brand._id %>"
-                                                class="btn btn-danger mx-auto "  
+                                                class="btn btn-danger mx-auto "
                                                 style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
                                                 onclick="return confirm('Are you sure to Delete?')">
                                                 Delete
@@ -136,7 +132,7 @@
                             <!-- Brand Image -->
                             <div class="mb-3">
                                 <label for="brandImage" class="form-label" name="image">Brand Image</label>
-                               <input type="file" class="form-control" id="brandImage" name="image">  
+                                <input type="file" class="form-control" id="brandImage" name="image">
                             </div>
                             <button type="submit" class="btn btn-primary">Add Brand</button>
                         </form>
@@ -176,26 +172,49 @@
             font-weight: bold;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.getElementById("addBrandForm").addEventListener("submit", function (event) {
-            event.preventDefault();
+        $(document).ready(function () {
+            $("#addBrandForm").submit(function (event) {
+                event.preventDefault();
 
-            const formData = new FormData(this); // Use FormData for file uploads
+                let formData = new FormData(this);
 
-            fetch("/admin/brand/add", {
-                method: "POST",
-                body: formData, // No need to modify
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Brand added successfully!");
-                        location.reload();
-                    } else {
-                        alert("Error: " + data.message);
-                    }
-                })
-                .catch(error => console.error("Error adding brand:", error));
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/brand/add",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Brand added successfully",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                window.location.href = response.redirectUrl;
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Brand Error",
+                                text: "Error occurred while adding the banner. Please try again.",
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Server Error",
+                            text: "An unexpected error occurred. Please try again later.",
+                        });
+                    },
+                });
+            });
         });
 
     </script>
