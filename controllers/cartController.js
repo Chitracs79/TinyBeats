@@ -55,14 +55,14 @@ const addToCart = async (req, res) => {
 
         const { quantity } = req.body;
         const productId = req.params.productId;
-        console.log("TestProductId", productId);
+       
 
         const product = await productModel.findById(productId);
-        console.log("TestProduct", product);
+       
         if (!product || product.category.isDeleted) {
             return res.status(404).json({ message: "Product not found" });
         }
-        console.log("ProductStock",product.stock);
+      
 
         let cart = await cartModel.findOne({ userId });
 

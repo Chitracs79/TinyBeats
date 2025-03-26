@@ -5,6 +5,7 @@ const profileController = require('../controllers/profileController');
 const wishlistController = require('../controllers/wishlistController');
 const cartController = require('../controllers/cartController');
 const checkoutController = require('../controllers/checkoutController');
+const orderController = require('../controllers/orderController');
 const passport = require('passport');
 const {userAuth,redirect,isBlocked} = require("../middlewares/auth");
 const multer  = require("multer");
@@ -90,6 +91,10 @@ router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
 router.get('/checkoutAddress',userAuth,checkoutController.loadCheckoutAddressPage)
 router.post('/checkoutAddress',userAuth,checkoutController.saveCheckoutAddress)
 
+//orders
+router.get('/confirmation',orderController.loadConfirmation);
+router.post('/placeOrder',orderController.placeOrder);
+router.get('/orders',orderController.orders);
 
 //logout routing
 router.get('/logout',userController.logout);

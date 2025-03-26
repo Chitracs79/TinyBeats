@@ -11,8 +11,11 @@ const wishlist = async(req,res,next)=>{
     const userId = req.session.user;
     const user  = await userModel.findById(userId);
 
-    const products = await productModel.find({_id:{$in:user.wishlist}}).populate("category").populate("brand");
-    console.log("TestProducts",products);
+    const cart = await cartModel.findOne({ userId })
+    const  cartProductIds = cart.products.map(item=>item.productId);
+    const products = await productModel.find({_id:{$in:user.wishlist,$nin: cartProductIds },isBlocked:false})
+    .populate("category").populate("brand");
+   
     if(userId){
         res.render('users/wishlist',{
             user:user,

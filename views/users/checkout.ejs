@@ -4,11 +4,11 @@
 
  
  <!-- Start Banner Area -->
- <section class="banner-area organic-breadcrumb">
-    <div class="container">
+ <section class="banner-area organic-breadcrumb ">
+    <!-- <div class="container">
         <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
             <div class="col-first">
-                <h1>Checkout</h1>
+                <h1 >Checkout</h1>
                 <nav class="d-flex align-items-center">
                     <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
                     <a href="/cart">Cart<span class="lnr lnr-arrow-right"></span></a>
@@ -16,12 +16,24 @@
                 </nav>
             </div>
         </div>
+    </div> -->
+    <div class="breadcrumbs d-flex flex-row align-items-center">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li class="active"><a href="/shop"><i class="fa fa-angle-right" aria-hidden="true"></i>Shop</a></li>
+        </ul>	
     </div>
 </section>
 <!-- End Banner Area -->
 
 
     <style>
+        .banner-area{
+            padding-top:150px;
+        }
+        .breadcrumbs{
+            margin-left:300px;
+        }
         .order-summary {
             background-color: white;
             padding: 20px;
@@ -48,11 +60,11 @@
             font-weight: bold;
         }
         .order-summary .apply-btn {
-            background-color: #ffc107;
+            background-color: #fe4c50;
             color: white;
         }
         .order-summary .place-order-btn {
-            background-color: #ffc107;
+            background-color: #fe4c50;
             color: white;
         }
     </style>
@@ -128,7 +140,7 @@
     }
     
     .address-cards .card:hover {
-        border-color: #007bff;
+        border-color: #fe4c50;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     
@@ -411,51 +423,51 @@ async function placeOrder() {
             return;
         }
 
-        // Check stock availability before proceeding
-        const stockStatus = await checkStockAvailability();
-        
-        if (stockStatus.length === 0) {
-            Swal.fire({
-                title: 'Cart Empty',
-                text: 'No items available in stock. Your cart will be cleared.',
-                icon: 'error',
-                confirmButtonText: 'Go to Shop'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/shop';
-                }
-            });
-            return;
-        }
+        //     // Check stock availability before proceeding
+        //     const stockStatus = await checkStockAvailability();
+            
+        //     if (stockStatus.length === 0) {
+        //         Swal.fire({
+        //         title: 'Cart Empty',
+        //         text: 'No items available in stock. Your cart will be cleared.',
+        //         icon: 'error',
+        //         confirmButtonText: 'Go to Shop'
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             window.location.href = '/shop';
+        //         }
+        //     });
+        //     return;
+        // }
 
-        // Check for blocked products
-        const blockedProducts = stockStatus.filter(item => item.isBlocked);
-        if (blockedProducts.length > 0) {
-            Swal.fire({
-                title: 'Products Blocked',
-                text: 'Some products in your cart have been blocked by admin. The page will reload to update your cart.',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.reload();
-            });
-            return;
-        }
+        // // Check for blocked products
+        // const blockedProducts = stockStatus.filter(item => item.isBlocked);
+        // if (blockedProducts.length > 0) {
+        //     Swal.fire({
+        //         title: 'Products Blocked',
+        //         text: 'Some products in your cart have been blocked by admin. The page will reload to update your cart.',
+        //         icon: 'warning',
+        //         confirmButtonText: 'OK'
+        //     }).then(() => {
+        //         window.location.reload();
+        //     });
+        //     return;
+        // }
 
-        if (stockStatus.some(item => item.stockChanged)) {
-            Swal.fire({
-                title: 'Stock Changed',
-                text: 'Some items in your cart have limited stock. The quantities have been adjusted.',
-                icon: 'warning',
-                confirmButtonText: 'Continue with Available Stock'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.reload();
-                    proceedWithOrder();
-                }
-            });
-            return;
-        }
+        // if (stockStatus.some(item => item.stockChanged)) {
+        //     Swal.fire({
+        //         title: 'Stock Changed',
+        //         text: 'Some items in your cart have limited stock. The quantities have been adjusted.',
+        //         icon: 'warning',
+        //         confirmButtonText: 'Continue with Available Stock'
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             window.location.reload();
+        //             proceedWithOrder();
+        //         }
+        //     });
+        //     return;
+        // }
 
         proceedWithOrder();
     } catch (error) {
@@ -487,38 +499,37 @@ function proceedWithOrder() {
     }
 }
 
-
-
 function processCODOrder(orderData) {
-    fetch('/placeOrder', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                title: 'Order Placed Successfully!',
-                text: `Order IDs: ${data.orderIds.join(", ")}`,
-                icon: 'success',
-                confirmButtonText: 'View Orders'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/orders';
-                }
-            });
-        } else {
-            Swal.fire('Error', data.message || 'An error occurred while placing the order', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Error', 'An error occurred while placing the order', 'error');
-    });
+   fetch('/placeOrder', {
+       method: 'POST',
+       headers: {
+           'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(orderData)
+   })
+   .then(response => response.json())
+   .then(data => {
+       console.log("Response from server:", data); 
+       if (data.success) {
+           Swal.fire({
+               title: 'Order Placed Successfully!',
+               icon: 'success',
+              showConfirmButton: false,
+              timer:1500,
+           }).then((result) => {
+                   window.location.href = '/confirmation';    
+           });
+       } else {
+           Swal.fire('Error', data.message || 'An error occurred while placing the order', 'error');
+       }
+   })
+   .catch(error => {
+       console.error('Error:', error);
+       Swal.fire('Error', 'An error occurred while placing the order', 'error');
+   });
 }
+
+
 
 function processRazorpayOrder(orderData) {
     // First create order on server
