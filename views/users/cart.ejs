@@ -39,7 +39,7 @@
                                                     <img src="/uploads/re-image/<%= data[i].productDetails.image[0] %>" style="width:100px;height:100px;"
                                                         alt="#" />
                                                 </td>
-                                                <td class="product-des product-name">
+                                                <td class="product-des product-name" >
                                                     <h5 class="product-name">
                                                         <a href="/cart">
                                                             <%= data[i].productDetails.name %>
@@ -50,11 +50,11 @@
                                                             <%= data[i].productDetails.brand.name %>
                                                     </p>
                                                 </td>
-                                                <td class="price" data-title="Price">₹<span> <text
+                                                <td class="price" data-title="Price"> AED <span> <text
                                                             id="subTotal<%= data[i].productDetails.id %>">
                                                             <%= data[i].productDetails.salesPrice * data[i].quantity %>
                                                         </text><br>
-                                                        <small class="text-muted text-nowrap">₹<span id="price">
+                                                        <small class="text-muted text-nowrap"> AED <span id="price">
                                                                 <%= data[i].productDetails.salesPrice %>
 
                                                             </span>
@@ -95,10 +95,11 @@
 
                                                 <td colspan="2" class="text-center">
                                                     <p class="lead mb-4">No item found in Cart</p>
+                                                    <a href="/shop" class="btn btn-outline-success"> Continue Shopping</a>
                                                 </td>
                                             </tr>
                                             <% } %>
-                                                    <input type="hidden" name="" id="totalabc" value="<%= x  %>">
+                                                    <!-- <input type="hidden" name="" id="totalabc" value="<%= x  %>"> -->
 
                             </tbody>
                         </table>
@@ -113,14 +114,14 @@
                             <table class="table">
                                 <tbody>
 
-                                    <tr>
+                                    <!-- <tr>
                                         <td class="cart_total_label">Shipping</td>
                                         <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                     <tr>
                                         <td class="cart_total_label">Total</td>
-                                        <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">₹
+                                        <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"> AED
                                                 <text id="total">
                                                     <%= grandTotal %>
                                                 </text>
@@ -129,7 +130,7 @@
                                 </tbody>
                             </table>
                         </div>
-                         <a href="/checkout?userId=" class="btn "> <i class="fi-rs-box-alt mr-10"></i>
+                         <a href="/checkout?userId=" class="btn btn-danger" style="background-color: #fe4c50;color:#fff"> <i class="fi-rs-box-alt mr-10"></i>
                             Proceed To CheckOut</a> 
                 </div>
 

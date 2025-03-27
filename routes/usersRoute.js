@@ -60,7 +60,7 @@ router.post('/EmailValid', userAuth, profileController.emailValid);
 //wishlist management
 router.get('/wishlist',userAuth,wishlistController.wishlist);
 router.post('/wishlist',userAuth,wishlistController.addToWishlist);
-router.delete('/wishlist',wishlistController.removeFromWishlist);
+router.delete('/wishlist',userAuth,wishlistController.removeFromWishlist);
 
 //Cart management
 router.post('/cart/:productId',userAuth,cartController.addToCart);
@@ -92,14 +92,16 @@ router.get('/checkoutAddress',userAuth,checkoutController.loadCheckoutAddressPag
 router.post('/checkoutAddress',userAuth,checkoutController.saveCheckoutAddress)
 
 //orders
-router.get('/confirmation',orderController.loadConfirmation);
-router.post('/placeOrder',orderController.placeOrder);
-router.get('/orders',orderController.orders);
-
+router.get('/confirmation',userAuth,orderController.loadConfirmation);
+router.post('/placeOrder',userAuth,orderController.placeOrder);
+router.get('/orders',userAuth,orderController.orders);
+router.get('/orderDetails',userAuth,orderController.loadOrderDetails);
+router.put('/cancelOrder',userAuth,orderController.cancelOrder);
+router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 //logout routing
-router.get('/logout',userController.logout);
+router.get('/logout',userAuth,userController.logout);
 
 //loading pageNotFoundPage
-router.get('/pageNotFound',userController.loadPageNotFound)
+router.get('/pageNotFound',userAuth,userController.loadPageNotFound)
 
 module.exports = router;

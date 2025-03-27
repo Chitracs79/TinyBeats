@@ -51,12 +51,25 @@ const orderModel = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
+        enum:['Pending','Processing','Shipped','Delivered','cancelled','Return Request','Returned']
     },
-    ceatedAt:{
+    cancelReason:{
+      type : String,
+    },
+    createdAt:{
         type:Date,
         default:Date.now,
         required:true
+    },
+    deliveredAt:{
+      type:Date,
+      default:Date.now,
+      required:false,
+  },
+    paymentMethod:{
+      type: String,
+      required:true,
+      enum:['cod']
     },
     couponApplied:{
         type:Boolean,

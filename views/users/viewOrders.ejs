@@ -167,12 +167,12 @@
 
 
 
-<div class="container">
+<div class="container-fluid" style="padding-top:150px">
     <div class="row">
         
         <%- include('../../views/partials/user/sidebar',{user:user}) %>
         <!-- Main Content -->
-        <div class="col-md-9">
+        <div class="col-md-10">
             <h2 class="mb-4">Your Orders</h2>
             
             <% if (orders && orders.length > 0) { %>
@@ -182,9 +182,9 @@
                             <div class="row align-items-center">
                                 <div class="col-md-2">
                                     <small class="text-muted">ORDER PLACED</small><br>
-                                    <%= new Date(order.createdOn).toLocaleDateString() %>
+                                    <%= new Date(order.createdAt).toLocaleDateString() %>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <small class="text-muted">TOTAL</small><br>
                                     ₹<%= Math.round(order.finalAmount) %>
                                 </div>
@@ -192,8 +192,8 @@
                                     <small class="text-muted">ORDER ID</small><br>
                                     #<%= order.orderId %>
                                 </div>
-                                <div class="col-md-2">
-                                    <small class="text-muted">ORDER STATUS</small><br>
+                                <div class="col-md-1">
+                                    <small class="text-muted">STATUS</small><br>
                                     <span class="status-badge <%= 
                                         order.status === 'delivered' ? 'bg-success' :
                                         order.status === 'cancelled' ? 'bg-danger' :
@@ -212,7 +212,7 @@
                                         <%=new Date(order.updatedOn).toLocaleDateString()%>
                                     <%}%>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <small class="text-muted">PAYMENT METHOD</small><br>
                                     <% if (order.paymentMethod === 'cod') { %>
                                         CASH ON DELIVERY
@@ -224,27 +224,10 @@
                                         UNKNOWN PAYMENT METHOD
                                     <% } %>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="order-body">
-                            <div class="row align-items-center">
-                                <div class="col-md-2">
-                                    <img src="<%= order.orderedItems[0].productImages[0] %>" 
-                                         alt="<%= order.orderedItems[0].productName %>"
-                                         class="product-image">
-                                </div>
-                                <div class="col-md-6">
-                                    <a href="/productDetails?id=<%= order.orderedItems[0].product %>">
-                                        <h5><%= order.orderedItems[0].productName %></h5>
-                                    </a>
-                                    <p class="text-muted mb-0">Quantity: <%= order.orderedItems[0].quantity %></p>
-                                    <p class="text-muted">Price: ₹<%= order.totalPrice/order.orderedItems[0].quantity %></p>
-                                </div>
-                                
-                                <div class="col-md-4 text-end">
-                                    <a href="/order-details?orderId=<%= order.orderId %>" 
-                                       class="btn btn-outline-primary btn-sm">View Details</a>
+
+                                <div class="col-md-3 text-end d-flex">
+                                    <a href="/orderDetails?orderId=<%= order.orderId %>" 
+                                       class="btn btn-outline-primary btn-sm mt-2" style="height:30px">View Details</a>
                                     
                                     <% if (order.status === 'delivered' && !order.returnReason && order.requestStatus !== "rejected") { %>
                                         <button onclick="initiateReturn('<%= order._id %>')" 
@@ -265,6 +248,27 @@
                                 </div>
                             </div>
                         </div>
+                        <% for(let i = 0; i< order.orderedItems.length;i++) { %>
+                        <div class="order-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="uploads/re-image/<%= order.orderedItems[i].product.image[0] %>" 
+                                         alt="<%= order.orderedItems[i].productName %>"
+                                         class="product-image">
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="/details?id=<%= order.orderedItems[i].product._id %>">
+                                        <h5><%= order.orderedItems[i].product.name %></h5>
+                                    </a>
+                                    <p class="text-muted mb-0">Quantity: <%= order.orderedItems[i].quantity %></p>
+                                    <p class="text-muted">Price: ₹<%= order.orderedItems[i].product.salesPrice*order.orderedItems[i].quantity %></p>
+                                </div>
+                                
+                                
+                            </div>
+                           
+                        </div>
+                        <% } %>
                     </div>
                 <% }); %>
             <% } else { %>
@@ -485,8 +489,8 @@ async function cancelOrder(orderId) {
     }
 
     try {
-        const response = await fetch('/orders/cancel', {
-            method: 'POST',
+        const response = await fetch('/cancelOrder', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
