@@ -37,7 +37,7 @@ async function sendVerificationEmail(email, otp) {
 
         return info.accepted.length > 0
 
-        // res.json({ message: "OTP sent successfully!", otp }); // Send OTP for testing (remove in production)
+        // res.json({ message: "OTP sent successfully!", otp }); 
 
     } catch (error) {
         console.error("Sending Email", error);
@@ -56,7 +56,7 @@ const loadForgotPasswordPage = async (req, res) => {
 const forgotEmailValid = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log("Email entered is ", email);
+        
         const findUser = await userModel.findOne({ email: email });
 
         if (findUser) {
@@ -170,13 +170,13 @@ const resetPassword = async (req, res) => {
         res.redirect('/pageNotFound');
     }
 }
-//-------------------------------Load user profile page ----------------------------------------------
+
 const loadProfilePage = async (req, res) => {
     try {
-        const userid = req.session.user;
-        if (mongoose.isValidObjectId(userid)) {
-            const userData = await userModel.findOne({ _id: userid });
-            const addressData = await addressModel.findOne({ userId: userid });
+        const userId = req.session.user;
+        if (mongoose.isValidObjectId(userId)) {
+            const userData = await userModel.findOne({ _id: userId });
+            const addressData = await addressModel.findOne({ userId: userId });
             res.render("users/userProfile", {
                 user: userData,
                 userAddress: addressData,
@@ -187,7 +187,7 @@ const loadProfilePage = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 }
-//-------------------------------upload profile image--------------------------------------------------------
+
 
 const uploadProfile = async (req, res, next) => {
     try {
@@ -209,14 +209,14 @@ const uploadProfile = async (req, res, next) => {
         next(error);
     }
 }
-//------------------------------Load Edit Profile Page------------------------------------
+
 
 const loadEditProfilePage = async (req, res, next) => {
     try {
-        const userid = req.session.user;
-        if (mongoose.isValidObjectId(userid)) {
-            const userData = await userModel.findOne({ _id: userid });
-            const addressData = await addressModel.findOne({ userId: userid });
+        const userId = req.session.user;
+        if (mongoose.isValidObjectId(userId)) {
+            const userData = await userModel.findOne({ _id: userId });
+            const addressData = await addressModel.findOne({ userId: userId });
             res.render("users/editProfile", {
                 user: userData,
                 userAddress: addressData,
@@ -228,11 +228,6 @@ const loadEditProfilePage = async (req, res, next) => {
 }
 
 
-
-
-
-
-//----------------------------change email--------------------------------------------------
 const changeEmail = async (req, res) => {
     try {
         const userid = req.session.user;
@@ -257,7 +252,7 @@ const changeEmail = async (req, res) => {
         res.status(500).json({ error: "Failed to update email" });
     }
 }
-//--------------------------------Load change password page---------------------------------------
+
 const loadChangePassword = async (req, res) => {
     try {
         res.render('users/changePassword');
@@ -265,16 +260,12 @@ const loadChangePassword = async (req, res) => {
         res.redirect('pageNotFound');
     }
 }
-//---------------------------------Change Password Functionality----------------------------------
+
 
 const changePassword = async (req, res) => {
     try {
         const { password, confirmPassword } = req.body;
-        console.log(password, confirmPassword);
-
         const userId = req.session.user;
-        console.log(userId);
-
 
         if (password === confirmPassword) {
             const passwordHash = await securePassword(password);
@@ -282,7 +273,7 @@ const changePassword = async (req, res) => {
                 { _id: userId },
                 { $set: { password: passwordHash } }
             )
-            console.log("userId,password", userId, password)
+           
             res.redirect('/signin')
         } else {
             res.render('users/changePassword', { message: "password doesnot match" });
@@ -295,9 +286,8 @@ const changePassword = async (req, res) => {
 const emailValid = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log("Email entered is ", email);
-        const findUser = await userModel.findOne({ email: email });
 
+        const findUser = await userModel.findOne({ email: email });
         if (findUser) {
             const otp = generateOtp();
             const emailSent = await sendVerificationEmail(email, otp);
@@ -319,7 +309,7 @@ const emailValid = async (req, res) => {
     }
 }
 
-//--------------------Load Address Page ------------------------------------------------------------
+
 const loadAddressPage = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -335,14 +325,14 @@ const loadAddressPage = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 }
-//-------------------------------Load Add Address Page------------------------------------------------
-const loadAddAddressPage = async (req, res) => {
-    try {
-        const userid = req.session.user;
 
-        res.render('users/addAddress', { user: userid });
+const loadAddAddressPage = async (req, res,next) => {
+    try {
+        const userId = req.session.user;
+
+        res.render('users/addAddress', { user: userId });
     } catch (error) {
-        res.redirect('/pageNotFound');
+        next(error);
     }
 }
 

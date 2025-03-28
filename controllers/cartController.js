@@ -10,7 +10,7 @@ const loadCart = async (req, res) => {
     try {
         const userId = req.session.user; // Get logged-in user ID
         const user = await userModel.findById(userId);
-        console.log("TestUser", user);
+     
 
         // Fetch the cart for the user & populate product details
         const cart = await cartModel.findOne({ userId }).populate({
@@ -139,7 +139,7 @@ const changeQuantity = async (req, res) => {
             return res.status(404).json({ message: "Cart not found" });
         }
 
-        // Find the specific item in the cart
+        //  specific item in the cart
         const specificItem = cart.products.find(item =>
             item.productId && item.productId._id.toString() === productId.toString()
         );
@@ -151,15 +151,15 @@ const changeQuantity = async (req, res) => {
         // Update the quantity
         specificItem.quantity += count;
 
-        // Ensure the quantity is at least 1
+       
         if (specificItem.quantity < 1) {
             specificItem.quantity = 1;
         }
 
-        // Save the updated cart
+      
         await cart.save();
 
-        // Prepare data for rendering
+       
         const cartData = cart.products.map(item => ({
             productDetails: item.productId,
             quantity: item.quantity
@@ -169,7 +169,7 @@ const changeQuantity = async (req, res) => {
             return acc + ((item.productId?.salesPrice || 0) * item.quantity);
         }, 0);
 
-        // Send a JSON response or render the cart page
+        
         res.status(200).json({
             success: true,
             message: "Updated successfully",
@@ -200,15 +200,11 @@ const removeFromCart = async (req, res, next) => {
         });
 
 
-        // Find the specific item in the cart
-
         await cartModel.updateOne(
             { userId },
             { $pull: { products: { productId: productId } } }
         );
 
-
-        console.log("product removed successfully from cart");
         return res.status(200).json({ success: true, message: "Product removed successfully!" });
     } catch (error) {
         console.error("Error deleting product from cart", error);
@@ -217,6 +213,9 @@ const removeFromCart = async (req, res, next) => {
 }
 
 module.exports = {
-    loadCart, addToCart, changeQuantity, removeFromCart,
+    loadCart, 
+    addToCart, 
+    changeQuantity, 
+    removeFromCart,
 
 }

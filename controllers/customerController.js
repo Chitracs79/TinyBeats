@@ -15,12 +15,12 @@ const customerInfo = async(req,res) => {
         let searchFilter = {
             isAdmin: false,
             $or: [
-                { name: { $regex: search, $options: "i" } }, // Case-insensitive search
+                { name: { $regex: search, $options: "i" } }, 
                 { email: { $regex: search, $options: "i" } }
             ]
         };
         const userData = await userModel.find(searchFilter)
-        .sort({ createdAt: -1 }) // Sort by most recent
+        .sort({ createdAt: -1 }) 
         .limit(limit)
         .skip((page - 1) * limit)
         .exec();

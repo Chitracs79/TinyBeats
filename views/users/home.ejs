@@ -78,7 +78,7 @@
 								<div class="product_image">
 									<img src="uploads/re-image/<%=products[i].image[0]%>" alt="<%products[i].name%>">
 								</div>
-								<div class="favorite favorite_left" href="/addToWishlist?id=<%products[i]._id%>"></div>
+								<div class="favorite favorite_left" onclick="addToWishlist('<%= products[i]._id%>')"></div>
 								<div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
 									<%if(products[i].discount!== 0) {%>
 									<span><%=products[i].discount%>%</span>
@@ -319,6 +319,44 @@
 </div>
 
 <script>
+	
+	//Wishlist
+	function addToWishlist(productId){
+			$.ajax({
+				url:'/wishlist',
+				method:'POST',
+				data :{productId :productId},
+				success :(response)=>{
+					if(response.status){
+						Swal.fire({
+							title : "Added to wishlist",
+							text : "The product has been added to you wishlist",
+							icon : "success",
+							timer : 2000,
+						})
+					} else {
+						Swal.fire({
+							title:response.message,
+							icon:"warning",
+							timer:2000,
+
+						})
+					}
+				},
+				error:(error)=>{
+					Swal.fire({
+						title : "Error",
+						text:"Error adding the product to your wishlist",
+						icon:"error",
+						timer :2000,
+					})
+					}
+
+			})
+		}
+	
+	
+	//Cart
 	document.querySelectorAll(".addToCartBtn").forEach(button => {
     button.addEventListener("click", async () => {
         const productId = button.getAttribute("data-id");

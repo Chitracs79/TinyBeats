@@ -110,7 +110,7 @@
 
                 <div class="card mt-4">
                     <div class="card-header">
-                        <h5 class="mb-0">Delivered On: <%= new Date(order.deliveredOn).toLocaleDateString() %></h5>
+                        <h5 class="mb-0">Delivered On: <%= new Date(order.deliveredAt).toLocaleDateString() %></h5>
                     </div>
                 </div>
                 <%}%>
@@ -139,7 +139,7 @@
                     </div>
                 <% } %>
                 
-                <% if (['return_requested', 'returning', 'returned'].includes(order.status)) { %>
+                <% if (['return requested', 'returning', 'returned'].includes(order.status)) { %>
                     <div class="card mt-4">
                         <div class="card-header <%= 
                             order.status === 'returned' ? 'bg-success' :
@@ -280,11 +280,11 @@
                                 <button class="btn btn-warning" onclick="initiateReturn('<%= order._id %>')">
                                     Request Return
                                 </button>
-                            <% } else if (order.status === 'return_requested' && order.requestStatus === 'pending') { %>
+                            <% } else if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                 <button class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">
                                     Cancel Return Request
                                 </button>
-                            <% } else if (!['delivered', 'cancelled', 'return_requested', 'returning', 'returned'].includes(order.status)) { %>
+                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
                                 <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">
                                     Cancel Order
                                 </button>
@@ -466,7 +466,7 @@ async function submitReturn() {
             formData.append('images', files[i]);
         }
 
-        const response = await fetch('/orders/return', {
+        const response = await fetch('/return', {
             method: 'POST',
             body: formData
         });
@@ -508,8 +508,8 @@ async function cancelReturn(orderId) {
         });
 
         if (result.isConfirmed) {
-            const response = await fetch('/orders/cancel-return', {
-                method: 'POST',
+            const response = await fetch('/cancelReturnRequest', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },

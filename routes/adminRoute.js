@@ -11,6 +11,7 @@ const categoryController = require('../controllers/categoryController');
 const brandController = require('../controllers/brandController');
 const productController = require('../controllers/productController');
 const bannerController = require('../controllers/bannerController');
+const adminOrderController = require('../controllers/adminOrderController');
 const {userAuth,adminAuth} = require("../middlewares/auth");
 
 // Error Management
@@ -56,4 +57,12 @@ router.get('/products/delete/:id',adminAuth,productController.softDeleteProducts
 router.get('/banner',adminAuth,bannerController.loadBannerpage);
 router.post('/banner/add',adminAuth,uploads.single("image"),bannerController.addBanner);
 router.get("/banner/delete",adminAuth, bannerController.deleteBanner);
+
+//order Management
+router.get('/order',adminOrderController.loadOrderPage);
+router.get('/adminOrders',adminOrderController.viewAdminOrderDetails);
+router.put('/updateStatus',adminOrderController.updateStatus);
+router.put('/orderCancel',adminOrderController.orderCancel);
+
+
 module.exports = router;

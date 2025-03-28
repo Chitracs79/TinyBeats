@@ -51,7 +51,11 @@ const orderModel = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','cancelled','Return Request','Returned']
+        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','Returned']
+    },
+    requestStatus:{
+      type:String,
+      enum:["pending","approved"],
     },
     cancelReason:{
       type : String,
@@ -74,6 +78,15 @@ const orderModel = new Schema({
     couponApplied:{
         type:Boolean,
         default:false
+    },
+    returnReason : {
+      type: String,
+    },
+    returnDescription: {
+      type: String,
+    },
+    returnImage:{
+      type:[{type:String}]
     }
 });
 

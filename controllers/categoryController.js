@@ -46,8 +46,8 @@ const categoryInfo = async(req, res) => {
 
 //----------------------------add Category-----------------------------------
 const addCategory = async(req,res) => {
+
     const {name, description,parentCategory } = req.body;
-    console.log(name,description,parentCategory);
     try {
        
         const existingCategory = await categoryModel.findOne({name});
@@ -58,9 +58,9 @@ const addCategory = async(req,res) => {
         const newCategory = new categoryModel({
             name, description,parentCategory: new mongoose.Types.ObjectId(parentCategory) || null
         })
-        console.log("new category before save",newCategory)
+      
         await newCategory.save();
-        console.log("new category",newCategory)
+       
         return res.json({ success: true, message: "Category added successfully!" });
 
     } catch (error) {
@@ -96,14 +96,14 @@ const updateCategory = async (req, res) => {
 const softDeleteCategory = async(req,res) => {
     try {
         const categoryId = req.params.id.trim();
-        console.log(categoryId);
+       
 
         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
             return res.status(400).json({ success: false, message: "Invalid category ID!" });
         }
 
         const category = await categoryModel.findById(categoryId);
-        console.log("category is",category);
+      
         if(!category){
             return res.status(404).json({success:false,message : "Category not found."});
         }
@@ -121,6 +121,6 @@ const softDeleteCategory = async(req,res) => {
 module.exports = {
     categoryInfo,
     addCategory,
-   updateCategory ,
-   softDeleteCategory,
+    updateCategory ,
+    softDeleteCategory,
 }

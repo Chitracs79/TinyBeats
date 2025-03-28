@@ -4,6 +4,7 @@ const productModel = require("../models/productModel")
 const mongoose = require('mongoose');
 const category = require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
+
 const wishlist = async(req,res,next)=>{
  
     try {
@@ -11,15 +12,29 @@ const wishlist = async(req,res,next)=>{
     const userId = req.session.user;
     const user  = await userModel.findById(userId);
 
+    const page = parseInt(req.query.page) || 1;
+        const limit = 9;
+        const skip = (page - 1) * limit;
+
+
     const cart = await cartModel.findOne({ userId })
     const  cartProductIds = cart.products.map(item=>item.productId);
+
     const products = await productModel.find({_id:{$in:user.wishlist,$nin: cartProductIds },isBlocked:false})
-    .populate("category").populate("brand");
+    .populate("category")
+    .populate("brand")
+    .skip(skip)
+    .limit(limit);
+
+    const totalProducts = await productModel.countDocuments({_id:{$in:user.wishlist,$nin: cartProductIds },isBlocked:false});
+        const totalPages = Math.ceil(totalProducts/limit);
    
     if(userId){
         res.render('users/wishlist',{
             user:user,
             wishlist:products,
+            currentPage:page,
+            totalPages:totalPages,
         })
     }
 

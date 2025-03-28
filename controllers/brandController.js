@@ -17,7 +17,7 @@ const getBrandpage = async (req, res) => {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
-        console.log("BrandData in brandcontroller is ",brandData);
+
 
         const totalBrands = await brandModel.countDocuments(searchFilter);
         const totalPages = Math.ceil(totalBrands / limit);

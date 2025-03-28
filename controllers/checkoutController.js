@@ -23,7 +23,7 @@ const loadCheckoutPage = async (req, res) => {
             model: "category"
         }]
     });
-    console.log(cart);
+   
     //   const wallet = await Wallet.findOne({ userId: userId });
         
     //   let transactions = [];
@@ -37,7 +37,7 @@ const loadCheckoutPage = async (req, res) => {
           return res.status(404).send("User not found");
       }
 
-      // Adjust cart quantities based on current product stock
+      // Adjust cart qty based on current product stock
       for (let item of cart.products) {
           if (item.productId && item.quantity > item.productId.stock) {
               item.quantity = item.productId.stock;
@@ -48,13 +48,13 @@ const loadCheckoutPage = async (req, res) => {
       }
       await cart.save();
 
-      // Filter out blocked products, unlisted categories, and products with quantity <= 0
+      // Filtering
       const cartItems = cart.products
     .filter(item => 
         item.productId && 
         !item.productId.isBlocked && 
         item.productId.category && 
-        !item.productId.category.isDeleted && // Fixed condition
+        !item.productId.category.isDeleted && 
         item.productId.stock > 0
     )
     .map((item) => ({
@@ -62,10 +62,9 @@ const loadCheckoutPage = async (req, res) => {
         quantity: item.quantity,
         totalPrice: item.productId.salesPrice * item.quantity,
     }));
-
-       console.log(cartItems);   
+  
       const subtotal = cartItems.reduce((total, item) => total + item.totalPrice, 0);
-      const shippingCharge = 0; // Free shipping
+      const shippingCharge = 0; 
       const grandTotal = subtotal + shippingCharge;
 
       res.render("users/checkout", {
@@ -103,7 +102,6 @@ const saveCheckoutAddress = async (req, res) => {
         if (mongoose.isValidObjectId(userId)) {
             const userData = await userModel.findOne({ _id: userId });
             const { addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone } = req.body;
-            console.log(req.body);
             const userAddress = await addressModel.findOne({ userId: userData._id });
             if (!userAddress) {
                 const newAddress = new addressModel({
@@ -124,11 +122,12 @@ const saveCheckoutAddress = async (req, res) => {
                     }]
                 });
                 await newAddress.save();
-                console.log("Address Saved!");
+              
             } else {
-                userAddress.address.push({ addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone });
+                userAddress.address.push({ addressType, name, apartment, building, street, city,
+                    landmark, state, country, zip, phone, altPhone });
                 await userAddress.save();
-                console.log("Appended Address saved!")
+             
             }
 
             res.redirect("/checkout");
@@ -234,7 +233,6 @@ module.exports = {
     loadCheckoutPage,
     loadCheckoutAddressPage,
     saveCheckoutAddress,
-   
     applyCoupon,
     checkStock,
 

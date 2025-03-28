@@ -33,7 +33,7 @@ const addBanner = async(req,res) =>{
             endDate : new Date(banner.endDate+"T00:00:00"),
         })
 
-        await newBanner.save().then(data => console.log(data));
+        await newBanner.save();
         res.json({ success: true, redirectUrl: "/admin/banner" })
         //res.redirect("/admin/banner");
       
@@ -47,9 +47,7 @@ const addBanner = async(req,res) =>{
 const deleteBanner = async (req, res) => {
     try {
         const id = req.query.id; 
-        console.log("Banner ID:", id);
-
-        await Banner.deleteOne({ _id: id }).then(data => console.log(data));
+         await Banner.deleteOne({ _id: id });
 
         res.redirect("/admin/banner");
     } catch (error) {

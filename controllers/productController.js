@@ -8,7 +8,7 @@ const path = require('path');
 const mongoose = require("mongoose");
 
 
-//--------------------load Product Page--------------------------------------------
+
 const loadProductpage = async(req,res) => {
     try {
         
@@ -22,14 +22,13 @@ const loadProductpage = async(req,res) => {
         
         let searchFilter = {
             isDeleted: false,
-            name: { $regex: search, $options: "i" } , // Case-insensitive search          
+            name: { $regex: search, $options: "i" } ,           
             
         };
 
         const productData = await productModel.find(searchFilter)
-        .populate("category", "name") // Populate category name
-        .populate("brand", "name")      //Populate brand name
-        .sort({createdAt : -1})
+        .populate("category", "name") 
+        .populate("brand", "name")      
         .skip(skip)
         .limit(limit);
 
@@ -63,7 +62,7 @@ const loadProductpage = async(req,res) => {
     }
 }
 
-//------------------------------ Laoding Add New Products Page-----------------------------------------
+
 
 const addProductpage = async(req, res)=>{
     try {
@@ -81,22 +80,18 @@ const addProductpage = async(req, res)=>{
 }
 
 
-//----------------------------------Adding new products------------------------------------------------
-
 const addProduct = async (req, res) => {
     try {
-            console.log("Files = ",req.files);
+            
             if (!req.files || req.files.length === 0) {
                 return res.status(400).json({error:"No files uploaded!"});
             }
 
-           
             const products = {...req.body};
-            console.log(products);
+           
             const name = req.body.name;
            
-            const existProduct = await productModel.findOne({ name: new RegExp(`^${name}$`, "i") });  
-            console.log("existProduct = ", existProduct, name);  
+            const existProduct = await productModel.findOne({ name: new RegExp(`^${name}$`, "i") });             
     
             if (existProduct) {  
                 return res.status(400).json({ success: false, message: "Product already exists, try another name!" });  
@@ -113,7 +108,7 @@ const addProduct = async (req, res) => {
               if (req.body.croppedImages) {
                 let croppedImages = Array.isArray(req.body.croppedImages) 
                 ? req.body.croppedImages 
-                : [req.body.croppedImages]; // Ensure it's always an array
+                : [req.body.croppedImages]; // array
 
             for (let i = 0; i < croppedImages.length; i++) {
                 let base64Image = croppedImages[i].replace(/^data:image\/png;base64,/, "");
@@ -123,33 +118,27 @@ const addProduct = async (req, res) => {
 
                 let filename = `cropped_${Date.now()}_${i}.png`; 
                 let filePath = path.join(outputDir, filename);
-                // fs.writeFileSync(filePath, base64Image, "base64"); 
+                
 
                 await sharp(buffer)
-                .resize(500, 500) // Resize to 500x500 (Change as needed)
+                .resize(500, 500) 
                 .toFormat("png")
                 .toFile(filePath);
 
-            console.log("Cropped and resized image saved:", filePath);
-            
+                console.log("Cropped and resized image saved:", filePath);
 
-                console.log("Cropped image saved:", filename);
-
-                    croppedImagePaths.push(filename); 
-                // croppedImagePaths.push(`uploads/re-image/${filename}`); 
-
+                croppedImagePaths.push(filename);
                 
             }
         }
-             console.log("Final cropped image paths:", croppedImagePaths); 
+            console.log("Final cropped image paths:", croppedImagePaths); 
        
             const brandData = await brandModel.findOne({name:products.brand})
-          
             if (!brandData) {
                 return res.status(400).json({ error: `Brand "${products.brand}" not found` });
               }
+
             const categoryId = await categoryModel.findOne({name:products.category})
-           
             if(!categoryId){
                 return res.status(400).send("Invalid Category name");
             }
@@ -185,11 +174,11 @@ const addProductOffer = async(req,res)=>{
     try {
     const{percentage,productId} = req.body;
     const product = await productModel.findOne({_id:productId});
-    console.log(product);
+   
     const category = await categoryModel.findOne({_id:product.category});
     
     product.salesPrice = product.basePrice - Math.floor(product.basePrice *(percentage/100))
-    console.log("Product.salesPrice =",product.salesPrice);
+   
     product.discount = parseInt(percentage);
     await product.save();
     res.json({status:true});
@@ -199,7 +188,6 @@ const addProductOffer = async(req,res)=>{
     }
 }
 
-//-------------------------------Remove Product Offer--------------------------------------
 const removeProductOffer = async(req,res)=>{
     try {
         const {productId} = req.body;
@@ -214,7 +202,6 @@ const removeProductOffer = async(req,res)=>{
         res.redirect('/pageError');
     }
 }
-//-------------------------------Product blocking------------------------------------------
 
 const productBlocked = async(req,res) => {
     try {
@@ -225,7 +212,6 @@ const productBlocked = async(req,res) => {
         res.redirect('/admin/pageError');
     }
 }
-
 
 const productUnblocked = async(req,res) => {
     try {
@@ -238,7 +224,6 @@ const productUnblocked = async(req,res) => {
         res.redirect('/admin/PageError')
     }
 }
-//------------------------load edit product page-------------------------------------------------------
 
 const loadEditProductPage = async(req,res) =>{
     try {
@@ -262,51 +247,40 @@ const editProduct = async(req,res,next)=>{
     try {
         const data = {...req.body};
         const productId = req.query.id;
-        const product = await productModel.findById(productId);
 
+        const product = await productModel.findById(productId);
         if(!product){
             return res.status(404).json({ success: false, message: "Product not found!" });
         }
         
         const existingProduct = await productModel.findOne({name:data.name,_id:{$ne:productId}});
-
         if(existingProduct){
           return  res.status(400).json({success:false,message:"Product with this name already exists!"});
         }
-
-        //-------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------
         let croppedImagePaths = [];
            
-            //Handle cropped images sent as Base64
-              if (req.body.croppedImages) {
-                let croppedImages = Array.isArray(req.body.croppedImages) 
-                ? req.body.croppedImages 
-                : [req.body.croppedImages]; // Ensure it's always an array
+        //Handle cropped images sent as Base64
+        if (req.body.croppedImages) {
+            let croppedImages = Array.isArray(req.body.croppedImages) ? req.body.croppedImages : [req.body.croppedImages]; // Ensure it's always an array
 
-            for (let i = 0; i < croppedImages.length; i++) {
-                let base64Image = croppedImages[i].replace(/^data:image\/png;base64,/, "");
-                let buffer = Buffer.from(base64Image, "base64"); 
+        for (let i = 0; i < croppedImages.length; i++) {
+            let base64Image = croppedImages[i].replace(/^data:image\/png;base64,/, "");
+            let buffer = Buffer.from(base64Image, "base64"); 
 
-              
-
-                let filename = `cropped_${Date.now()}_${i}.png`; 
-                let filePath = path.join(outputDir, filename);
-                // fs.writeFileSync(filePath, base64Image, "base64"); 
+            let filename = `cropped_${Date.now()}_${i}.png`; 
+            let filePath = path.join(outputDir, filename);
+           
 
                 await sharp(buffer)
                 .resize(500, 500) // Resize to 500x500 (Change as needed)
                 .toFormat("png")
                 .toFile(filePath);
 
-            console.log("Cropped and resized image saved:", filePath);
-            
-
+                console.log("Cropped and resized image saved:", filePath);
                 console.log("Cropped image saved:", filename);
 
-                    croppedImagePaths.push(filename); 
-                // croppedImagePaths.push(`uploads/re-image/${filename}`); 
-
-                
+                croppedImagePaths.push(filename);              
             }
         }
 
@@ -377,14 +351,15 @@ const softDeleteProducts = async(req,res) => {
         }
 
         const product = await productModel.findById(productId);
- 
         if(!product){
             return res.status(404).json({success:false,message : "Product not found."});
         }
 
         await productModel.findByIdAndUpdate(productId,{isDeleted:true});
         return res.json({success:true, message:"Product deleted successfully!"});
+
     } catch (error) {
+        
         console.error("Error soft deleting product",error);
         return res.status(500).json({success:false,message:"Failed to delete category."})
     }

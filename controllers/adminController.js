@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 
 
-const loadLogin = async(req,res)=>{
+const loadLogin = async(req,res,next)=>{
     try {
         
         if(req.session.admin){
@@ -12,8 +12,8 @@ const loadLogin = async(req,res)=>{
         res.render('admin/login',{message:null});
 
     } catch (error) {
-        console.log("Admin login error",error);
-
+        
+        next(error);
     }
 }
 //---------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ const login = async(req,res) => {
 //---------------------------------------------------------------------------------------
 
 const loadDashboard = async(req,res) => {
-    console.log("Session admin :",req.session.admin);
+   
    if(req.session.admin){
     try {
         res.render("admin/dashboard");
@@ -60,7 +60,7 @@ const loadPageError = async(req,res) =>{
 //------------------------------------------------------------------------------------------
 const logout = async(req,res) =>{
     try {
-        console.log(req.session.admin)
+        
         req.session.destroy(err =>{
             
             if(err){
