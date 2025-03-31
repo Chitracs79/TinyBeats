@@ -200,6 +200,8 @@ const uploadProfile = async (req, res, next) => {
             { profileImage: '/uploads/re-image/' + req.file.filename },
             { new: true }
         );
+        console.log(updatedUser);
+        
         if (!updatedUser) {
             return next(new Error("User not found."));
         }
@@ -264,8 +266,14 @@ const loadChangePassword = async (req, res) => {
 
 const changePassword = async (req, res) => {
     try {
-        const { password, confirmPassword } = req.body;
+        const { currentPassword, password, confirmPassword } = req.body;
         const userId = req.session.user;
+        const user = await userModel.findById(userId);
+        const match = await bcrypt.compare(currentPassword,user.password);
+
+        if(!match){
+            return res.render('users/changePassword',{ message: "Incorrect current password" })
+        }
 
         if (password === confirmPassword) {
             const passwordHash = await securePassword(password);

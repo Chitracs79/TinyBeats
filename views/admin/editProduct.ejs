@@ -316,7 +316,7 @@ function validateAndSubmit() {
             if(data.success){
                 Swal.fire({
                 icon :"success",
-                title : "product added",
+                title : "product updated successfully",
             }).then(()=>{
                 window.location.href="/admin/addProduct"
             })
@@ -401,13 +401,7 @@ function validateAndSubmit() {
                 isValid = false;
             }
 
-            // Validate at least one image is uploaded
-            let imageInputs = document.querySelectorAll("input[type='file']");
-            let hasImage = Array.from(imageInputs).some(input => input.files.length > 0);
-            if (!hasImage) {
-                errorMessage += "Please upload at least one product image.\n";
-                isValid = false;
-            }
+           
 
             // Show error messages if validation fails
             if (!isValid) {

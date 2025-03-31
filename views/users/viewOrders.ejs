@@ -207,7 +207,7 @@
                             <div class="col-12 col-md-10 col-lg-8">
                                 <form action="/orderSearch" method="POST" class="d-flex">
 
-                                    <input type="text" id="searchInput" name="query" placeholder="Search items..."
+                                    <input type="text" id="searchInput" name="query" placeholder="Search by orderId"
                                         class="form-control me-2" />
                                     <button type="submit" class="btn btn-secondary me-2">Search</button>
                                     <a href="/orders" id="clearButton"
@@ -253,7 +253,7 @@
                                                     <%}%>
                                                         <%if(order.status==='returned' ){%>
                                                             On
-                                                            <%=new Date(order.updatedOn).toLocaleDateString()%>
+                                                            <%=new Date(order.updatedAt).toLocaleDateString()%>
                                                                 <%}%>
                                         </div>
                                         <div class="col-md-2">

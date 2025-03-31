@@ -41,7 +41,7 @@ router.get('/blockBrand',adminAuth,brandController.brandBlocked);
 router.get('/unblockBrand',adminAuth,brandController.brandUnblocked);
 
 // product Management
-router.get('/products',productController.loadProductpage);
+router.get('/products',adminAuth,productController.loadProductpage);
 router.get('/addProduct',adminAuth,productController.addProductpage);
 router.post("/addProduct",adminAuth, uploads.array('images',5), productController.addProduct);
 router.post('/addProductOffer',adminAuth,productController.addProductOffer);
@@ -63,6 +63,7 @@ router.get('/order',adminOrderController.loadOrderPage);
 router.get('/adminOrders',adminOrderController.viewAdminOrderDetails);
 router.put('/updateStatus',adminOrderController.updateStatus);
 router.put('/orderCancel',adminOrderController.orderCancel);
-
+router.put('/handleReturn',adminOrderController.handleReturn);
+router.put('/updateReturnStatus',adminOrderController.updateReturnStatus);
 
 module.exports = router;

@@ -69,13 +69,13 @@ router.put('/cart',userAuth,cartController.changeQuantity);
 router.delete('/cart',userAuth,cartController.removeFromCart);
 
 // Forgot Password OTP verification page
-router.get("/verifyForgotPassOtp", profileController.loadVerifyOtp);
-router.post("/verifyForgotPassOtp", profileController.verifyOtp);
-router.post('/resendOtp',profileController.resendOtp)
+router.get("/verifyForgotPassOtp",userAuth, profileController.loadVerifyOtp);
+router.post("/verifyForgotPassOtp",userAuth,profileController.verifyOtp);
+router.post('/resendOtp',userAuth,profileController.resendOtp)
 
 //Reset Password
-router.get('/resetPassword',profileController.loadResetPasswordPage);
-router.post('/resetPassword',profileController.resetPassword);
+router.get('/resetPassword',userAuth,profileController.loadResetPasswordPage);
+router.post('/resetPassword',userAuth,profileController.resetPassword);
 
 //Address Management
 router.get("/address",userAuth,profileController.loadAddressPage);

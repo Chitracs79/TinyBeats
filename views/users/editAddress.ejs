@@ -111,7 +111,7 @@
     <script>
         document.querySelector("#editAddressForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            console.log("1");
+            
             if (!validateForm()){
                 Swal.fire("Error", "Please correct the errors before submitting.", "error");
                 return;
@@ -120,7 +120,7 @@
             const formData = new FormData(e.target);
             const addressId = new URLSearchParams(window.location.search).get('id');
             const updatedAddress = Object.fromEntries(formData.entries());
-            console.log("2")
+           
             try {
 
                 const response = await fetch(`/editAddress?id=${addressId}`, {
@@ -136,7 +136,7 @@
                    window.location.href = "/userProfile";
                 });
             } else {
-                Swal.fire(data.error);
+              Swal.fire("Warning", data.message , "warning")
             }
             } catch (error) {
                 Swal.fire("Error", "Something went wrong. Please try again.", "error");

@@ -10,7 +10,7 @@ const countryError = document.getElementById("country-error");
 const zipError = document.getElementById("zip-error");  
 const phoneError = document.getElementById("phone-error");
 const altPhoneError = document.getElementById("altphone-error");
-
+const submitError = document.getElementById("submit-error");
 
 //Regular Expressions
 const nameRegex = /^[A-za-z\s]{3,20}$/;
@@ -212,6 +212,7 @@ function validateAlternativePhone() {
     altPhoneError.textContent = '';
     return true;
 }
+
 
 
 function validateForm() {

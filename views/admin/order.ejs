@@ -1,18 +1,93 @@
 <%- include('../partials/admin/header') %> 
 <section>
-    <div class="container mt-5">
-        <h1 style="font-weight: bold; font-size:1.25rem ;">Product List</h1>
+    <style>
+        .custom-select {
+            background-color: #fff;
+            color: #333;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+        }
         
-        <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/products">
-            <input class="form-control me-2" type="search" name="search" placeholder="Search by product name"
-                style="width: 300px;" value="<%= search %>" aria-label="Search">
-
-            <button class="btn btn-outline-success me-2" type="submit">Search</button>
-
-            <% if (search && search.trim() !=="" ) { %>
-                <a href="/admin/products" class="btn btn-outline-danger">Clear</a>
-                <% } %>
+        .custom-select:focus {
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
+        }
+    
+        .form-control {
+            border-radius: 8px;
+        }
+    
+        .btn {
+            border-radius: 8px;
+        }
+    
+        .form-control:focus, .custom-select:focus {
+            outline: none;
+        }
+    
+        .input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    </style>
+   
+    <div class="container mt-5">
+        <h1 style="font-weight: bold; font-size:1.25rem ;">Order List</h1>
+        
+        <form method="GET" action="/admin/order" class="m-4 p-3 bg-light rounded shadow-sm">
+            <div class="row g-2 align-items-center">
+                
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control border-primary" placeholder="Search by Order ID " value="<%= search %>">
+                        <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+        
+               
+                <div class="col-md-3">
+                    <select name="status" class="form-select border-primary custom-select">
+                        <option value="all" <%= status === 'all' ? 'selected' : '' %>>All Status</option>
+                        <option value="returned" <%= status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                        <option value="Processing" <%= status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                        <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                        <option value="delivered" <%= status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    </select>
+                </div>
+        
+              
+                <div class="col-md-2">
+                    <select name="sortField" class="form-select border-primary custom-select">
+                        <option value="createdAt" <%= sortField === 'createdAt' ? 'selected' : '' %>>Date</option>
+                        <option value="finalAmount" <%= sortField === 'finalAmount' ? 'selected' : '' %>>Price</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sortOrder" class="form-select border-primary custom-select">
+                        <option value="desc" <%= sortOrder === -1 ? 'selected' : '' %>>Descending</option>
+                        <option value="asc" <%= sortOrder === 1 ? 'selected' : '' %>>Ascending</option>
+                    </select>
+                </div>
+        
+               
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-success">Filter</button>
+                </div>
+                <div class="col-md-1 d-grid mt-3">
+                    <button type="button" class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+                </div>
+            </div>
         </form>
+        
+        <script>
+            function clearFilters() {
+                window.location.href = "/admin/order";
+            }
+        </script>
+        
+        
 
         <table class="table  table-hover text-center mt-5"
             style="table-layout: fixed; width: 100%; border-color: #946B88; font-size: 12px;">
@@ -61,16 +136,16 @@
                             
                             <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                 <div class="btn-group mt-2">
-                                    <button onclick="handleReturn('approve', '<%= order._id %>')" 
+                                    <button onclick="handleReturn('approved', '<%= order._id %>')" 
                                             class="btn btn-success btn-sm" style="min-width:30px ; margin-right: 5px;border-radius: 25px;font-size: 12px;font-weight: bold;">
                                         Approve Return
                                     </button>
-                                    <button onclick="handleReturn('reject', '<%= order._id %>')" 
+                                    <button onclick="handleReturn('rejected', '<%= order._id %>')" 
                                             class="btn btn-danger btn-sm"style="min-width:30px ; margin-right: 5px;border-radius: 25px;font-size: 12px;font-weight: bold;">
                                         Reject
                                     </button>
                                 </div>
-                            <% } else if (order.status === 'returning' && order.requestStatus === 'approved') { %>
+                            <% } else if ( order.requestStatus === 'approved' && order.status != 'returned' ) { %>
                                 <button onclick="updateReturnStatus('<%= order._id %>')" 
                                         class="btn btn-info btn-sm mt-2"style="min-width:30px ; margin-right: 5px;border-radius: 25px;font-size: 12px;font-weight: bold;">
                                     Update Return Status
@@ -96,19 +171,19 @@
         <!-- Pagination -->
         <div class="pagination">
             <% if (currentPage> 1) { %>
-                <a href="/admin/products?page=<%= currentPage - 1 %>">
+                <a href="/admin/order?page=<%= currentPage - 1 %>">
                     <i class="fa-solid fa-backward"></i>
                 </a>
                 <% } %>
 
                     <% for (let i=1; i <=totalPages; i++) { %>
-                        <a href="/admin/products?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                        <a href="/admin/order?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
                             <%= i %>
                         </a>
                         <% } %>
 
                             <% if (currentPage < totalPages) { %>
-                                <a href="/admin/products?page=<%= currentPage + 1 %>">
+                                <a href="/admin/order?page=<%= currentPage + 1 %>">
                                     <i class="fa-solid fa-forward"></i>
                                 </a>
                                 <% } %>
@@ -287,13 +362,13 @@ async function cancelOrder(orderId) {
 async function handleReturn(action, orderId) {
     currentOrderId = orderId;
     
-    if (action === 'reject') {
+    if (action === 'rejected') {
         const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
         modal.show();
         return;
     }
 
-    if (action === 'approve') {
+    if (action === 'approved') {
         Swal.fire({
             title: 'Are you sure?',
             text: "You are about to approve this return request!",
@@ -305,8 +380,8 @@ async function handleReturn(action, orderId) {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch('/admin/orders/handle-return', {
-                        method: 'POST',
+                    const response = await fetch('/admin/handleReturn', {
+                        method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -352,14 +427,14 @@ async function submitRejection() {
     }
 
     try {
-        const response = await fetch('/admin/orders/handle-return', {
-            method: 'POST',
+        const response = await fetch('/admin/handleReturn', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 orderId: currentOrderId,
-                action: 'reject',
+                action: 'rejected',
                 category: category,
                 message: reason
             })
@@ -395,7 +470,7 @@ async function updateReturnStatus(orderId) {
         title: 'Update Return Status',
         input: 'select',
         inputOptions: {
-            'returning': 'Returning',
+            'returning': 'returning',
             'returned': 'Returned'
         },
         inputPlaceholder: 'Select status',
@@ -409,8 +484,8 @@ async function updateReturnStatus(orderId) {
 
     if (status) {
         try {
-            const response = await fetch('/admin/orders/update-return-status', {
-                method: 'POST',
+            const response = await fetch('/admin/updateReturnStatus', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },

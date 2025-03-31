@@ -51,11 +51,11 @@ const orderModel = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','Returned']
+        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','returned','returning']
     },
     requestStatus:{
       type:String,
-      enum:["pending","approved"],
+      enum:["pending","approved","rejected"],
     },
     cancelReason:{
       type : String,
@@ -87,6 +87,15 @@ const orderModel = new Schema({
     },
     returnImage:{
       type:[{type:String}]
+    },
+    rejectionCategory:{
+      type:String
+    },
+    rejectionReason:{
+      type:String
+    },
+    updatedAt:{
+      type:Date,
     }
 });
 

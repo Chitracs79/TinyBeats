@@ -130,14 +130,14 @@
                     </div>
                 <% } %>
 
-                <% if (order.requestStatus === 'rejected') { %>
+                <!-- <% if (order.requestStatus === 'rejected') { %>
                     <div class="alert alert-danger mt-3">
                         <h6 class="alert-heading">Return Request Rejected</h6>
                         <p><strong>Category:</strong> <%= order.rejectionCategory %></p>
                         <p><strong>Reason:</strong> <%= order.rejectionReason %></p>
                         
                     </div>
-                <% } %>
+                <% } %> -->
                 
                 <% if (['return requested', 'returning', 'returned'].includes(order.status)) { %>
                     <div class="card mt-4">
@@ -149,17 +149,18 @@
                             <h5 class="mb-0">Return Status: <%= order.status.replace('_', ' ').toUpperCase() %></h5>
                         </div>
                         <div class="card-body">
+                            
                             <p><strong>Return Reason:</strong> <%= order.returnReason %></p>
                             <% if (order.status === "returned") { %>
-                            <p><strong>Returned On:</strong> <%=new Date(order.updatedOn).toLocaleDateString()%></p>
+                            <p><strong>Returned On:</strong> <%=new Date(order.updatedAt).toLocaleDateString()%></p>
                             <% } %>
                             
-                            <% if (order.returnImages && order.returnImages.length > 0) { %>
+                            <% if (order.returnImage && order.returnImage.length > 0) { %>
                                 <div class="mt-3">
                                     <h6>Uploaded Images:</h6>
                                     <div class="d-flex gap-2">
-                                        <% order.returnImages.forEach(image => { %>
-                                            <img src="/<%= image %>" alt="Return image" class="img-thumbnail" style="width: 100px;">
+                                        <% order.returnImage.forEach(image => { %>
+                                            <img src="uploads/re-image/<%= image %>" alt="Return image" class="img-thumbnail" style="width: 100px;">
                                         <% }); %>
                                     </div>
                                 </div>
@@ -177,6 +178,7 @@
                             <% } else if (order.requestStatus === 'rejected') { %>
                                 <div class="alert alert-danger mt-3">
                                     <strong>Return Request Rejected</strong><br>
+                                    Category: <%= order.rejectionCategory %><br>
                                     Reason: <%= order.rejectionReason %>
                                 </div>
                             <% } else { %>
@@ -277,9 +279,9 @@
                         <!-- Order Actions -->
                         <div class="order-actions mt-4">
                             <% if (order.status === 'delivered' && !order.returnReason && order.requestStatus !== "rejected") { %>
-                                <button class="btn btn-warning" onclick="initiateReturn('<%= order._id %>')">
+                                <!-- <button class="btn btn-warning" onclick="initiateReturn('<%= order._id %>')">
                                     Request Return
-                                </button>
+                                </button> -->
                             <% } else if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                 <button class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">
                                     Cancel Return Request
@@ -297,7 +299,7 @@
                 <div class="address-card">
                     <h5 class="mb-3">Shipping Address</h5>
                     <p class="mb-1"><strong><%= order.address.name %></strong></p>
-                    <p class="mb-1"><%= order.address.streetAddress %></p>
+                    <p class="mb-1"><%= order.address.street %></p>
                     <p class="mb-1"><%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %></p>
                     <p class="mb-1">Phone: <%= order.address.phone %></p>
                     <p class="mb-0">Email: <%= user.email %></p>

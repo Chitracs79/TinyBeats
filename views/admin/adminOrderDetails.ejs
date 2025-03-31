@@ -69,7 +69,7 @@
                <div class="card-header">
                    <div class="d-flex justify-content-between align-items-center">
                        <h5 class="mb-0">Order #<%= order.orderId %></h5>
-                       <span class="badge bg-<%= 
+                       <span class=" text-white badge bg-<%= 
                            order.status === 'delivered' ? 'success' :
                            order.status === 'cancelled' ? 'danger' :
                            order.status === 'shipped' ? 'info' :
@@ -95,7 +95,7 @@
                        <% }); %>
                    </div>
 
-                   <% if (order.status === 'return requested') { %>
+                   <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                        <div class="card mb-4">
                            <div class="card-header bg-warning">
                                <h5 class="mb-0">Return Request</h5>
@@ -110,12 +110,12 @@
                                    <p><%= order.returnDescription %></p>
                                </div>
                                
-                               <% if (order.returnImages && order.returnImages.length > 0) { %>
+                               <% if (order.returnImage && order.returnImage.length > 0) { %>
                                    <div class="mb-3">
                                        <strong>Return Images:</strong>
                                        <div class="d-flex gap-2 mt-2">
-                                           <% order.returnImages.forEach(image => { %>
-                                               <img src="/<%= image %>" 
+                                           <% order.returnImage.forEach(image => { %>
+                                               <img src="/uploads/re-image/<%= image %>" 
                                                     alt="Return image" 
                                                     class="img-thumbnail" 
                                                     style="width: 100px; height: 100px; object-fit: cover;">
@@ -125,17 +125,47 @@
                                <% } %>
                    
                                <div class="mt-4">
-                                   <button onclick="handleReturn('approve', '<%= order._id %>')" class="btn btn-success me-2" >
+                                   <button onclick="handleReturn('approved', '<%= order._id %>')" class="btn btn-success me-2" >
                                        Approve Return
                                    </button>
-                                   <button onclick="handleReturn('reject', '<%= order._id %>')" class="btn btn-danger">
+                                   <button onclick="handleReturn('rejected', '<%= order._id %>')" class="btn btn-danger">
                                        Reject Return
                                    </button>
                                </div>
                            </div>
                        </div>
                    <% } %>
-
+                   <% if (order.requestStatus === 'approved') { %>
+                    <div class="card mb-4">
+                        <div class="card-header bg-success">
+                            <h5 class="mb-0 text-white">Return Approved</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Return Reason:</strong>
+                                <p><%= order.returnReason %></p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Return Description:</strong>
+                                <p><%= order.returnDescription %></p>
+                            </div>
+                            
+                            <% if (order.returnImage && order.returnImage.length > 0) { %>
+                                <div class="mb-3">
+                                    <strong>Return Images:</strong>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <% order.returnImage.forEach(image => { %>
+                                            <img src="/uploads/re-image/<%= image %>" 
+                                                 alt="Return image" 
+                                                 class="img-thumbnail" 
+                                                 style="width: 100px; height: 100px; object-fit: cover;">
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>   
                    <% if (order.status === 'delivered' || order.status === 'returned') { %>
                        <div class="card">
                            <div class="card-header">
@@ -192,14 +222,14 @@
                            <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                <div class="mb-4">
                                    <h6>Return Request Actions</h6>
-                                   <button onclick="handleReturn('approve', '<%= order._id %>')" class="btn btn-success me-2">
+                                   <button onclick="handleReturn('approved', '<%= order._id %>')" class="btn btn-success me-2">
                                        Approve Return
                                    </button>
-                                   <button onclick="handleReturn('reject', '<%= order._id %>')" class="btn btn-danger">
+                                   <button onclick="handleReturn('rejected', '<%= order._id %>')" class="btn btn-danger">
                                        Reject Return
                                    </button>
                                </div>
-                           <% } else if (order.status === 'returning' && order.requestStatus === 'approved') { %>
+                           <% } else if ( order.requestStatus === 'approved' && order.status != 'returned') { %>
                                <div class="mb-4">
                                    <h6>Update Return Status</h6>
                                    <button onclick="updateReturnStatus('<%= order._id %>')" class="btn btn-primary">
@@ -446,13 +476,13 @@ async function cancelOrder(orderId) {
 async function handleReturn(action, orderId) {
    currentOrderId = orderId;
    
-   if (action === 'reject') {
+   if (action === 'rejected') {
        const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
        modal.show();
        return;
    }
 
-   if (action === 'approve') {
+   if (action === 'approved') {
        Swal.fire({
            title: 'Are you sure?',
            text: "You are about to approve this return request!",
@@ -464,8 +494,8 @@ async function handleReturn(action, orderId) {
        }).then(async (result) => {
            if (result.isConfirmed) {
                try {
-                   const response = await fetch('/admin/orders/handle-return', {
-                       method: 'POST',
+                   const response = await fetch('/admin/handleReturn', {
+                       method: 'PUT',
                        headers: {
                            'Content-Type': 'application/json'
                        },
@@ -511,14 +541,14 @@ async function submitRejection() {
    }
 
    try {
-       const response = await fetch('/admin/orders/handle-return', {
-           method: 'POST',
+       const response = await fetch('/admin/handleReturn', {
+           method: 'PUT',
            headers: {
                'Content-Type': 'application/json'
            },
            body: JSON.stringify({
                orderId: currentOrderId,
-               action: 'reject',
+               action: 'rejected',
                category: category,
                message: reason
            })
@@ -554,7 +584,7 @@ async function updateReturnStatus(orderId) {
        title: 'Update Return Status',
        input: 'select',
        inputOptions: {
-           'returning': 'Returning',
+           'returning': 'returning',
            'returned': 'Returned'
        },
        inputPlaceholder: 'Select status',
@@ -568,8 +598,8 @@ async function updateReturnStatus(orderId) {
 
    if (status) {
        try {
-           const response = await fetch('/admin/orders/update-return-status', {
-               method: 'POST',
+           const response = await fetch('/admin/updateReturnStatus', {
+               method: 'PUT',
                headers: {
                    'Content-Type': 'application/json',
                },

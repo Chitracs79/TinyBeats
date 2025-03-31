@@ -14,7 +14,7 @@
                     <div class="content">
                         <h4 class="pb-3">Add User Address</h4>
 
-                        <form class="row g-3"  id="address-Form" method="post" action="/addAddress">
+                        <form class="row g-3"  id="address-Form" method="post" action="/addAddress" onsubmit="return validateForm()">
                             
                             <div class="col-md-6">
                               <label for="addressType" class="form-label">Address Type</label>
@@ -94,7 +94,7 @@
                               </div>
                             
                             <div class="col-12">
-                              <button type="submit" class="btn btn-primary" onclick="return validateForm()">Save</button>
+                              <button type="submit" class="btn btn-primary" >Save</button>
                               <span class="error" id="submit-error"></span>
                             </div>
 

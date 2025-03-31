@@ -199,7 +199,7 @@ const removeProductOffer = async(req,res)=>{
         await  product.save();
         res.json({status:true});
     } catch (error) {
-        res.redirect('/pageError');
+        res.status(500).json({status:false,message:"Internal Server Error"});
     }
 }
 
@@ -207,9 +207,10 @@ const productBlocked = async(req,res) => {
     try {
         let id = req.query.id;
         await productModel.updateOne({_id:id},{$set:{isBlocked:true}});
-        res.redirect('/admin/products')
+        console.log("checking");
+        return res.json({status:true});
     } catch (error) {
-        res.redirect('/admin/pageError');
+        return res.status(500).json({status:false,message:"Internal Server Error"});
     }
 }
 
@@ -219,9 +220,9 @@ const productUnblocked = async(req,res) => {
       
         await productModel.updateOne({_id:id},{$set:{isBlocked:false}});
     
-        res.redirect('/admin/products')
+        return res.json({status:true});
     } catch (error) {
-        res.redirect('/admin/PageError')
+        return res.status(500).json({status:false,message:"Internal Server Error"});
     }
 }
 

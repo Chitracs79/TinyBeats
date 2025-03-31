@@ -5,14 +5,57 @@ const userModel = require('../models/userModel');
 const Address = require('../models/addressModel');
 
 
-const loadOrderPage = async(req,res)=>{
-   try {
-    const orders = await Order.find().populate('userId').sort({createdAt:-1})
-    res.render('admin/order',{orders:orders,search:"",currentPage:1,totalPages:1});
-   } catch (error) {
+const loadOrderPage = async (req, res) => {
+  try {
+    let search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+
+   
+    let sortField = req.query.sortField || "createdAt";
+    let sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+
+   
+    let filter = {};
+    if (req.query.status && req.query.status !== "all") {
+      filter.status = req.query.status;
+    }
+
     
-   }
-}
+    if (search) {
+      filter.$or = [
+        { orderId: { $regex: search, $options: "i" } },
+        { "userId.name": { $regex: search, $options: "i" } }
+      ];
+    }
+
+   
+    const orders = await Order.find(filter)
+      .populate("userId")
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(limit);
+
+    const totalOrders = await Order.countDocuments(filter);
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    res.render("admin/order", {
+      orders,
+      search,
+      currentPage: page,
+      totalPages,
+      sortField,
+      sortOrder,
+      status: req.query.status || "all"
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
 
 const viewAdminOrderDetails = async(req,res)=>{
     try {
@@ -95,7 +138,101 @@ const orderCancel = async(req,res)=>{
     res.redirect("/pageError");
   }
 }
+const handleReturn = async(req,res,next)=>{
+  try {
+    const { action } = req.body;
+    if (action === "approved") {
+      const { orderId } = req.body;
 
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        { $set: { requestStatus: action } },
+        { new: true }
+      );
+      if (order) {
+        return res
+          .status(200)
+          .json({ success: true, message: "return approved successfully" });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "order not found" });
+      }
+    } else if (action === "rejected") {
+      const { orderId, category, message } = req.body;
+
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        {
+          $set: {
+            requestStatus: action,
+            rejectionCategory: category,
+            rejectionReason: message,
+          },
+        },
+        { new: true }
+      );
+      if (order) {
+        return res
+          .status(200)
+          .json({ success: true, message: "return request rejected" });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "order not found" });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageerror");
+  }
+}
+const updateReturnStatus = async(req,res,next)=>{
+  try {
+    const { orderId,status} = req.body;
+    if (status === "returning") {
+    
+
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        { $set: { status: status,updatedAt:new Date()} },
+        { new: true }
+      );
+      if (order) {
+        return res
+          .status(200)
+          .json({ success: true, message: "returning successfully" });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "order not found" });
+      }
+    } else if (status === "returned") {
+      
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        {
+          $set: {
+            status: status, updatedAt:new Date()          
+          },
+        },
+        { new: true }
+      );
+      if (order) {
+        return res
+          .status(200)
+          .json({ success: true, message: " returned successfully" });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "order not found" });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageerror");
+  } 
+}
 module.exports = {
-    loadOrderPage,viewAdminOrderDetails,updateStatus,orderCancel
+    loadOrderPage,viewAdminOrderDetails,updateStatus,orderCancel,handleReturn,updateReturnStatus,
 }

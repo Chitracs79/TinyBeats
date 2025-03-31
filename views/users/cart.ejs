@@ -99,8 +99,7 @@
                                                 </td>
                                             </tr>
                                             <% } %>
-                                                    <!-- <input type="hidden" name="" id="totalabc" value="<%= x  %>"> -->
-
+                                                   
                             </tbody>
                         </table>
                     </div>
@@ -130,8 +129,10 @@
                                 </tbody>
                             </table>
                         </div>
+                        <% if(data.length > 0) {%>
                          <a href="/checkout?userId=" class="btn btn-danger" style="background-color: #fe4c50;color:#fff"> <i class="fi-rs-box-alt mr-10"></i>
                             Proceed To CheckOut</a> 
+                        <%}%>    
                 </div>
 
             </div>
@@ -161,7 +162,14 @@
         })
         return;
     }
-    
+    if(newQuantity > 5){
+        swal.fire({
+            icon:"warning",
+            title:"Stock limit reached",
+            text:`You can only add 5 products.`,
+        })
+        return;
+    }
     $.ajax({
         url: "/cart",
         type: "PUT",

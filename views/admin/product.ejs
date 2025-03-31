@@ -89,20 +89,20 @@
                             </td>
                             <td>
                                 <%if(product.isBlocked){%>
-                                    <a href="/admin/unblockProduct?id=<%= product._id %>"
+                                    <button 
                                         class="btn btn-primary mx-auto me-2"
                                         style="width:70px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
-                                        onclick="return confirm('Do you really want to block ?')">
+                                        onclick="confirmAction('Unblock', '<%= product._id %>')">                                      
 
                                         Unblock
-                                    </a>
+                                </button>
                                     <%} else {%>
-                                        <a href="/admin/blockProduct?id=<%= product._id %>"
+                                        <button
                                             class="btn btn-danger mx-auto "
                                             style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
-                                            onclick="return confirm('Are you sure to unblock it?')">
+                                            onclick="confirmAction('Block', '<%= product._id %>')">
                                             Block
-                                        </a>
+                                    </button>
                                         <%}%>
                             </td>
 
@@ -251,7 +251,45 @@
                 console.error(error);
             }
         }
-        
+    
+        async function confirmAction(action, productId) {
+            try {
+                Swal.fire({
+                    title: `Are you sure ?`,
+                    text: `This action will ${action.toLowerCase()} this product`,
+                    icon: action ==='Block'?'warning':'info',
+                    showCancelButton: true,
+                    cancelButtonColor: action === 'Block'?'#d33':'#28a745',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: `Yes,${action.toLowerCase()} it!`,
+                    
+
+                }).then((result) => {
+                    console.log("Result",productId);
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/admin/${action.toLowerCase()}Product?id=${productId}`,
+                            method: 'GET',
+                            dataType: 'json', 
+                            success: (response) => {
+                                if (response.status === true) {
+                                    Swal.fire(`${action.toLowerCase()}ed`, `The product has been ${action.toLowerCase()}ed`, 'success')
+                                    .then(()=>location.reload());
+                                } else {
+                                    Swal.fire('Error', `Failed to ${action.toLowerCase()}`, 'error');
+                                }
+                            },
+                            error: (xhr, status, error) => {
+                    Swal.fire('Error', 'Something went wrong! Try again later.', 'error');
+                    console.error('AJAX Error:', error);
+                }
+                        })
+                    }
+                })
+            } catch (error) {
+                console.error(error);
+            }
+    }
 
     </script>
 
