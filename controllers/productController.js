@@ -28,7 +28,8 @@ const loadProductpage = async(req,res) => {
 
         const productData = await productModel.find(searchFilter)
         .populate("category", "name") 
-        .populate("brand", "name")      
+        .populate("brand", "name")   
+        .sort({createdAt:-1})   
         .skip(skip)
         .limit(limit);
 
@@ -142,7 +143,13 @@ const addProduct = async (req, res) => {
             if(!categoryId){
                 return res.status(400).send("Invalid Category name");
             }
-       
+            
+            let productOffer;
+            if(products.basePrice>products.salesPrice){
+                productOffer = ((products.basePrice - products.salesPrice) / products.basePrice) * 100;
+                productOffer = Math.round(productOffer);
+                console.log(products.basePrice,products.salesPrice,productOffer);
+            }
             const newProduct = new productModel({
                 image : croppedImagePaths,
                 name : products.name,
@@ -153,7 +160,7 @@ const addProduct = async (req, res) => {
                 basePrice : products.basePrice, 
                 salesPrice : products.salesPrice,
                 stock : products.stock,
-                discount : products.discount,
+                discount :productOffer,
                 status:'Available',
                 createdOn: new Date()
 
@@ -176,7 +183,9 @@ const addProductOffer = async(req,res)=>{
     const product = await productModel.findOne({_id:productId});
    
     const category = await categoryModel.findOne({_id:product.category});
-    
+    if(category.offer > percentage){
+        return res.json({status:false,message:"This product already has a higher category offer !"})
+    }
     product.salesPrice = product.basePrice - Math.floor(product.basePrice *(percentage/100))
    
     product.discount = parseInt(percentage);
@@ -192,10 +201,15 @@ const removeProductOffer = async(req,res)=>{
     try {
         const {productId} = req.body;
         const product = await productModel.findOne({_id:productId});
-        const percentage = product.discount;
-
-        product.salesPrice = product.basePrice;
+        const percentage = product.discount;    
         product.discount = 0;
+
+        const category = await categoryModel.findById(product.category);
+        if(category && category.offer > 0){
+            product.salesPrice = Math.floor(product.basePrice*(1-category.offer/100));           
+        }else{
+            product.salesPrice = product.basePrice;
+        }
         await  product.save();
         res.json({status:true});
     } catch (error) {
@@ -295,6 +309,14 @@ const editProduct = async(req,res,next)=>{
         const categoryId = await categoryModel.findOne({name : data.category},{_id:1})
         const brandId = await brandModel.findOne({name:data.brand},{_id:1})
 
+          
+        let productOffer;
+        if(data.basePrice>data.salesPrice){
+            productOffer = ((data.basePrice - data.salesPrice) / data.basePrice) * 100;
+            productOffer = Math.round(productOffer);
+            console.log(productOffer);
+        }
+
         const updatedFields = {
             name:data.name,
             description : data.description,
@@ -304,7 +326,7 @@ const editProduct = async(req,res,next)=>{
             basePrice : data.basePrice,
             salesPrice : data.salesPrice,
             stock:data.stock,
-            discount:data.discount,    
+            discount:productOffer,    
         }
        
         if(images.length > 0){
@@ -365,7 +387,70 @@ const softDeleteProducts = async(req,res) => {
         return res.status(500).json({success:false,message:"Failed to delete category."})
     }
 }
+const loadInventory = async(req,res) => {
+    try {
+        const search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = 7;
+        
+        const brand = await brandModel.findOne({ name: { $regex: search, $options: "i" } });
+        const category = await categoryModel.findOne({ name: { $regex: search, $options: "i" } });
+        console.log("category",category);
+        
+        const productData = await productModel.find({
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { brand: brand ? brand._id : null },
+            { category: category ? category._id: null },
+          ],
+        })
+          .limit(limit)
+          .skip((page - 1) * limit)
+          .populate("category")
+          .populate("brand")
+          .exec();
+        
+        const count = await productModel.find({
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { brand: brand ? brand._id : null },
+            { category: category ? category._id : null },
+          ],
+        }).countDocuments();
+        
+        const totalPages = Math.ceil(count / limit);
+        console.log("PD",productData);
+        res.render("admin/inventory", {
+          product: productData,
+          currentPage: page,
+          totalPages: totalPages,
+          searched:search
+        });
+        
+      } catch (error) {
+        console.error(error);
+      }
+          
+}
 
+const updateInventory = async(req,res,next)=>{
+    try {
+        const productId = req.query.id;
+
+        const stock = req.body.quantity;
+
+        const newQuantity = await productModel.findByIdAndUpdate(productId,{$set:{stock:stock}},{new:true});
+
+        if(newQuantity){
+            return res.status(200).json({success:true, message:"Stock updated Successfully."})
+        } else {
+            return res.status(400).json({success:false, message:"Stock updation failed."})
+        }
+
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = {
     loadProductpage,
@@ -374,6 +459,7 @@ module.exports = {
     addProductOffer,removeProductOffer,
     productBlocked,productUnblocked,
     loadEditProductPage,editProduct,deleteSingleImage,
-    softDeleteProducts
+    softDeleteProducts,
+    loadInventory,updateInventory,
 
 }

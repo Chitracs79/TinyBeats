@@ -1,4 +1,5 @@
 const categoryModel = require("../models/categoryModel");
+const productModel = require("../models/productModel");
 const mongoose = require("mongoose");
 
 const categoryInfo = async(req, res) => {
@@ -19,7 +20,6 @@ const categoryInfo = async(req, res) => {
         };
 
         const categoryData = await categoryModel.find(searchFilter)
-        .populate("parentCategory")
         .sort({createdAt : -1})
         .skip(skip)
         .limit(limit);
@@ -47,7 +47,7 @@ const categoryInfo = async(req, res) => {
 //----------------------------add Category-----------------------------------
 const addCategory = async(req,res) => {
 
-    const {name, description,parentCategory } = req.body;
+    const {name, description } = req.body;
     try {
        
         const existingCategory = await categoryModel.findOne({name});
@@ -56,7 +56,7 @@ const addCategory = async(req,res) => {
         }
        
         const newCategory = new categoryModel({
-            name, description,parentCategory: new mongoose.Types.ObjectId(parentCategory) || null
+            name, description
         })
       
         await newCategory.save();
@@ -118,9 +118,106 @@ const softDeleteCategory = async(req,res) => {
     }
 }
 
+const addCategoryOffer = async(req,res,next)=>{
+    try {
+        const{categoryId,percentage} = req.body;
+        
+        if (!percentage || !categoryId) {
+            return res.status(400).json({
+              status: false,
+              message: "Percentage and category ID are required.",
+            });
+          }
+      
+          if (percentage < 1 || percentage > 100) {
+            return res.status(400).json({
+              status: false,
+              message: "Percentage must be between 1 and 100.",
+            });
+          }
+        
+          const category = await categoryModel.findById(categoryId);
+      
+          if(!category){
+              return res.status(404).json({status:false,message : "Category not found."});
+          }
+
+          const products = await productModel.find({category:categoryId});
+
+          const hasProductsOffer = products.some(
+            (product) => product.discount > percentage
+          );
+          if (hasProductsOffer) {
+            return res.status(400).json({
+              status: false,
+              message:
+                "Products within this category already have a product-specific offer greater than the category offer.",
+            });
+          }
+          await categoryModel.updateOne({_id:categoryId},{$set:{offer:percentage}});
+
+          for (const product of products) {
+            const discountAmount = (product.basePrice * percentage) / 100;
+            product.salesPrice = product.basePrice - discountAmount;
+            if(product.discount < percentage){
+                product.discount = percentage;  
+            }
+            
+            
+            await product.save();
+           
+          }
+          return res.status(200).json({
+            status: true,
+            message: `Offer of ${percentage}% added successfully.`,
+          });
+    } catch (error) {
+        
+    }
+}
+
+
+const removeCategoryOffer = async(req,res,next)=>{
+    try {
+        const {categoryId} = req.body;
+
+        if (!categoryId) {
+            return res.status(400).json({
+              status: false,
+              message: "category ID is required.",
+            });
+          }
+        
+        const category = await categoryModel.findById(categoryId);
+        
+        if(!category){
+            return res.status(404).json({status:false,message : "Category not found."});
+        }
+
+        await categoryModel.updateOne({_id:categoryId},{$set:{offer:0}});
+
+        const products = await productModel.find({category:categoryId})
+
+        for (const product of products) {
+            
+            product.salesPrice = product.basePrice;   
+            await product.save();
+           
+          }
+          return res.status(200).json({
+            status: true,
+            message: `Offer removed successfully.`,
+          });
+
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
     categoryInfo,
     addCategory,
     updateCategory ,
     softDeleteCategory,
+    addCategoryOffer,
+    removeCategoryOffer
 }

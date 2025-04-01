@@ -14,10 +14,9 @@ const categorySchema = new mongoose.Schema({
         type : String,
         required : false,
     },
-    parentCategory : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "category",
-        default : null,
+    offer : {
+        type : Number,
+        default : 0,
     },
     isDeleted : {
         type : Boolean,

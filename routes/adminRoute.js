@@ -12,6 +12,7 @@ const brandController = require('../controllers/brandController');
 const productController = require('../controllers/productController');
 const bannerController = require('../controllers/bannerController');
 const adminOrderController = require('../controllers/adminOrderController');
+const couponController = require('../controllers/couponController');
 const {userAuth,adminAuth} = require("../middlewares/auth");
 
 // Error Management
@@ -33,6 +34,8 @@ router.get('/category',adminAuth,categoryController.categoryInfo);
 router.post("/category/add", adminAuth, categoryController.addCategory);
 router.post("/category/edit/:id", adminAuth, categoryController.updateCategory);
 router.get("/category/delete/:id",adminAuth,categoryController.softDeleteCategory);
+router.post("/addCategoryOffer",categoryController.addCategoryOffer);
+router.delete("/removeCategoryOffer",categoryController.removeCategoryOffer);
 
 //brand Management
 router.get('/brand',adminAuth,brandController.getBrandpage);
@@ -65,5 +68,14 @@ router.put('/updateStatus',adminOrderController.updateStatus);
 router.put('/orderCancel',adminOrderController.orderCancel);
 router.put('/handleReturn',adminOrderController.handleReturn);
 router.put('/updateReturnStatus',adminOrderController.updateReturnStatus);
+
+//coupon Management
+router.get('/coupon',couponController.loadCouponPage);
+router.post('/coupon',couponController.addCoupon);
+router.put('/coupon',couponController.editCoupon);
+router.delete('/coupon',couponController.deleteCoupon);
+//inventory Management
+router.get('/inventory',productController.loadInventory);
+router.patch('/inventory',productController.updateInventory);
 
 module.exports = router;

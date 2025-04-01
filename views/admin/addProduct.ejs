@@ -86,11 +86,11 @@
                                 <input type="text" class="form-control" id="productStock" name="stock">
                                 <span class="error-message" id="stock-error"></span>
                             </div>
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <label for="productDiscount" class="form-label">Discount</label>
-                                <input type="text" class="form-control" id="productDiscount" name="discount">
+                                <input type="text" class="form-control" id="productDiscount" name="discount" >
                                 <span class="error-message" id="discount-error"></span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -345,7 +345,7 @@ function validateAndSubmit() {
             let basePrice = document.getElementById("basePrice").value.trim();
             let salesPrice = document.getElementById("salesPricing").value.trim();
             let stock = document.getElementById("productStock").value.trim();
-            let discount = document.getElementById("productDiscount").value.trim();
+            // let discount = document.getElementById("productDiscount").value.trim();
 
             // Validate required fields
             if (productName === "") {
@@ -382,10 +382,10 @@ function validateAndSubmit() {
                 errorMessage += "Enter a valid stock quantity.\n";
                 isValid = false;
             }
-            if (discount !== "" && (isNaN(discount) || Number(discount) < 0)) {
-                errorMessage += "Enter a valid discount value.\n";
-                isValid = false;
-            }
+            // if (discount !== "" && (isNaN(discount) || Number(discount) < 0)) {
+            //     errorMessage += "Enter a valid discount value.\n";
+            //     isValid = false;
+            // }
 
             // Validate at least one image is uploaded
             let imageInputs = document.querySelectorAll("input[type='file']");

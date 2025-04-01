@@ -64,11 +64,13 @@
                                 <%= product.salesPrice %>
                             </td>
                             <td id="discount-<%= product._id %>">
-                                <% if(product.discount) {%>
-                                    <%= product.discount %>
-                                        <% } else { %>
-                                            <%= '0%' %>
-                                                <% } %>
+                               <% if(product.discount != 0) {%>
+                                <span class="text-success">Product Offer <br> <%= product.discount%>%</span>
+                                <% } else if(product.basePrice != product.salesPrice) {%>
+                                 <span class="text-warning">Category Offer <br> <%= ((product.basePrice-product.salesPrice)/product.basePrice)*100 %>% </span>
+                                <% } else {%>
+                                  <span>0%</span>   
+                                <% } %>     
                             </td>
                             <td>
                                 <% if(product.discount === 0) { %>

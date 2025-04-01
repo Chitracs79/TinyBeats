@@ -28,7 +28,8 @@
                         <th scope="col" class="text-center">#</th>
                         <th scope="col" class="text-center">Name</th>
                         <th scope="col" class="text-center">Description</th>
-                        <th scope="col" class="text-center">Parent Category</th>
+                        <th scope="col" class="text-center">Offer</th>
+                        <th scope="col" class="text-center">Offer Action</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -45,7 +46,26 @@
                                 <%= category.description %>
                             </td>
                             <td>
-                                <%= category.parentCategory ? category.parentCategory.name : 'None' %>
+                              <%  if(category.offer > 0){ %>
+                               <span class=" text-success"> <%= category.offer %>%</span>
+                               <% } else { %> 
+                                <span> 0% </span>
+                               <% } %> 
+                            </td>
+                            <td>
+                                    <% if(category.offer === 0) {%>
+                                    <button class="btn btn-outline-success" onclick="addOffer('<%= category._id %>')"
+                                        style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#048504">
+                                        Add
+                                    </button>
+                                    <% } else { %>
+                                        <button class="btn btn-outline-danger"
+                                            onclick="removeOffer('<%=category._id %>')"
+                                            style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#db0001;">
+                                            Remove
+                                        </button>
+                                    <% } %>  
+                            </button>
                             </td>
                             <td>
                                 <button class="btn btn-warning" data-bs-toggle="modal"
@@ -145,16 +165,7 @@
                                 <textarea class="form-control" id="categoryDescription" name="description" 
                                     required></textarea>
                             </div>
-                            <div class="mb-3">
-                                <label for="parentCategory" class="form-label">Parent Category</label>
-                                <select class="form-select" id="parentCategory" name="parentCategory">
-                                  <option value="">None</option>
-                                  <% categories.filter(category => !category.parentCategory).forEach(parentCategory => { %>
-                                    <option value="<%= parentCategory._id %>"><%= parentCategory.name %></option>
-                                  <% }) %>
-                                </select>
-                              </div>
-                           
+                                                     
                             <button type="submit" class="btn btn-primary">Add Category</button>
                         </form>
                     </div>
@@ -260,5 +271,106 @@
     });
 
 
+    async function addOffer(categoryId) {
+      const { value: percentage } = await Swal.fire({
+        title: "Add Offer Percentage",
+        input: "number",
+        inputLabel: "Percentage",
+        inputPlaceholder: "Enter percentage (e.g., 10 for 10%)",
+        inputAttributes: {
+          min: 1,
+          max: 99,
+        },
+        showCancelButton: true,
+        confirmButtonText: "Add Offer",
+        cancelButtonText: "Cancel",
+        inputValidator: (value) => {
+          if (!value || value < 1 || value > 100) {
+            return "Please enter a valid percentage between 1 and 100";
+          }
+        },
+      });
+      console.log("Sending Data:", { percentage, categoryId });
+
+      if (percentage) {
+        try {
+          const response = await fetch("/admin/addCategoryOffer", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              percentage: percentage,
+              categoryId: categoryId,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.status === true) {
+            Swal.fire(
+              "Offer Added",
+              `The offer of ${percentage}% has been added successfully.`,
+              "success"
+            ).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire(
+              "Failed",
+              data.message || "Failed to add the offer.",
+              "error"
+            );
+          }
+        } catch (error) {
+          Swal.fire(
+            "Error",
+            "An error occurred while adding the offer.",
+            "error"
+          );
+          console.error("Error adding offer:", error);
+        }
+      }
+    }
+
+
+    async function removeOffer(categoryId) {
+      try {
+        const response = await fetch("/admin/removeCategoryOffer", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            categoryId: categoryId,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === true) {
+          Swal.fire(
+            "Offer Removed",
+            "The offer has been removed successfully.",
+            "success"
+          ).then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire(
+            "Failed",
+            data.message || "Failed to remove the offer.",
+            "error"
+          );
+        }
+      } catch (error) {
+        Swal.fire(
+          "Error",
+          "An error occurred while removing the offer.",
+          "error"
+        );
+        console.error("Error removing offer:", error);
+      }
+    }
     </script>
     <%- include('../partials/admin/footer') %>

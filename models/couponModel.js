@@ -13,7 +13,7 @@ const couponSchema = new mongoose.Schema({
         default: Date.now,
         required:true,
     },
-    expiredOn:{
+    expireOn:{
         type: Date,
         required:true,
     },
@@ -27,7 +27,7 @@ const couponSchema = new mongoose.Schema({
     },
     isList:{
         type: Boolean,
-        required:true,
+        default:true,
     },
     userId:[{
         type: mongoose.Schema.Types.ObjectId,
@@ -36,6 +36,6 @@ const couponSchema = new mongoose.Schema({
     }]
 })
 
-const coupon = mongoose.Model("coupon", couponSchema);
+const coupon = mongoose.model("coupon", couponSchema);
 module.exports = coupon;
 
