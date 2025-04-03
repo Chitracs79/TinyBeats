@@ -244,7 +244,11 @@
                                 <% } %>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Delivery Charge:</span>
+                                    <%if(order.totalPrice < 200) {%>
                                     <span>AED 50</span>
+                                    <% } else {%>
+                                    <span  class="text-success">Free Shipping</span>
+                                    <% }%>
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between fw-bold">

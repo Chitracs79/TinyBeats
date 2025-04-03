@@ -3,6 +3,7 @@ const addressModel = require("../models/addressModel");
 const productModel = require("../models/productModel");
 const categoryModel= require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
+const walletModel = require('../models/walletModel');
 const mongoose = require("mongoose");
 
 // const Coupon = require("../../models/couponModel");
@@ -24,7 +25,7 @@ const loadCheckoutPage = async (req, res) => {
         }]
     });
    
-    //   const wallet = await Wallet.findOne({ userId: userId });
+      const wallet = await walletModel.findOne({ userId: userId });
         
     //   let transactions = [];
     //   if (wallet) {
@@ -64,18 +65,21 @@ const loadCheckoutPage = async (req, res) => {
     }));
   
       const subtotal = cartItems.reduce((total, item) => total + item.totalPrice, 0);
-      const shippingCharge = 0; 
-      const grandTotal = subtotal + shippingCharge;
+      let grandTotal = 0; 
+      if(subtotal < 200){
+        grandTotal = subtotal + 50;
+      } else {
+        grandTotal= subtotal;
+      }
+     
 
       res.render("users/checkout", {
           user,
           cartItems,
           subtotal,
-          shippingCharge,
           grandTotal,
           userAddress: addressData,
-          wallet:null,
-        //   wallet: wallet || { balance: 0, refundAmount: 0, totalDebited: 0 },
+          wallet: wallet || { balance: 0 },
       });
   } catch (error) {
       console.error("Error in loadCheckoutPage:", error);

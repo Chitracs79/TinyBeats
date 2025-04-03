@@ -249,32 +249,36 @@
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Shipping</span>
+                            <% if(subtotal < 200) {%>
                             <span>₹ 50.00</span>
+                            <% } else {%>
+                            <span class="text-success">Free shipping</span>
+                            <%}%>
                         </div>
                         <div class="text-right text-primary mb-2">
                             <a href="#" onclick="showShippingCharge(); return false;">View shipping charge</a>
                         </div>
                         <div class="d-flex justify-content-between font-weight-bold">
                             <span>Total</span>
-                            <span class="total-price">₹ <span id="grandTotal"><%= subtotal ==0? subtotal.toFixed(2):(subtotal+50).toFixed(2) %></span></span>
+                            <span class="total-price">₹ <span id="grandTotal"><%= subtotal > 200? subtotal.toFixed(2):(subtotal + 50).toFixed(2) %></span></span>
                         </div>
                     </div>
                     <div class="mb-4">
                         <h3 class="h5 mb-3">Payment Method</h3>
                         
-                        <!-- <div class="mb-3">
+                         <div class="mb-3">
                             <label class="d-flex align-items-center">
                                 <input type="radio" name="payment" value="razorpay" class="mr-2">
-                                <img src="./img/icon/razorpay.webp" alt="Razorpay" style="height: 30px;">
+                                <!-- <img src="./img/icon/razorpay.webp" alt="Razorpay" style="height: 30px;"> -->
                                 <span class="ml-2">Online Payment</span>
                             </label>
                         </div>
                         <div class="mb-3">
                             <label class="d-flex align-items-center">
                                 <input type="radio" name="payment" value="wallet" class="mr-2">
-                               
+                                <span>Wallet Payment (Balance: ₹<%= wallet.balance.toFixed(2) %>)</span>
                             </label>
-                        </div> -->
+                        </div>
                         <div class="mb-3">
                             <label class="d-flex align-items-center">
                                 <input type="radio" name="payment" value="cod" class="mr-2">
@@ -289,18 +293,16 @@
     </div>
 
     <!-- Wallet Payment Modal -->
+<!-- Wallet Payment Modal -->
 <div class="modal fade" id="walletPaymentModal" tabindex="-1" aria-labelledby="walletPaymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="walletPaymentModalLabel">Wallet Payment</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="walletPaymentModalLabel">Wallet Payment</h5>               
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    
+                    <h6>Available Balance: ₹<span id="walletBalance"><%= wallet.balance.toFixed(2) %></span></h6>
                     <h6>Payable Amount: ₹<span id="payableAmount"></span></h6>
                 </div>
                 <div id="insufficientFunds" style="display: none;">
@@ -311,7 +313,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
                 <button type="button" class="btn btn-primary" id="confirmWalletPayment">Pay Now</button>
             </div>
         </div>
@@ -592,7 +594,6 @@ function verifyPayment(paymentResponse, orderData) {
         if (data.success) {
             Swal.fire({
                 title: 'Payment Successful!',
-                text: `Order IDs: ${data.orderIds.join(", ")}`,
                 icon: 'success',
                 confirmButtonText: 'View Orders'
             }).then((result) => {
@@ -613,7 +614,7 @@ function verifyPayment(paymentResponse, orderData) {
     function showShippingCharge() {
         Swal.fire({
             title: 'Shipping Charge',
-            text: 'Shipping charge is ₹ 50.00 For All Orders',
+            text: 'Shipping charge is ₹ 50.00 For All Orders below 200',
             icon: 'info',
             confirmButtonText: 'OK'
         });
@@ -667,7 +668,7 @@ function processWalletOrder(orderData) {
 }
 
 function placeWalletOrder(orderData) {
-    fetch('/place-wallet-order', {
+    fetch('/placeWalletOrder', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -679,13 +680,13 @@ function placeWalletOrder(orderData) {
         if (data.success) {
             Swal.fire({
                 title: 'Order Placed Successfully!',
-                text: `Order IDs: ${data.orderIds.join(", ")}`,
                 icon: 'success',
-                confirmButtonText: 'View Orders'
+                timer:1500,
+                timerProgressBar:true,
             }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/orders';
-                }
+                
+                    window.location.href = '/confirmation';
+                
             });
         } else {
             Swal.fire('Error', data.message || 'Failed to place order', 'error');
@@ -715,7 +716,7 @@ document.getElementById('confirmWalletPayment').addEventListener('click', async 
     };
 
     try {
-        const response = await fetch('/place-wallet-order', {
+        const response = await fetch('/placeWalletOrder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -727,13 +728,13 @@ document.getElementById('confirmWalletPayment').addEventListener('click', async 
         if (data.success) {
             Swal.fire({
                 title: 'Order Placed Successfully!',
-                text: `Order IDs: ${data.orderIds.join(", ")}`,
                 icon: 'success',
-                confirmButtonText: 'View Orders'
+                timer:1500,
+                timerProgressBar:true,
             }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/orders';
-                }
+              
+                    window.location.href = '/confirmation';
+                
             });
         } else {
             Swal.fire('Error', data.message || 'Failed to place order', 'error');

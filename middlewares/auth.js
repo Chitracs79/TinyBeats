@@ -2,7 +2,6 @@ const userModel = require("../models/userModel");
 const mongoose = require('mongoose');
 
 function userAuth(req, res, next) {
-    console.log("Auth Page: Session user is:", req.session);
 
     if (req.session.user) {
         userModel.findById(req.session.user)
@@ -78,19 +77,6 @@ const isBlocked = async(req,res,next)=>{
  }
 }
 
-// const syncUser = async (req, res, next) => {
-//     if (!req.user && req.session.user) {
-//         try {
-//             const user = await userModel.findById(req.session.user);
-//             if (user) {
-//                 req.user = user; // Attach user object to req.user
-//             }
-//         } catch (error) {
-//             console.error("Error syncing session user:", error);
-//         }
-//     }
-//     next();
-// };
 
 
 module.exports = { userAuth, adminAuth,redirect,isBlocked};

@@ -83,7 +83,7 @@ const addToCart = async (req, res) => {
                         cart.products[itemIndex].quantity * cart.products[itemIndex].price;
                 }
             } else {
-
+                console.log(quantity);
                 cart.products.push({
                     productId,
                     quantity,
@@ -92,7 +92,7 @@ const addToCart = async (req, res) => {
                 });
             }
         } else {
-
+           
             cart = new cartModel({
                 userId,
                 products: [
@@ -150,7 +150,7 @@ const changeQuantity = async (req, res) => {
 
         // Update the quantity
         specificItem.quantity += count;
-
+        specificItem.totalPrice = specificItem.quantity * specificItem.price;
        
         if (specificItem.quantity < 1) {
             specificItem.quantity = 1;

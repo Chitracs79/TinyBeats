@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const Cart = require("../models/cartModel"); 
 const Address = require("../models/addressModel");
 const Order = require('../models/orderModel');
+const Wallet = require('../models/walletModel');
 const userModel = require('../models/userModel');
 
 
@@ -23,11 +24,18 @@ const placeOrder =async (req,res) => {
             quantity: item.quantity,
             price: item.totalPrice  
         }));
+        console.log(cartItems);
        
 
-        const totalPrice=cartItems.reduce((sum,item)=>sum+item.price,0);
-
-        const finalAmount=totalPrice + 50;
+        const totalPrice=cartItems.reduce((sum,item)=>sum + item.price,0);
+        console.log('tota',totalPrice)
+        let finalAmount = 0;
+        if(totalPrice < 200){
+          finalAmount=totalPrice + 50;
+        } else {
+          finalAmount = totalPrice;
+        }
+       
 
         const invoiceDate = new Date();
         const status = 'Processing';
@@ -63,6 +71,83 @@ const placeOrder =async (req,res) => {
         
     }
     
+}
+
+const placeWalletOrder = async(req,res,next)=>{
+  try{
+
+  const userId = req.session.user;
+  const {addressId,paymentMethod} = req.body;
+       
+
+       const userData = await User.findById(userId);
+        
+       const cart = await Cart.findOne({ userId });
+  
+
+        const cartItems = cart.products.map(item => ({
+            product: item.productId, 
+            quantity: item.quantity,
+            price: item.totalPrice  
+        }));
+       
+
+        const totalPrice=cartItems.reduce((sum,item)=>sum + item.price,0);
+        let finalAmount = 0;
+        if(totalPrice < 200){
+          finalAmount=totalPrice + 50;
+        } else {
+          finalAmount = totalPrice;
+        }
+        console.log(totalPrice);
+        const invoiceDate = new Date();
+
+        const wallet = await Wallet.findOne({userId:userId});
+            if(!wallet){
+                return res.status(400).json({success:false,message:"Wallet not found"});
+            }  
+
+            if(wallet.balance < finalAmount){
+              return res.status(400).json({success:false,message:"Insufficient Balance"})
+            }
+            wallet.balance -= parseInt(finalAmount);
+  
+            wallet.transactions.push({ amount:finalAmount, type: "debit", description: "Deducted for purchase " });
+    
+            await wallet.save();
+
+            const status = 'Processing';
+
+            const orderModel= new Order({
+                userId : userId,
+                orderedItems:cartItems,
+                totalPrice:totalPrice,
+                finalAmount:finalAmount,
+                address:addressId,
+                invoiceDate:invoiceDate,
+                status:status,
+                paymentMethod:paymentMethod,
+            });
+    
+            await orderModel.save();
+    
+            await User.findByIdAndUpdate(userId, { $push: { orders: orderModel._id } }, { new: true });
+    
+            const orderedItems = cart.products.map(item => ({
+                product: item.productId, 
+                quantity: item.quantity,
+     
+            }));
+            for(let i=0;i<orderedItems.length;i++){
+                await Product.findByIdAndUpdate(orderedItems[i].product,{$inc:{stock:-orderedItems[i].quantity}});
+            }
+    
+            await Cart.findOneAndUpdate( { userId }, { $set: { products: [] } } );
+            console.log("Final",finalAmount);     
+            return res.status(200).json({success:true,message:'Order Placed Successfully'});
+          } catch(error){
+            next(error);
+          }
 }
 
 const loadConfirmation = async (req,res) => {
@@ -278,6 +363,7 @@ const cancelReturnRequest = async (req, res, next) => {
       }
 };
 
+
 module.exports={
     loadConfirmation,
     placeOrder,
@@ -288,4 +374,5 @@ module.exports={
     requestReturn,
     orderSearch,
     cancelReturnRequest,
+    placeWalletOrder,
 }

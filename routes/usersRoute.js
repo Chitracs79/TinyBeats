@@ -95,6 +95,7 @@ router.post('/checkoutAddress',userAuth,checkoutController.saveCheckoutAddress)
 //orders
 router.get('/confirmation',userAuth,orderController.loadConfirmation);
 router.post('/placeOrder',userAuth,orderController.placeOrder);
+router.post('/placeWalletOrder',userAuth,orderController.placeWalletOrder);
 router.get('/orders',userAuth,orderController.orders);
 router.get('/orderDetails',userAuth,orderController.loadOrderDetails);
 router.put('/cancelOrder',userAuth,orderController.cancelOrder);
