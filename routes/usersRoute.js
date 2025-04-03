@@ -6,6 +6,7 @@ const wishlistController = require('../controllers/wishlistController');
 const cartController = require('../controllers/cartController');
 const checkoutController = require('../controllers/checkoutController');
 const orderController = require('../controllers/orderController');
+const walletController = require('../controllers/walletController');
 const passport = require('passport');
 const {userAuth,redirect,isBlocked} = require("../middlewares/auth");
 const multer  = require("multer");
@@ -101,6 +102,15 @@ router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth, uploads.array('images', 3), orderController.requestReturn);
 router.post('/orderSearch',userAuth,orderController.orderSearch);
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest)
+
+//wallet
+router.get('/wallet',userAuth,walletController.loadWallet);
+
+router.post("/wallet/createOrder", userAuth,walletController.createOrder);
+router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
+router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
+
+
 //logout routing
 router.get('/logout',userAuth,userController.logout);
 

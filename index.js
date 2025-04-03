@@ -43,6 +43,8 @@ connectDB();
 app.use('/',usersRouter)
 app.use('/admin',adminRouter);
 
+
+
 //error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack); 
