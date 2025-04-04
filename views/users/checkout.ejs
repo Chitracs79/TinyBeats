@@ -268,7 +268,7 @@
                         
                          <div class="mb-3">
                             <label class="d-flex align-items-center">
-                                <input type="radio" name="payment" value="razorpay" class="mr-2">
+                                <input type="radio" name="payment" value="online payment" class="mr-2">
                                 <!-- <img src="./img/icon/razorpay.webp" alt="Razorpay" style="height: 30px;"> -->
                                 <span class="ml-2">Online Payment</span>
                             </label>
@@ -292,7 +292,7 @@
         </div>
     </div>
 
-    <!-- Wallet Payment Modal -->
+   
 <!-- Wallet Payment Modal -->
 <div class="modal fade" id="walletPaymentModal" tabindex="-1" aria-labelledby="walletPaymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -492,7 +492,7 @@ function proceedWithOrder() {
         case 'cod':
             processCODOrder(orderData);
             break;
-        case 'razorpay':
+        case 'online payment':
             processRazorpayOrder(orderData);
             break;
         case 'wallet':
@@ -533,83 +533,121 @@ function processCODOrder(orderData) {
 
 
 
-function processRazorpayOrder(orderData) {
-    // First create order on server
-    fetch('/create-razorpay-order', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const options = {
-                key: data.razorpayKeyId, // Your Razorpay Key ID
-                amount: data.amount,
-                currency: data.currency,
-                name: 'PC Monarch',
-                image: 'img/pc-logo.png',
-                description: 'Purchase Description',
-                order_id: data.orderId,
-                handler: function (response) {
-                    // Handle successful payment
-                    verifyPayment(response, orderData);
-                },
-                prefill: {
-                    name: data.customerName,
-                    email: data.customerEmail,
-                    contact: data.customerPhone
-                },
-                theme: {
-                    color: '#F37254'
-                }
-            };
-            const rzp = new Razorpay(options);
-            rzp.open();
-        } else {
-            Swal.fire('Error', data.message || 'An error occurred while creating the order', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Error', 'An error occurred while processing the payment', 'error');
-    });
-}
+function processWalletOrder(orderData) {
+       const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
+       const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
 
-function verifyPayment(paymentResponse, orderData) {
-    fetch('/verify-payment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            paymentResponse,
-            orderData
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                title: 'Payment Successful!',
-                icon: 'success',
-                confirmButtonText: 'View Orders'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/orders';
-                }
-            });
+       document.getElementById('payableAmount').textContent = payableAmount.toFixed(2);
+
+       const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
+       const insufficientFunds = document.getElementById('insufficientFunds');
+       const confirmWalletPayment = document.getElementById('confirmWalletPayment');
+
+       if (walletBalance < payableAmount) {
+           insufficientFunds.style.display = 'block';
+           confirmWalletPayment.style.display = 'none';
+       } else {
+           insufficientFunds.style.display = 'none';
+           confirmWalletPayment.style.display = 'block';
+       }
+
+       walletPaymentModal.show();
+    }
+
+    function placeWalletOrder(orderData) {
+       fetch('/placeWalletOrder', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify(orderData)
+       })
+       .then(response => response.json())
+       .then(data => {
+           if (data.success) {
+               Swal.fire({
+                   title: 'Order Placed Successfully!',
+                   icon: 'success',
+                   timer:2000,
+                   timerProgressBar:true
+
+               }).then((result) => {
+                       window.location.href = '/confirmation';
+               });
+           } else {
+               Swal.fire('Error', data.message || 'Failed to place order', 'error');
+           }
+       })
+       .catch(error => {
+           console.error('Error:', error);
+           Swal.fire('Error', 'An error occurred while placing the order', 'error');
+       });
+    }
+
+
+    async function processRazorpayOrder(orderData) {
+        const response = await  fetch('/order/createOrder', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify(orderData)
+       })
+       
+       const order = await response.json();
+
+      const options = {
+      key: "<%= process.env.RAZORPAY_KEY_ID %>",
+      amount: order.amount,
+      currency: "INR",
+      name: "Tiny Beats",
+      description: "Order Payment",
+      order_id: order.id,
+      handler: async function (response) {
+        console.log("Razorpay Handler Triggered", response);
+        const verifyRes = await fetch("/order/verifyPayment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            amount: order.amount,
+            addressId:orderData.addressId,
+            paymentMethod:orderData.paymentMethod
+          }),
+        });
+
+        const result = await verifyRes.json();
+        if (result.success) {
+          Swal.fire({
+            title: "Success!",
+            text: "Payment Successfull!",
+            icon: "success",
+            timer:1500,
+            timerProgressBar:true
+          }).then(() => {
+            window.location.href = "/confirmation";
+          });
         } else {
-            Swal.fire('Error', data.message || 'Payment verification failed', 'error');
+          Swal.fire({
+            title: "Error!",
+            text: "Payment Verification Failed",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Error', 'An error occurred while verifying the payment', 'error');
-    });
-}
+      },
+      prefill: {
+        email: "<%= user.email %>",
+        contact: "<%= user.phone %>",
+      },
+      theme: { color: "#3399cc" },
+    };
+
+    const paymentObject = new Razorpay(options);
+    paymentObject.open();
+    }
 
     function showShippingCharge() {
         Swal.fire({

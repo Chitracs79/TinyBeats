@@ -73,7 +73,7 @@ const orderModel = new Schema({
     paymentMethod:{
       type: String,
       required:true,
-      enum:['cod','wallet']
+      enum:['cod','wallet','online payment']
     },
     couponApplied:{
         type:Boolean,

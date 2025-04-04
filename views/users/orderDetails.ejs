@@ -207,7 +207,7 @@
                                     <div>
                                         <h6><%= order.orderedItems[0].product.name %></h6>
                                         <p class="mb-1">Quantity: <%= order.orderedItems[i].quantity %></p>
-                                        <p class="mb-1">Price: AED <%= order.orderedItems[i].product.salesPrice*order.orderedItems[i].quantity %></p>
+                                        <p class="mb-1">Price: ₹ <%= order.orderedItems[i].product.salesPrice*order.orderedItems[i].quantity %></p>
                                         <p class="mb-0">Status: 
                                             <span class="badge <%= 
                                                 order.status === 'delivered' ? 'bg-success' :
@@ -234,18 +234,18 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal:</span>
-                                    <span>AED <%= order.totalPrice %></span>
+                                    <span>₹ <%= order.totalPrice %></span>
                                 </div>
                                 <% if (order.discount > 0) { %>
                                     <div class="d-flex justify-content-between mb-2 text-success">
                                         <span>Coupon Discount:</span>
-                                        <span>-AED <%= Math.round(order.discount) %></span>
+                                        <span>-₹ <%= Math.round(order.discount) %></span>
                                     </div>
                                 <% } %>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Delivery Charge:</span>
                                     <%if(order.totalPrice < 200) {%>
-                                    <span>AED 50</span>
+                                    <span>₹ 50</span>
                                     <% } else {%>
                                     <span  class="text-success">Free Shipping</span>
                                     <% }%>
@@ -253,7 +253,7 @@
                                 <hr>
                                 <div class="d-flex justify-content-between fw-bold">
                                     <span>Total:</span>
-                                    <span>AED <%= Math.round(order.finalAmount) %></span>
+                                    <span>₹ <%= Math.round(order.finalAmount) %></span>
                                 </div>
                                 <div class="mt-3">
                                     <span class="text-muted">Payment Method:</span>
@@ -264,7 +264,7 @@
                                     %>">
                                     <% if (order.paymentMethod === 'cod') { %>
                                         CASH ON DELIVERY
-                                    <% } else if (order.paymentMethod === 'online') { %>
+                                    <% } else if (order.paymentMethod === 'online payment') { %>
                                         ONLINE PAYMENT
                                     <% } else if (order.paymentMethod === 'wallet') { %>
                                         WALLET PAYMENT

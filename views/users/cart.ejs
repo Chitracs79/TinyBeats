@@ -50,11 +50,11 @@
                                                             <%= data[i].productDetails.brand.name %>
                                                     </p>
                                                 </td>
-                                                <td class="price" data-title="Price"> AED <span> <text
+                                                <td class="price" data-title="Price"> ₹ <span> <text
                                                             id="subTotal<%= data[i].productDetails.id %>">
                                                             <%= data[i].productDetails.salesPrice * data[i].quantity %>
                                                         </text><br>
-                                                        <small class="text-muted text-nowrap"> AED <span id="price">
+                                                        <small class="text-muted text-nowrap"> ₹ <span id="price">
                                                                 <%= data[i].productDetails.salesPrice %>
 
                                                             </span>
@@ -120,7 +120,7 @@
                                     </tr> -->
                                     <tr>
                                         <td class="cart_total_label">Total</td>
-                                        <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"> AED
+                                        <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"> ₹
                                                 <text id="total">
                                                     <%= grandTotal %>
                                                 </text>

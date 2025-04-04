@@ -111,6 +111,10 @@ router.post("/wallet/createOrder", userAuth,walletController.createOrder);
 router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
 router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 
+//razorPay
+router.post("/order/createOrder",userAuth,orderController.createOrder)
+router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
+
 
 //logout routing
 router.get('/logout',userAuth,userController.logout);

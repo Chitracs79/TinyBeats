@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const Order = require('../models/orderModel');
 const userModel = require('../models/userModel');
 const Address = require('../models/addressModel');
+const Wallet = require('../models/walletModel');
 
 
 const loadOrderPage = async (req, res) => {
@@ -198,6 +199,8 @@ const updateReturnStatus = async(req,res,next)=>{
         { $set: { status: status,updatedAt:new Date()} },
         { new: true }
       );
+
+      
       if (order) {
         return res
           .status(200)
@@ -218,6 +221,24 @@ const updateReturnStatus = async(req,res,next)=>{
         },
         { new: true }
       );
+
+      const orderData = await Order.findById(orderId);
+      const userId = orderData.userId;
+
+      let wallet = await Wallet.findOne({ userId: userId });
+      if (!wallet) {
+        wallet = new Wallet({ userId, balance: 0, transactions: [] });
+      }
+
+      wallet.balance += parseInt(orderData.finalAmount);
+
+      wallet.transactions.push({
+        amount:orderData.finalAmount,
+        type: "credit",
+        description: "Order return Refund",
+      });
+
+      await wallet.save();
       if (order) {
         return res
           .status(200)
