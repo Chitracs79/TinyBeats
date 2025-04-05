@@ -4,16 +4,20 @@ const productModel = require("../models/productModel");
 const categoryModel= require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
 const walletModel = require('../models/walletModel');
+const Coupon = require("../models/couponModel");
 const mongoose = require("mongoose");
+const coupon = require("../models/couponModel");
 
-// const Coupon = require("../../models/couponModel");
-// const Wallet = require("../../models/walletModel");
+
+
 
 const loadCheckoutPage = async (req, res) => {
   try {
       const userId = req.session.user;
       const user = await userModel.findById(userId);
-
+      
+        const coupons = await Coupon.find({isList:true});
+      
       const cart = await cartModel.findOne({ userId }).populate({
         path: "products.productId",
         populate: [{
@@ -80,6 +84,7 @@ const loadCheckoutPage = async (req, res) => {
           grandTotal,
           userAddress: addressData,
           wallet: wallet || { balance: 0 },
+          coupons,
       });
   } catch (error) {
       console.error("Error in loadCheckoutPage:", error);
@@ -143,37 +148,35 @@ const saveCheckoutAddress = async (req, res) => {
         res.redirect('/pageNotFound');
     }
 };
-
-const applyCoupon = async (req, res) => {
+const applyCoupon = async(req,res,next)=>{
     try {
-        const { couponCode, subtotal } = req.body;
-        const userId = req.session.user;
+       
+       const userId = req.session.user;
+       const{couponCode, subtotal} = req.body;
 
-        const coupon = await Coupon.findOne({ name: couponCode, isList: true });
+       const coupon  = await Coupon.findOne({name:couponCode});
 
-        if (!coupon) {
-            return res.json({ success: false, message: 'Invalid coupon code' });
-        }
+       if(!coupon){
+        return res.json({success:false, message:'Invalid coupon code'});
+       }
 
-        if (new Date() > coupon.expireOn) {
-            return res.json({ success: false, message: 'Coupon has expired' });
-        }
-
-        if (subtotal < coupon.minimumPrice) {
-            return res.json({ success: false, message: `Minimum purchase amount should be ₹${coupon.minimumPrice}` });
-        }
-
-        if (coupon.userId.includes(userId)) {
-            return res.json({ success: false, message: 'You have already used this coupon' });
-        }
-
-        res.json({ success: true, coupon: coupon });
+       await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:coupon.offerPrice}},{new:true});
+       res.status(200).json({success:true, message:"Coupon applied", coupon});
+       console.log(coupon);
     } catch (error) {
-        console.error('Error applying coupon:', error);
-        res.status(500).json({ success: false, message: 'An error occurred while applying the coupon' });
+        next(error)
     }
-};
+}
 
+const removeCoupon = async(req,res,next)=>{
+    try {
+        const userId = req.session.user;
+        await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:0}},{new:true});
+        res.status(200).json({success:true,message:'Coupon removed successfully'});
+    } catch (error) {
+        next(error);
+    }
+}
 
 const checkStock = async (req, res) => {
     try {
@@ -237,7 +240,7 @@ module.exports = {
     loadCheckoutPage,
     loadCheckoutAddressPage,
     saveCheckoutAddress,
-    applyCoupon,
+    applyCoupon,removeCoupon,
     checkStock,
 
 };

@@ -456,7 +456,6 @@ section
 	display: inline-block;
 	position: relative;
 	min-width: 50px;
-	width:150px;
 	padding-left: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -473,7 +472,7 @@ section
 }
 .account > a > i
 {
-	margin-left: 7px;
+	margin-left: 8px;
 }
 .account:hover .account_selection
 {
@@ -904,28 +903,25 @@ section
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 165px;
+	height: 265px;
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center center;
-	border-radius: 50%;
-	
-	
 }
 .banner_category
 {
 	height: 50px;
-	background: #DAADCC;
-	min-width: 140px;
-	padding-left: 20px;
-	padding-right: 20px;
+	background: #FFFFFF;
+	min-width: 180px;
+	padding-left: 25px;
+	padding-right: 25px;
 }
 .banner_category a
 {
 	display: block;
 	color: #1e1e27;
 	text-transform: uppercase;
-	font-size: 18px;
+	font-size: 22px;
 	font-weight: 600;
 	text-align: center;
 	line-height: 50px;
@@ -1011,7 +1007,7 @@ section
 }
 .product-item
 {
-	width: 80%;
+	width: 20%;
 	height: 380px;
 	cursor: pointer;
 }
@@ -1046,7 +1042,7 @@ section
 }
 .product_image
 {
-	width:100%;
+	width: 100%;
 }
 .product_image img
 {
@@ -1337,7 +1333,7 @@ section
 }
 .product_slider_item .product-item
 {
-	width: 200px !important;
+	width: 100% !important;
 }
 
 /*********************************

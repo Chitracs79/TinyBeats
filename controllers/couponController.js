@@ -4,8 +4,29 @@ const Coupon = require('../models/couponModel');
 const loadCouponPage = async(req,res,next)=>{
     try {
         
-       const coupon = await Coupon.find({isList:true}); 
-       res.render('admin/coupon',{serialNumber:1,coupons:coupon});
+        let coupons = await Coupon.find();
+        console.log(coupons);
+
+        for (let coupon of coupons) {
+          if (coupon.expireOn < new Date() || coupon.createdOn > new Date()) {
+            await Coupon.findByIdAndUpdate(
+              coupon._id,
+              { $set: { isList: false } },
+              { new: true }
+            );
+          } else {
+            await Coupon.findByIdAndUpdate(
+              coupon._id,
+              { $set: { isList: true } },
+              { new: true }
+            );
+          }
+        }
+    
+        const updatedCoupons = await Coupon.find();
+
+
+       res.render('admin/coupon',{serialNumber:1,coupons:updatedCoupons});
 
     } catch (error) {
 

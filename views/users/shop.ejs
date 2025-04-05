@@ -1,7 +1,68 @@
 <%- include('../../views/partials/user/header',{user:user}) %>
 <link rel="stylesheet" type="text/css" href="styles/categories_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/categories_responsive.css">
+<style>
+	@media screen and (max-width: 768px) {
+    .product-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
+    .product-item {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .product_image img {
+        width: 100%;
+        height: auto;
+    }
+
+    .breadcrumbs {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination a {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .newsletter_form {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .benefit_item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .product_sorting_container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    form.d-flex {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+
+    form input {
+        width: 90%;
+    }
+}
+</style>
 <section>
 	<div class="container product_section_container">
 		<div class="row">

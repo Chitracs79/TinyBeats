@@ -175,7 +175,7 @@ const addProduct = async (req, res) => {
         res.redirect('/admin/pageError');
     }
 };
-//-------------------------------Add Product Offer-----------------------------------------
+
 
 const addProductOffer = async(req,res)=>{
     try {
@@ -268,36 +268,40 @@ const editProduct = async(req,res,next)=>{
             return res.status(404).json({ success: false, message: "Product not found!" });
         }
         
-        const existingProduct = await productModel.findOne({name:data.name,_id:{$ne:productId}});
+        const existingProduct = await productModel.find({name:data.name,_id:{$ne:productId}});
         if(existingProduct){
           return  res.status(400).json({success:false,message:"Product with this name already exists!"});
         }
-        //---------------------------------------------------------------------------------------------------
-        let croppedImagePaths = [];
+        // //---------------------------------------------------------------------------------------------------
+        // const outputDir = path.join(__dirname, "../public/uploads/re-image"); 
+        //     if (!fs.existsSync(outputDir)) {
+        //         fs.mkdirSync(outputDir, { recursive: true });
+        //     }
+        // let croppedImagePaths = [];
            
-        //Handle cropped images sent as Base64
-        if (req.body.croppedImages) {
-            let croppedImages = Array.isArray(req.body.croppedImages) ? req.body.croppedImages : [req.body.croppedImages]; // Ensure it's always an array
+        // //Handle cropped images sent as Base64
+        // if (req.body.croppedImages) {
+        //     let croppedImages = Array.isArray(req.body.croppedImages) ? req.body.croppedImages : [req.body.croppedImages]; 
 
-        for (let i = 0; i < croppedImages.length; i++) {
-            let base64Image = croppedImages[i].replace(/^data:image\/png;base64,/, "");
-            let buffer = Buffer.from(base64Image, "base64"); 
+        // for (let i = 0; i < croppedImages.length; i++) {
+        //     let base64Image = croppedImages[i].replace(/^data:image\/png;base64,/, "");
+        //     let buffer = Buffer.from(base64Image, "base64"); 
 
-            let filename = `cropped_${Date.now()}_${i}.png`; 
-            let filePath = path.join(outputDir, filename);
+        //     let filename = `cropped_${Date.now()}_${i}.png`; 
+        //     let filePath = path.join(outputDir, filename);
            
 
-                await sharp(buffer)
-                .resize(500, 500) // Resize to 500x500 (Change as needed)
-                .toFormat("png")
-                .toFile(filePath);
+        //         await sharp(buffer)
+        //         .resize(500, 500) // Resize to 500x500 (Change as needed)
+        //         .toFormat("png")
+        //         .toFile(filePath);
 
-                console.log("Cropped and resized image saved:", filePath);
-                console.log("Cropped image saved:", filename);
+        //         console.log("Cropped and resized image saved:", filePath);
+        //         console.log("Cropped image saved:", filename);
 
-                croppedImagePaths.push(filename);              
-            }
-        }
+        //         croppedImagePaths.push(filename);              
+        //     }
+        // }
 
         //---------------------------------------------------------------------
         
@@ -314,7 +318,7 @@ const editProduct = async(req,res,next)=>{
         if(data.basePrice>data.salesPrice){
             productOffer = ((data.basePrice - data.salesPrice) / data.basePrice) * 100;
             productOffer = Math.round(productOffer);
-            console.log(productOffer);
+            // console.log(productOffer);
         }
 
         const updatedFields = {
@@ -363,7 +367,7 @@ const deleteSingleImage = async (req, res) => {
       res.redirect("/pageerror");
     }
   };
-//-------------------------soft Delete Category --------------------------------------------------------
+
 const softDeleteProducts = async(req,res) => {
     try {
         const productId = req.params.id.trim();

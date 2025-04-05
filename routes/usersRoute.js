@@ -91,6 +91,8 @@ router.delete('/deleteAddress',userAuth,profileController.deleteAddress);
 router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
 router.get('/checkoutAddress',userAuth,checkoutController.loadCheckoutAddressPage)
 router.post('/checkoutAddress',userAuth,checkoutController.saveCheckoutAddress)
+router.post('/applyCoupon',userAuth,checkoutController.applyCoupon);
+router.delete('/removeCoupon',userAuth,checkoutController.removeCoupon);
 
 //orders
 router.get('/confirmation',userAuth,orderController.loadConfirmation);
@@ -103,6 +105,7 @@ router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth, uploads.array('images', 3), orderController.requestReturn);
 router.post('/orderSearch',userAuth,orderController.orderSearch);
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest)
+
 
 //wallet
 router.get('/wallet',userAuth,walletController.loadWallet);

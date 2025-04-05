@@ -14,11 +14,11 @@ const passport = require("passport");
 const filter = async (req, res, next) => {
     try {
         const user = req.session.user;
-        console.log("filterTestUser :", user);
+       
         const category = req.query.category;
-        console.log("filterTestCategory: ", category);
+       
         const brand = req.query.brand;
-        console.log("FilterTestBrand :", brand);
+      
 
 
 
@@ -59,7 +59,7 @@ const filter = async (req, res, next) => {
 
         if (user) {
             userData = await userModel.findOne({ _id: user })
-            console.log(userData);
+          
         }
 
         if (userData) {
@@ -135,22 +135,22 @@ const search = async (req, res,next) => {
         const user = req.session.user;
         const userData = await userModel.findOne({ _id: user });
         const search = req.body.search || "";
-        console.log("Search",req.body.search);
+    
 
         const brands = await brandModel.find({}).lean();
         const categories = await categoryModel.find({ isDeleted: false }).lean();
         const categoryIds = categories.map(category => category._id.toString());
-        console.log("TestCategoryIds :",categoryIds);
+       
         let searchResult = [];
-        console.log("Filtered Products in Session:", req.session.filteredProducts);
+       
        
         if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
-            console.log("Filtered Products in Session:", req.session.filteredProducts);
+        
             searchResult = req.session.filteredProducts.filter(products =>
                 products.name.toLowerCase().includes(search.toLowerCase())
             )
         } else {
-            console.log("Else part starts")
+           
             
             searchResult = await productModel.find({
              $and:[
@@ -160,7 +160,7 @@ const search = async (req, res,next) => {
              ]
             })
         }
-            console.log("TestSearchResult :", searchResult);
+           
             searchResult.sort((a,b) => new Date(b.createdOn) - new Date(a.createdOn));
 
             let itemsPerPage = 6;
@@ -172,7 +172,7 @@ const search = async (req, res,next) => {
             let endIndex = startIndex + itemsPerPage;
 
             const currentProduct = searchResult.slice(startIndex,endIndex);
-            console.log("currentProduct",currentProduct);
+            
 
             res.render('users/shop',{
                 user : userData,
@@ -255,7 +255,7 @@ const clear = async(req,res)=>{
 const sort = async(req,res)=>{
     try {
         const sort = req.query.sort;
-        console.log("TestSort",sort);
+        
 
         const user = req.session.user;
         const userData = await userModel.findOne({ _id: user });
@@ -276,7 +276,7 @@ const sort = async(req,res)=>{
               products = req.session. filteredProducts;
                 
             } else {
-                console.log("Else part starts")
+              
                 
              products =   await productModel.find({
                     isBlocked: false,
@@ -341,14 +341,14 @@ const details = async(req,res,next)=>{
         const product = await productModel.findById(productId)
                                     .populate("category")
                                     .populate("brand");
-        console.log("Testproduct:",product);
+        
 
         if(!product || product.isBlocked){
             return res.redirect("/shop")
         }
 
         const cat = product.category._id;
-        console.log("TesTCat",cat);
+       
 
         let products = await productModel.find({
             isBlocked: false,
@@ -435,31 +435,30 @@ const loadShoppingPage = async (req, res, next) => {
 const loadHomePage = async (req, res) => {
     try {
         const userid = req.session.user || req.user; // Get user from session
-        console.log("req.session.user", req.session.user);
-        console.log("req.user", req.user);
+        
+        
         const today = new Date().toISOString();
         let banners = await bannerModel.find({
             startDate: { $lte: new Date(today) },
             endDate: { $gt: new Date(today) }
         })
 
-        console.log("TestBanner :", banners);
+       
         let categories = await categoryModel.find({});
-        // console.log("Categories in homepage",categories);
         categories = categories.slice(0, 6);
 
         let products = await productModel.find({
             isBlocked: false,
-            category: { $in: categories.map((category) => category._id) }, stock: { $gt: 0 }
+            stock: { $gt: 0 }
         })
-        // console.log("Products in homepage",products);
+       
         products.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
-        products = products.slice(0, 4)
-        //  console.log("Products in homepage sec 2",products);
+       
+        
 
         if (mongoose.isValidObjectId(userid)) {
-            const userData = await userModel.findOne({ _id: userid }); // Fetch user data from DB
-            // console.log("User in home page from database is ",userData);
+            const userData = await userModel.findOne({ _id: userid }); 
+            
             return res.render("users/home", { user: userData, products: products, categories: categories, banners: banners || [] });
         } else {
             return res.render("users/home", { user: null, products: products, categories: categories, banners: banners || [] })
@@ -526,7 +525,7 @@ const signup = async (req, res) => {
         }
 
         const findUser = await userModel.findOne({ email });
-        // console.log(findUser)
+     
         if (findUser) {
             return res.render('users/signup', { message: "User with this email already exist" });
         }
@@ -594,7 +593,7 @@ const verifyOtp = async (req, res) => {
 
             await saveUserData.save();
             req.session.user = saveUserData._id;
-            console.log("req.session.user =>", req.session.user);
+           
             res.json({ success: true, redirectUrl: "/" })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
@@ -651,9 +650,9 @@ const signin = async (req, res) => {
     try {
 
         const { email, password } = req.body;
-        console.log(email);
+      
         const findUser = await userModel.findOne({ email: email });
-        // console.log(findUser);
+        
         if (!findUser) {
             return res.render("users/signin", { message: "Invalid Credentials" });
         }
@@ -666,7 +665,7 @@ const signin = async (req, res) => {
             return res.render("users/signin", { message: "Invalid Credentials" })
         }
         req.session.user = findUser._id;
-        console.log("User stored in session", req.session.user);
+      
 
         return res.redirect("/");
     } catch (error) {

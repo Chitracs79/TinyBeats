@@ -32,9 +32,9 @@ const placeOrder =async (req,res) => {
         console.log('tota',totalPrice)
         let finalAmount = 0;
         if(totalPrice < 200){
-          finalAmount=totalPrice + 50;
+          finalAmount=totalPrice - cart.discount + 50;
         } else {
-          finalAmount = totalPrice;
+          finalAmount = totalPrice - cart.discount;
         }
        
 
@@ -65,7 +65,7 @@ const placeOrder =async (req,res) => {
             await Product.findByIdAndUpdate(orderedItems[i].product,{$inc:{stock:-orderedItems[i].quantity}});
         }
 
-        await Cart.findOneAndUpdate( { userId }, { $set: { products: [] } } );
+        await Cart.findOneAndUpdate( { userId }, { $set: { products: [],discount:0 } } );
              
         return res.status(200).json({success:true,message:'Order Placed Successfully'})
     } catch (error) {
@@ -96,9 +96,9 @@ const placeWalletOrder = async(req,res,next)=>{
         const totalPrice=cartItems.reduce((sum,item)=>sum + item.price,0);
         let finalAmount = 0;
         if(totalPrice < 200){
-          finalAmount=totalPrice + 50;
+          finalAmount=totalPrice + 50- cart.discount;
         } else {
-          finalAmount = totalPrice;
+          finalAmount = totalPrice- cart.discount;
         }
         console.log(totalPrice);
         const invoiceDate = new Date();
@@ -143,7 +143,7 @@ const placeWalletOrder = async(req,res,next)=>{
                 await Product.findByIdAndUpdate(orderedItems[i].product,{$inc:{stock:-orderedItems[i].quantity}});
             }
     
-            await Cart.findOneAndUpdate( { userId }, { $set: { products: [] } } );
+            await Cart.findOneAndUpdate( { userId }, { $set: { products: [] ,discount:0} } );
             console.log("Final",finalAmount);     
             return res.status(200).json({success:true,message:'Order Placed Successfully'});
           } catch(error){
@@ -166,7 +166,7 @@ const createOrder = async (req, res, next) => {
     }));
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
-    let finalAmount = totalPrice < 200 ? totalPrice + 50 : totalPrice;
+    let finalAmount = totalPrice < 200 ? totalPrice + 50 - cart.discount : totalPrice- cart.discount;
 
     const options = {
       amount: finalAmount * 100, 
@@ -223,9 +223,9 @@ const verifyPayment = async (req, res, next) => {
         console.log('tota',totalPrice)
         let finalAmount = 0;
         if(totalPrice < 200){
-          finalAmount=totalPrice + 50;
+          finalAmount=totalPrice + 50- cart.discount;
         } else {
-          finalAmount = totalPrice;
+          finalAmount = totalPrice- cart.discount;
         }
        
 
@@ -256,7 +256,7 @@ const verifyPayment = async (req, res, next) => {
             await Product.findByIdAndUpdate(orderedItems[i].product,{$inc:{stock:-orderedItems[i].quantity}});
         }
 
-        await Cart.findOneAndUpdate( { userId }, { $set: { products: [] } } );
+        await Cart.findOneAndUpdate( { userId }, { $set: { products: [] ,discount:0} } );
 
 
     res.status(200).json({ success: true, message: "Payment successful" });

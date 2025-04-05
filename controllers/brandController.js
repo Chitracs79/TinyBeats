@@ -7,7 +7,7 @@ const getBrandpage = async (req, res) => {
 
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
-        const limit = 4;
+        const limit = 8;
         const skip = (page - 1) * limit;
         let serialNumber = (page - 1) * limit + 1;
 

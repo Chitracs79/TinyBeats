@@ -78,7 +78,7 @@
                             <h5>Stock</h5>
                             <div class="mb-3">
                                 <label for="productRegularPrice" class="form-label">Base Pricing</label>
-                                <input type="text" class="form-control" id="basePrice" name="basePrice" value="<%=product.basePrice%>">
+                                <input type="text" class="form-control" id="basePrice" name="basePrice" placeholder="₹" value="<%=product.basePrice%>">
                                 <span class="error-message" id="basePrice-error"></span>
                             </div>
                             <div class="mb-3">
@@ -314,12 +314,12 @@ function validateAndSubmit() {
                 icon :"success",
                 title : "product updated successfully",
             }).then(()=>{
-                window.location.href="/admin/addProduct"
+                window.location.href="/admin/products"
             })
             }else {
                 Swal.fire({
                     icon:'error',
-                    title:'product already exits'
+                    title:'product already exists'
             })
                 
             }
