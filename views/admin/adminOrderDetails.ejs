@@ -291,7 +291,11 @@
                            <% } %>
                            <div class="d-flex justify-content-between mb-2">
                                <span>Delivery Charge:</span>
+                               <%if(order.totalPrice < 200) {%>
                                <span>₹ 50</span>
+                               <%} else {%>
+                                <span class="text-success">Free shipping</span>
+                               <%}%> 
                            </div>
                            <hr>
                            <div class="d-flex justify-content-between fw-bold">
@@ -316,11 +320,11 @@
                        <p class="mb-1"><strong>Order Date:</strong> <%= new Date(order.createdAt).toLocaleString() %></p>
                        <p class="mb-0"><strong>Order Status:</strong> <%= order.status.toUpperCase() %></p>
                        <% if (order.status === 'confirmed') { %>
-                           <p class="mb-0"><strong>Confirmed On:</strong> <%= new Date(order.updatedOn).toLocaleDateString() %></p>
+                           <p class="mb-0"><strong>Confirmed On:</strong> <%= new Date(order.updatedAt).toLocaleDateString() %></p>
                        <% } %>
                        
                        <% if (order.status === 'shipped') { %>
-                           <p class="mb-0"><strong>Shipped On:</strong> <%= new Date(order.updatedOn).toLocaleDateString() %></p>
+                           <p class="mb-0"><strong>Shipped On:</strong> <%= new Date(order.updatedAt).toLocaleDateString() %></p>
                        <% } %>
                        
                        <% if (order.status === 'delivered') { %>
@@ -328,7 +332,7 @@
                        <% } %>
                        
                        <% if (order.status === 'returned') { %>
-                           <p class="mb-0"><strong>Returned On:</strong> <%= new Date(order.updatedOn).toLocaleDateString() %></p>
+                           <p class="mb-0"><strong>Returned On:</strong> <%= new Date(order.updatedAt).toLocaleDateString() %></p>
                        <% } %>
                        
                    </div>

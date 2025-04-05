@@ -107,10 +107,30 @@
             background-color: #28a745;
             color: white;
         }
+
+        .button-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+
+      .download-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .download-btn:hover {
+        background-color: #45a049;
+      }
     </style>
 </head>
 <body>
-    <div class="invoice-container">
+    <div class="invoice-container" id="invoice" >
         <div class="invoice-header">
             <div>
                 <div class="invoice-title">INVOICE</div>
@@ -206,10 +226,18 @@
                     <div class="total-value">-₹<%= order.discount.toFixed(2) %></div>
                 </div>
             <% } %>
+           
             <div class="total-row">
                 <div class="total-label">Delivery Charge:</div>
+                <% if(order.totalPrice < 200) {%>
                 <div class="total-value">₹ 50</div>
+                <%} else {%>
+                <div class="total-value">Free shipping</div>
+                <%} %>
             </div>
+           
+               
+               
             <div class="total-row grand-total">
                 <div class="total-label">Grand Total:</div>
                 <div class="total-value">₹<%= order.finalAmount.toFixed(2) %></div>
@@ -221,5 +249,27 @@
             <p>For any questions or concerns regarding this invoice, please contact our customer support.</p>
         </div>
     </div>
+
+    <div class="button-container">
+        <button onclick="downloadPDF()" class="download-btn">
+          Download Invoice
+        </button>
+      </div>
+      <script>
+        function downloadPDF() {
+          const element = document.getElementById("invoice");
+          const opt = {
+            margin: 0.5,
+            filename: "invoice.pdf",
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+          };
+  
+          html2pdf().set(opt).from(element).save();
+        }
+      </script>
+  
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>

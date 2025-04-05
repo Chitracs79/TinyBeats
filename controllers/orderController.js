@@ -50,6 +50,7 @@ const placeOrder =async (req,res) => {
             invoiceDate:invoiceDate,
             status:status,
             paymentMethod:paymentMethod,
+            discount:cart.discount,
         });
 
         await orderModel.save();
@@ -128,6 +129,7 @@ const placeWalletOrder = async(req,res,next)=>{
                 invoiceDate:invoiceDate,
                 status:status,
                 paymentMethod:paymentMethod,
+                discount:cart.discount,
             });
     
             await orderModel.save();
@@ -241,6 +243,7 @@ const verifyPayment = async (req, res, next) => {
             invoiceDate:invoiceDate,
             status:status,
             paymentMethod:paymentMethod,
+            discount:cart.discount,
         });
 
         await orderModel.save();
