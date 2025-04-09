@@ -66,19 +66,8 @@ const viewAdminOrderDetails = async(req,res)=>{
         const orderId = req.query.id;
        
         let orders = await Order.findById(orderId)
-          .populate("orderedItems.product")
-          .populate("userId")
           .lean();
-          const userId = orders.userId;
-          const addressDoc = await Address.findOne({ userId:userId }).lean();
-         
-
-          const userAddress = addressDoc.address.find(addr => addr._id.toString() === orders.address.toString());
-          
-  
-          orders.address= userAddress;
-    
-       
+          const userId = orders.userId;       
         
         res.render("admin/adminOrderDetails", {
           order: orders,
@@ -236,6 +225,7 @@ const updateReturnStatus = async(req,res,next)=>{
         amount:orderData.finalAmount,
         type: "credit",
         description: "Order return Refund",
+        orderId:orderData._id,
       });
 
       await wallet.save();

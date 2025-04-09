@@ -14,6 +14,7 @@ const bannerController = require('../controllers/bannerController');
 const adminOrderController = require('../controllers/adminOrderController');
 const couponController = require('../controllers/couponController');
 const salesController = require('../controllers/salesController');
+const adminWalletController = require('../controllers/adminWalletController');
 const {userAuth,adminAuth} = require("../middlewares/auth");
 
 // Error Management
@@ -82,5 +83,9 @@ router.patch('/inventory',adminAuth,productController.updateInventory);
 //sales
 router.get('/sales',adminAuth,salesController.loadSales);
 router.get('/salesReport',adminAuth,salesController.loadSalesReport);
+
+//wallet
+router.get('/wallet',adminWalletController.loadWallet);
+router.get('/walletTransaction/:id',adminWalletController.loadTransaction);
 
 module.exports = router;

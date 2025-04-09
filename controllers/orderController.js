@@ -138,9 +138,7 @@ const placeWalletOrder = async (req, res, next) => {
     }
     wallet.balance -= parseInt(finalAmount);
 
-    wallet.transactions.push({ amount: finalAmount, type: "debit", description: "Deducted for purchase " });
-
-    await wallet.save();
+    
 
     if (couponCode) {
       await Coupon.findOneAndUpdate({ name: couponCode }, { $addToSet: { usedBy: userId } });
@@ -160,7 +158,11 @@ const placeWalletOrder = async (req, res, next) => {
       discount: cart.discount,
     });
 
-    await orderModel.save();
+    const savedOrder = await orderModel.save();
+
+    wallet.transactions.push({ amount: finalAmount, type: "debit", description: "Deducted for purchase ",orderId:savedOrder._id });
+
+    await wallet.save();
 
     await User.findByIdAndUpdate(userId, { $push: { orders: orderModel._id } }, { new: true });
 
@@ -388,7 +390,7 @@ const cancelOrder = async (req, res, next) => {
 
       wallet.balance += parseInt(order.finalAmount);
 
-      wallet.transactions.push({ amount: order.finalAmount, type: "credit", description: "Order Cancellation Refund" });
+      wallet.transactions.push({ amount: order.finalAmount, type: "credit", description: "Order Cancellation Refund",orderId:order._id });
 
       await wallet.save();
     }

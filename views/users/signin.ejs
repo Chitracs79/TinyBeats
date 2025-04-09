@@ -17,11 +17,11 @@
                 <span>or use your email for registration</span>
                 <input type="text" placeholder="Name" />
                 <input type="email" placeholder="Email" />
-                <!-- Password input with eye toggle -->
-    <div style="position: relative;">
-        <input type="password" id="passwordInput" placeholder="Password" style="width:280px;padding-right: 40px;" />
-        <i class="fa-solid fa-eye" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-    </div>
+                
+                <div style="position: relative;">
+                    <input type="password" id="signupPassword" placeholder="Password" style="width:280px; padding-right: 40px;" />
+                    <i class="fa-solid fa-eye" id="toggleSignupPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
                 <button>Sign Up</button>
             </form>
         </div>
@@ -38,10 +38,8 @@
                 <input type="email" name = "email" placeholder="Email" />
 
                 <div style="position: relative;">
-                <input type="password" name = "password" placeholder="Password" />
-                <button type="button" id="togglePassword" 
-                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
-                <i class="fa-regular fa-eye"></i></button>
+                    <input type="password" id="signinPassword" name="password" placeholder="Password" style="width:282px;padding-right: 40px;" />
+                    <i class="fa-solid fa-eye" id="toggleSigninPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>
 
 
@@ -70,15 +68,25 @@
     </div>
 <script src="js/signup.js"></script>
 <script>
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('passwordInput');
+    // SIGN UP password toggle
+    const toggleSignupPassword = document.getElementById('toggleSignupPassword');
+    const signupPassword = document.getElementById('signupPassword');
 
-    togglePassword.addEventListener('click', () => {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
+    toggleSignupPassword.addEventListener('click', () => {
+        const type = signupPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        signupPassword.setAttribute('type', type);
+        toggleSignupPassword.classList.toggle('fa-eye');
+        toggleSignupPassword.classList.toggle('fa-eye-slash');
+    });
 
-        // Toggle eye icon
-        togglePassword.classList.toggle('fa-eye');
-        togglePassword.classList.toggle('fa-eye-slash');
+    // SIGN IN password toggle
+    const toggleSigninPassword = document.getElementById('toggleSigninPassword');
+    const signinPassword = document.getElementById('signinPassword');
+
+    toggleSigninPassword.addEventListener('click', () => {
+        const type = signinPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        signinPassword.setAttribute('type', type);
+        toggleSigninPassword.classList.toggle('fa-eye');
+        toggleSigninPassword.classList.toggle('fa-eye-slash');
     });
 </script>
