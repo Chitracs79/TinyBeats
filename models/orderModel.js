@@ -14,11 +14,25 @@ const orderModel = new Schema({
     ref: 'users'
   },
   orderedItems: [{
-      product: {
-        type: Schema.Types.ObjectId,
-        ref: "Products",
-        required: true,
+    product: {
+      _id: mongoose.Schema.Types.ObjectId, 
+      name: String,
+      description: String,
+      brand: mongoose.Schema.Types.ObjectId,
+      category: mongoose.Schema.Types.ObjectId,
+      color: String,
+      basePrice: Number,
+      salesPrice: Number,
+      discount: Number,
+      quantity: Number, 
+      image: [String],
+      status: {
+        type: String,
+        enum: ["Available", "Out of Stock"]
       },
+      isBlocked: Boolean,
+    }
+    ,
       quantity: {
         type: Number,
         required: true,
@@ -40,10 +54,19 @@ const orderModel = new Schema({
         type:Number,
         required:true
     },
-    address:{
-        type:Schema.Types.ObjectId,
-        ref:'users',
-        required:true
+    address: {
+      addressType: { type: String, required: true },
+      name: { type: String, required: true },
+      apartment: { type: String, required: true },
+      building: { type: String, required: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      landmark: { type: String, required: true },
+      state: { type: String, required: true },
+      country: { type: String, required: true },
+      zip: { type: String, required: true },
+      phone: { type: String, required: true },
+      altPhone: { type: String, required: true },
     },
     invoiceDate:{
         type:Date

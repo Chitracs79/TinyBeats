@@ -9,7 +9,7 @@ const customerInfo = async(req,res) => {
 
         //pagination
         let page = parseInt(req.query.page) || 1;
-        const limit = 3 ;
+        const limit = 8 ;
         let serialNumber = (page - 1) * limit + 1;
 
         let searchFilter = {

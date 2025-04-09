@@ -455,7 +455,7 @@ section
 {
 	display: inline-block;
 	position: relative;
-	min-width: 50px;
+	min-width: 150px;
 	padding-left: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -903,15 +903,16 @@ section
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 265px;
+	height: 100px;
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center center;
+	border-radius: 10px;
 }
 .banner_category
 {
 	height: 50px;
-	background: #FFFFFF;
+	background:transparent;
 	min-width: 180px;
 	padding-left: 25px;
 	padding-right: 25px;

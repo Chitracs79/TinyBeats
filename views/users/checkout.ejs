@@ -583,11 +583,12 @@ async function placeOrder() {
 function proceedWithOrder() {
     const selectedAddress = document.getElementById('existingAddress');
     const paymentMethod = document.querySelector('input[name="payment"]:checked');
+    const couponCode = document.getElementById("couponCode").value;
     
     const orderData = {
         addressId: selectedAddress.value,
         paymentMethod: paymentMethod.value,
-        couponCode: appliedCoupon ? appliedCoupon.name : null
+        couponCode: couponCode ? couponCode : null
     };
 
     switch (paymentMethod.value) {

@@ -1,0 +1,326 @@
+<%- include('../partials/admin/header') %>
+<style>
+    .border-left-success {
+      border-left: 0.25rem solid #28a745 !important;
+    }
+    .border-left-warning {
+      border-left: 0.25rem solid #d5c322 !important;
+    }
+    .border-left-danger {
+      border-left: 0.25rem solid #db0001 !important;
+    }
+    .border-left-secondary {
+      border-left: 0.25rem solid #5a5c5a !important;
+    }
+    .border-left-primary{
+      border-left: 0.25rem solid #283da7 !important;
+    }
+    .border-left-info{
+      border-left: 0.25rem solid #28a1a7 !important;
+    }
+    
+  </style>
+
+
+
+<div class="container my-5">
+
+    <div class="col d-flex justify-content-end mb-3">
+        <a href="/admin/salesReport" class="btn btn-success" style="margin-right: 10px;">View Report</a>
+        <form method="GET" action="/admin/sales" class="d-flex align-items-center bg-light p-2 rounded shadow-sm flex-wrap gap-2" id="filterForm">
+          <label for="range" class="form-label mb-0 me-2 fw-semibold text-primary">
+            Sort By:
+          </label>
+          <select 
+            name="range" 
+            id="range" 
+            class="form-select form-select-sm w-auto border-primary me-2" 
+            onchange="handleRangeChange()"
+          >
+            <option value="daily" <%= range === 'daily' ? 'selected' : '' %>>Daily</option>
+            <option value="weekly" <%= range === 'weekly' ? 'selected' : '' %>>Weekly</option>
+            <option value="monthly" <%= range === 'monthly' ? 'selected' : '' %>>Monthly</option>
+            <option value="yearly" <%= range === 'yearly' ? 'selected' : '' %>>Yearly</option>
+            <option value="custom" <%= range === 'custom' ? 'selected' : '' %>>Custom</option>
+          </select>
+        
+          <div id="customDateBlock" class="d-flex flex-column" style="display: none;">
+            <div class="d-flex flex-row gap-2">
+              <input type="date" name="from" id="fromDate" class="form-control form-control-sm" value="<%= from || '' %>">
+              <input type="date" name="to" id="toDate" class="form-control form-control-sm" value="<%= to || '' %>">
+              <button type="submit" class="btn btn-primary btn-sm" id="applyBtn">Apply</button>
+            </div>
+            <p id="dateError" class="text-danger mt-1 mb-0" style="display: none;"></p>
+          </div>
+        </form>
+      </div>
+
+
+    <div class="row g-4 text-center">
+  
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div
+                      class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                    >
+                      Total Sales
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                      ₹<%= totalSales.toLocaleString() %>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div
+                      class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                    >
+                      Total Orders
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <%= totalOrders %>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-truck fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div
+                      class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                    >
+                      Products Sold
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <%= totalProducts %>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-store fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+      
+          
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div
+                      class="text-xs font-weight-bold text-danger text-uppercase mb-1"
+                    >
+                    Discounts Given
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        ₹<%= totalDiscounts.toLocaleString() %>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-tag fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div
+                      class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                    >
+                    Net Revenue
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        ₹<%= netRevenue.toLocaleString() %>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-secondary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div
+                      class="text-xs font-weight-bold text-secondary text-uppercase mb-1"
+                    >
+                    Avg. Order Value
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        ₹<%= averageOrderValue.toFixed(2) %>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+    </div>
+    <div class="container my-5">
+        <div class="card shadow-lg p-4 rounded-4">
+          <h5 class="text-center mb-4 fw-bold">Monthly Sales Trend</h5>
+          <canvas id="salesChart" height="350"></canvas>
+        </div>
+      </div>
+      
+      
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function handleRangeChange(autoLoad = false) {
+      const range = document.getElementById('range').value;
+      const from = document.getElementById('fromDate');
+      const to = document.getElementById('toDate');
+      const btn = document.getElementById('applyBtn');
+      const error = document.getElementById('dateError');
+  
+      if (range === 'custom') {
+        from.style.display = 'block';
+        to.style.display = 'block';
+        btn.style.display = 'inline-block';
+        error.style.display = 'none';
+      } else {
+        from.style.display = 'none';
+        to.style.display = 'none';
+        btn.style.display = 'none';
+        error.style.display = 'none';
+        if (!autoLoad) {
+          document.getElementById('filterForm').submit();
+        }
+      }
+    }
+  
+  
+    document.getElementById('applyBtn').addEventListener('click', function (e) {
+      const from = document.getElementById('fromDate').value;
+      const to = document.getElementById('toDate').value;
+      const error = document.getElementById('dateError');
+  
+      if (!from || !to) {
+        e.preventDefault();
+        error.textContent = 'Please select both From and To dates.';
+        error.style.display = 'block';
+      } else {
+        error.style.display = 'none';
+      }
+    });
+  
+    // Trigger UI setup on initial page load
+    window.addEventListener('DOMContentLoaded', () => {
+      handleRangeChange(true);
+    });
+  </script>
+  <script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+  
+   
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(54, 162, 235, 0.4)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  
+    const salesChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: <%- JSON.stringify(salesData.months) %>, 
+        datasets: [
+          {
+            label: 'Sales (₹)',
+            data: <%- JSON.stringify(salesData.sales) %>,
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: 'rgba(54, 162, 235, 1)',
+            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+            tension: 0.4,
+            borderWidth: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return '₹ ' + context.formattedValue;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                size: 13
+              }
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => '₹' + value,
+              font: {
+                size: 13
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+  
+
+
+
+
+
+<%- include('../partials/admin/footer') %>

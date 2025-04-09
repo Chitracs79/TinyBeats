@@ -42,19 +42,20 @@
                             </td>
                             <td>
                                 <%if(customer.isBlocked){%>
-                                    <a href="/admin/unblockCustomer?id=<%= customer._id %>"
-                                        class="btn btn-primary mx-auto me-2" style="width:80px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
-                                        onclick="return confirm('Do you really want to block the user?')">
-                                        
+                                    <a href="#" 
+                                        class="btn btn-primary mx-auto me-2 unblock-btn" 
+                                        style="width:70px;padding:5px;font-size: 12px;font-weight: bold; background-color: #946B88;border: none;" 
+                                        data-id="<%= customer._id %>">
                                         Unblock
-                                    </a>
+                                    </a>                                                                          
                                     <%} else {%>
-                                        <a href="/admin/blockCustomer?id=<%= customer._id %>"
-                                            class="btn btn-danger mx-auto " style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
-                                            onclick="return confirm('Are you sure to unblock the user?')">
-                                            Block
-                                        </a>
-                                        <%}%>
+                                    <a href="#" 
+                                        class="btn btn-danger mx-auto block-btn" 
+                                        style="width:70px;padding:5px;font-size: 12px;font-weight: bold;border: none;";
+                                        data-id="<%= customer._id %>">
+                                        Block
+                                    </a>                                     
+                                <%}%>
 
                             </td>
                         </tr>
@@ -87,7 +88,8 @@
         </div>
 
     </section>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         .pagination {
             margin-top: 20px;
@@ -111,4 +113,51 @@
             font-weight: bold;
         }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.block-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const customerId = this.getAttribute('data-id');
+                    
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "Do you really want to block this user?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#aaa',
+                        confirmButtonText: 'Yes, block!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = `/admin/blockCustomer?id=${customerId}`;
+                        }
+                    });
+                });
+            });
+
+            document.querySelectorAll('.unblock-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const customerId = this.getAttribute('data-id');
+    
+                    Swal.fire({
+                        title: 'Unblock User?',
+                        text: "Do you really want to unblock this user?",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#946B88',
+                        cancelButtonColor: '#aaa',
+                        confirmButtonText: 'Yes, unblock!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = `/admin/unblockCustomer?id=${customerId}`;
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    
+    
 <%- include('../partials/admin/footer') %> 

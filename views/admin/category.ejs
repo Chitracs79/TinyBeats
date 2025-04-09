@@ -73,10 +73,11 @@
                                     Edit
                                 </button>
 
-                                    <a href="/admin/category/delete/<%= category._id %>" class="btn btn-danger mx-auto " style="width:80px"
-                                        onclick="return confirm('Are you sure to Delete?')">
-                                        Delete
-                                    </a>
+                                <button class="btn btn-danger mx-auto" style="width:80px"
+                                onclick="confirmDeleteCategory('<%= category._id %>')">
+                                Delete
+                                 </button>
+                            
 
 
                             </td>
@@ -206,27 +207,36 @@
     </style>
     <script>
         document.getElementById("addCategoryForm").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent page refresh
+            event.preventDefault(); 
 
             const formData = new FormData(this);
             fetch("/admin/category/add", {
                 method: "POST",
-                body: new URLSearchParams(formData), // Convert FormData to URL-encoded format
+                body: new URLSearchParams(formData), 
                 headers: { "Content-Type": "application/x-www-form-urlencoded" }
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert("Category added successfully!");
-                        location.reload(); // Reload to update the category list
+                        Swal.fire({
+                            icon:"success",
+                            title:"Success",
+                            text:"Category added successfully!",
+                            timer:1500,
+                        }).then(()=>{
+                            location.reload(); 
+                        })
+                        
                     } else {
-                        alert("Error: " + data.message);
+                       Swal.fire("error" ,data.message,"Error");
                     }
                 })
-                .catch(error => console.error("Error adding category:", error));
+                .catch(error => {
+                        console.error("Error adding category:", error);
+                        Swal.fire("error" ,"Error while adding category","Error");
+                    });
         });
-    </script>
-    <script>
+  
         document.querySelectorAll(".edit-category-form").forEach(form => {
             form.addEventListener("submit", function (event) {
                 event.preventDefault(); // Prevent default form submission
@@ -242,33 +252,46 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert("Category updated successfully!");
-                            location.reload(); // Reload the page to update category list
+                            Swal.fire({
+                            icon:"success",
+                            title:"Success",
+                            text:"Category updated successfully!",
+                            timer:1500,
+                        }).then(()=>{
+                            location.reload(); 
+                        })
                         } else {
-                            alert("Error: " + data.message);
+                            Swal.fire("error" ,data.message,"Error");
                         }
                     })
                     .catch(error => {
                         console.error("Error updating category:", error);
-                        alert("Error: Could not reach the server.");
+                        Swal.fire("error" ,"Error while updating category","Error");
                     });
             });
         });
+
     </script>
     <!-- Soft Deletion Message -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const message = urlParams.get("message");
-        const error = urlParams.get("error");
-
-        if (message) {
-            alert(message); // Show success alert
-        }
-        if (error) {
-            alert(error); // Show error alert
-        }
+  function confirmDeleteCategory(categoryId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action will delete the category!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#aaa',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Redirect to the delete route
+        window.location.href = `/admin/category/delete/${categoryId}`;
+      }
     });
+  }
+
+
 
 
     async function addOffer(categoryId) {

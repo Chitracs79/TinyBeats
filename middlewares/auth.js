@@ -10,7 +10,7 @@ function userAuth(req, res, next) {
                     return next();
                 } else {
                     req.session.destroy(() => {
-                        return res.redirect("/signin");
+                        return res.redirect("/");
                     });
                 }
             })
@@ -48,6 +48,7 @@ const adminAuth = (req, res, next) => {
 }
 const redirect = async(req,res,next)=>{
     if(req.session.user && req.session){
+        console.log(req.session.user);
         return res.redirect('/');
     } 
 
@@ -68,7 +69,7 @@ const isBlocked = async(req,res,next)=>{
 
     if(user.isBlocked === true){
         req.session.user = null;
-        return res.redirect(req.originalUrl);
+        return res.redirect("/");
     }
     next();
  } catch (error) {

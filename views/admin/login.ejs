@@ -9,7 +9,18 @@
 
        <h2 class="text-center">Login</h2>
       
-
+       <% if (success_msg.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+           <%= success_msg %>
+        </div>
+      <% } %>
+      
+      <% if (error_msg.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+           <%= error_msg %>
+        </div>
+      <% } %>
+      
        <div class="mb-3 mt-5">
          <label for="exampleInputEmail1" class="form-label">Email</label>
          <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">

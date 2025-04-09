@@ -5,7 +5,7 @@ const brandModel = require("../models/brandModel");
 const mongoose = require('mongoose');
 const category = require("../models/categoryModel");
 
-// getting cart
+
 const loadCart = async (req, res) => {
     try {
         const userId = req.session.user; // Get logged-in user ID
@@ -27,16 +27,18 @@ const loadCart = async (req, res) => {
         if (!cart || cart.products.length === 0) {
             return res.render("users/cart", { data: [], grandTotal: 0, user: req.session.user });
         }
-
-        // Format cart data for EJS rendering
+        if(cart.discount > 0){
+            await cartModel.findOneAndUpdate({userId},{$set:{discount:0}});
+        }
+        
         const cartData = cart.products.filter(item => item.productId &&  item.productId.isBlocked === false)
         .map(item => ({
-            productDetails: item.productId, // Correct access
+            productDetails: item.productId, 
             quantity: item.quantity
         }));
         let grandTotal = cart.products.filter(item => item.productId &&  item.productId.isBlocked === false)
         .reduce((acc, item) => {
-            return acc + (item.productId?.salesPrice || 0) * item.quantity; // Prevent undefined error
+            return acc + (item.productId?.salesPrice || 0) * item.quantity; 
         }, 0);
 
         res.render("users/cart", { data: cartData, grandTotal, user: user });

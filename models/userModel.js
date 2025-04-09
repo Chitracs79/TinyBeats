@@ -51,7 +51,15 @@ const userSchema = new mongoose.Schema({
     orders:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Order"
-    }]
+    }],
+    referralCode: {
+        type: String,
+        unique: true
+      },
+      referredBy: {
+        type: String,
+        default: null
+      },
 });
 
 module.exports = mongoose.model('users',userSchema);

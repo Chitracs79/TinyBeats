@@ -11,13 +11,13 @@ const loadCouponPage = async(req,res,next)=>{
           if (coupon.expireOn < new Date() || coupon.createdOn > new Date()) {
             await Coupon.findByIdAndUpdate(
               coupon._id,
-              { $set: { isList: false } },
+              { $set: { isListed: false } },
               { new: true }
             );
           } else {
             await Coupon.findByIdAndUpdate(
               coupon._id,
-              { $set: { isList: true } },
+              { $set: { isListed: true } },
               { new: true }
             );
           }
@@ -38,9 +38,9 @@ const loadCouponPage = async(req,res,next)=>{
 const addCoupon = async(req,res,next)=>{
     try {
         const data = {
-            name:req.body.name,
-            startDate:new Date(req.body.createdOn+"T00:00:00"),
-            endDate:new Date(req.body.expireOn+"T00:00:00"),
+            name:req.body.couponName,
+            startDate:new Date(req.body.startDate+"T00:00:00"),
+            endDate:new Date(req.body.endDate+"T00:00:00"),
             offerPrice:parseInt(req.body.offerPrice),
             minimumPrice:parseInt(req.body.minimumPrice)
          }

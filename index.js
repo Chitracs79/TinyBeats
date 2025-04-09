@@ -4,6 +4,8 @@ const path = require('path');
 const nocache = require("nocache")
 const session = require("express-session");
 const passport = require("./config/passport");
+const flash = require("connect-flash");
+const middleware = require('./middlewares/middleware');
 const usersRouter = require('./routes/usersRoute');
 const adminRouter = require('./routes/adminRoute');
 const connectDB = require('./config/connectDB')
@@ -26,7 +28,8 @@ app.use(session({
         maxAge:72*60*60*1000
     }
 }))
-
+app.use(flash());
+app.use(middleware.flashMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(syncUser);

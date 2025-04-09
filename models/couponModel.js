@@ -25,11 +25,11 @@ const couponSchema = new mongoose.Schema({
         type: Number,
         required:true,
     },
-    isList:{
+    isListed:{
         type: Boolean,
         default:true,
     },
-    userId:[{
+    usedBy:[{
         type: mongoose.Schema.Types.ObjectId,
         ref:'users',
 

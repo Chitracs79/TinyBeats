@@ -3,6 +3,7 @@ const categoryModel = require("../models/categoryModel");
 const productModel = require("../models/productModel");
 const brandModel = require("../models/brandModel");
 const bannerModel = require("../models/bannerModel");
+const walletModel = require("../models/walletModel")
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const nodemailer = require("nodemailer");
@@ -450,15 +451,17 @@ const loadHomePage = async (req, res) => {
         let products = await productModel.find({
             isBlocked: false,
             stock: { $gt: 0 }
-        })
+        }).limit(10);
        
         products.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
        
         
 
         if (mongoose.isValidObjectId(userid)) {
-            const userData = await userModel.findOne({ _id: userid }); 
-            
+            let userData = await userModel.findOne({ _id: userid }); 
+            if(userData.isBlocked){
+                userData = null;
+            }
             return res.render("users/home", { user: userData, products: products, categories: categories, banners: banners || [] });
         } else {
             return res.render("users/home", { user: null, products: products, categories: categories, banners: banners || [] })
@@ -518,7 +521,7 @@ async function sendVerificationEmail(email, otp) {
 //signup page 
 const signup = async (req, res) => {
     try {
-        const { name, email, phone, password, confirmPassword } = req.body;
+        const { name, email, phone, password, confirmPassword , referral} = req.body;
 
         if (password !== confirmPassword) {
             return res.render('users/signup', { message: "Password doesnot match" });
@@ -529,6 +532,13 @@ const signup = async (req, res) => {
         if (findUser) {
             return res.render('users/signup', { message: "User with this email already exist" });
         }
+        if(referral && referral.trim()){
+        const referralCode = referral.toUpperCase();
+        const referredUser = await userModel.findOne({referralCode:referralCode})
+            if(!referredUser){
+            return res.status(400).json({success:false,message:"Invalid referral code."})
+             }
+         }
         const otp = generateOtp();
 
         const emailSent = await sendVerificationEmail(email, otp);
@@ -536,10 +546,10 @@ const signup = async (req, res) => {
         if (!emailSent) {
             return res.json("email-error")
         }
-
+      
         //session handling
         req.session.userOtp = otp;
-        req.session.userData = { name, email, phone, password };
+        req.session.userData = { name, email, phone, password,referral };
 
         res.render("users/verifyOtp");
         console.log("OTP Send", otp)
@@ -574,6 +584,19 @@ const loadVerifyOtp = async (req, res) => {
         res.status(500).send("Internal server error");
     }
 }
+
+function generateReferralCode(input) {
+
+    if (!input || typeof input !== 'string') return null;
+  
+  
+    const base = input.substring(0, 5).toUpperCase();
+  
+  
+    const randomNumber = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+  
+    return `${base}${randomNumber}`;
+  }
 const verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body;
@@ -582,13 +605,37 @@ const verifyOtp = async (req, res) => {
         if (otp === req.session.userOtp) {
             const user = req.session.userData
             const passwordHash = await securePassword(user.password);
+        
+            let referral=req.session.userData.referral
+            referral = referral.toUpperCase();
+            let referredUser
+            if(referral && referral.trim()){
+            referredUser = await userModel.findOne({referralCode:referral});
+            
+            let wallet = await walletModel.findOne({ userId:referredUser._id});
+                  if (!wallet) {
+                    wallet = new walletModel({ userId:referredUser._id, balance: 0, transactions: [] });
+                  }
+              
+                  wallet.balance += 100;
+            
+                  wallet.transactions.push({ amount:500, type: "credit", description: "Referral Reward" });
+              
+                  await wallet.save();
+                }
+      
+      
+            const referralCode =  generateReferralCode(user.name);
+            console.log(referralCode)    
 
             const saveUserData = new userModel({
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
                 password: passwordHash,
-                googleId: undefined
+                googleId: undefined,
+                referralCode,
+                referredBy: referredUser?.name,
             })
 
             await saveUserData.save();
@@ -710,6 +757,7 @@ const loadPageNotFound = async (req, res) => {
 const googleSession = async (req, res) => {
 
     req.session.user = req.user._id;
+    console.log("rsu",req.session.user);
     res.redirect("/");
 
 

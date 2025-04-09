@@ -26,12 +26,14 @@ const login = async(req,res) => {
         const passwordMatch =  await bcrypt.compare(password, admin.password);
         if(passwordMatch){
             req.session.admin = admin._id.toString();
-            return res.redirect('/admin');
+            return res.redirect('/admin/dashboard');
         } else {
-            return res.redirect('/login');
+            req.flash('error', 'Invalid email or password');
+            return res.redirect('/admin/');
         }
       } else {
-            return res.redirect('/login');
+        req.flash('error', 'Admin not found');
+            return res.redirect('/admin/');
       }
     } catch (error) {
         console.log("Login Error ",error);

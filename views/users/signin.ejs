@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
     integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
     crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <div class="container" id="container">
         <div class="form-container sign-up-container">
@@ -16,7 +17,11 @@
                 <span>or use your email for registration</span>
                 <input type="text" placeholder="Name" />
                 <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
+                <!-- Password input with eye toggle -->
+    <div style="position: relative;">
+        <input type="password" id="passwordInput" placeholder="Password" style="width:280px;padding-right: 40px;" />
+        <i class="fa-solid fa-eye" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+    </div>
                 <button>Sign Up</button>
             </form>
         </div>
@@ -31,7 +36,15 @@
                 </div>
                 <span>or use your account</span>
                 <input type="email" name = "email" placeholder="Email" />
+
+                <div style="position: relative;">
                 <input type="password" name = "password" placeholder="Password" />
+                <button type="button" id="togglePassword" 
+                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                <i class="fa-regular fa-eye"></i></button>
+                </div>
+
+
                 <a href="/forgotPassword">Forgot your password?</a>
                 <button type="submit">Sign In</button>
 
@@ -56,3 +69,16 @@
         </div>
     </div>
 <script src="js/signup.js"></script>
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+
+        // Toggle eye icon
+        togglePassword.classList.toggle('fa-eye');
+        togglePassword.classList.toggle('fa-eye-slash');
+    });
+</script>

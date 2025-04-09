@@ -16,7 +16,7 @@ const loadCheckoutPage = async (req, res) => {
       const userId = req.session.user;
       const user = await userModel.findById(userId);
       
-        const coupons = await Coupon.find({isList:true});
+        const coupons = await Coupon.find({isListed:true});
       
       const cart = await cartModel.findOne({ userId }).populate({
         path: "products.productId",
@@ -154,10 +154,18 @@ const applyCoupon = async(req,res,next)=>{
        const userId = req.session.user;
        const{couponCode, subtotal} = req.body;
 
-       const coupon  = await Coupon.findOne({name:couponCode});
+       const coupon  = await Coupon.findOne({name:couponCode,isListed:true});
 
        if(!coupon){
         return res.json({success:false, message:'Invalid coupon code'});
+       }
+
+       if(coupon.minimumPrice > subtotal){
+        return res.status(400).json({success:false,message:`you need to have items worth ${coupon.minimumPrice} to apply this coupon`});
+       }
+
+       if(coupon.usedBy.includes(userId)){
+        return res.status(400).json({success:false,message:"You have already used this coupon."});
        }
 
        await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:coupon.offerPrice}},{new:true});

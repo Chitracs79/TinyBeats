@@ -61,7 +61,7 @@
 				<div class="col">
 					<div class="product-grid" data-isotope='{ "itemSelector": ".product-item", "layoutMode": "fitRows" }'>
 
-						<%for(let i = 0 ; i < 10 ; i++) {%>
+						<%for(let i = 0 ; i < products.length ; i++) {%>
 							
 						<!-- Product 1 -->
 
@@ -71,16 +71,16 @@
 									<img src="uploads/re-image/<%=products[i].image[0]%>" alt="<%products[i].name%>">
 								</div>
 								<div class="favorite favorite_left" onclick="addToWishlist('<%= products[i]._id%>')"></div>
-								<div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
-									<%if(products[i].discount!== 0) {%>
-									<span><%=products[i].discount%>%</span>
-									<%} else {%>
-									<span></span>
+								<% if(products[i].salesPrice != products[i].basePrice) {%>
+									<div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center"><span><%= Math.round(((products[i].basePrice - products[i].salesPrice) / products[i].basePrice) * 100)%>%</span></div>
 									<%}%>
-								</div>
 								<div class="product_info">
-									<h6 class="product_name"><a href="/productDetails?id=<%=products._id%>"><%=products[i].name%></a></h6>
-									<div class="product_price">₹ <%=products[i].salesPrice%><span>₹ <%=products[i].basePrice%></span></div>
+									<h6 class="product_name"><a href="/productDetails?id=<%=products[i]._id%>"><%=products[i].name%></a></h6>
+									<div class="product_price">₹ <%= products[i].salesPrice %>
+										<% if(products[i].salesPrice != products[i].basePrice) {%>
+										<span>₹ <%= products[i].basePrice %></span>
+									<%}%>
+									</div>
 								</div>
 							</div>
 
@@ -143,56 +143,7 @@
 
 	<!-- Best Sellers -->
 
-	<div class="best_sellers">
-		<div class="container">
-			<div class="row">
-				<div class="col text-center">
-					<div class="section_title new_arrivals_title">
-						<h2>Best Sellers</h2>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<%for(let i = 0 ;i < products.length; i++) {%>
-				<div class="col">
-					<div class="product_slider_container">
-						<div class="owl-carousel owl-theme product_slider">
-
-							<!-- Slide 1 -->
-
-							<div class="owl-item product_slider_item">
-								<div class="product-item">
-									<div class="product discount">
-										<div class="product_image">
-											<img src="uploads/re-image/<%=products[i].image[0]%>" alt="">
-										</div>
-										<div class="favorite favorite_left"></div>
-										<!-- <div class="product_bubble product_bubble_left product_bubble_green d-flex flex-column align-items-center"><span>new</span></div> -->
-										<div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center"><span>-$20</span></div>
-										<div class="product_info">
-											<h6 class="product_name"><a href="/productDetails?id=<%=products._id%>"><%=products[i].name%></a></h6>
-											<div class="product_price">₹ <%=products[i].salesPrice%><span></span></div>
-										</div>
-									</div>
-								</div>
-							</div>
-																																	
-						</div>
-
-						<!-- Slider Navigation -->
-
-						<div class="product_slider_nav_left product_slider_nav d-flex align-items-center justify-content-center flex-column">
-							<i class="fa fa-chevron-left" aria-hidden="true"></i>
-						</div>
-						<div class="product_slider_nav_right product_slider_nav d-flex align-items-center justify-content-center flex-column">
-							<i class="fa fa-chevron-right" aria-hidden="true"></i>
-						</div>
-					</div>
-				</div>
-				<%}%>
-			</div>
-		</div>
-	</div>
+	
 
 	<!-- Benefit -->
 
