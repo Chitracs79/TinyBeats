@@ -1,22 +1,158 @@
+<%- include("../partials/admin/header") %>
 
+<div class="container-fluid mt-4">
+  <div class="card shadow rounded-4">
+    <div class="card-header background-color text-white d-flex justify-content-between align-items-center rounded-top-4 px-4 py-3" style="background-color:#DAADCC;>
+      <h4 class="mb-0">📊 Sales Overview</h4>
+      <form method="GET" action="/admin/dashboard" class="d-inline-block w-auto">
+        <select name="filter" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="daily" <%= filter === "daily" ? "selected" : "" %>>Daily</option>
+          <option value="weekly" <%= filter === "weekly" ? "selected" : "" %>>Weekly</option>
+          <option value="monthly" <%= filter === "monthly" ? "selected" : "" %>>Monthly</option>
+          <option value="yearly" <%= filter === "yearly" ? "selected" : "" %>>Yearly</option>
+        </select>
+      </form>
+    </div>
 
+    <div class="card-body bg-light p-4 rounded-bottom-4 ">
+      <div class="row g-4">
 
-
-<%- include('../partials/admin/header') %> 
-         <!-- Main Dashboard section -->
-         <main class="p-3">
-            <div class="container-fluid">
-                <div class="mb-3 text-center">
-                   <h1 style="font-weight: bold;"> Admin Panel</h1>
-                </div>
-    
+       
+        <div class="row justify-content-center mb-3">
+          <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+              <div class="card-header bg-white border-0">
+                <h6 class="mb-0 text-primary">Top 10 Best-Selling Products</h6>
+              </div>
+              <div class="card-body text-center">
+                <canvas id="productChart" height="200"></canvas>
+              </div>
             </div>
-        </main>
-<%- include('../partials/admin/footer') %> 
+          </div>
+        </div>  
+
+        
+        <div class="col-md-6">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-0">
+              <h6 class="mb-0 text-success">Top 10 Best-Selling Categories</h6>
+            </div>
+            <div class="card-body text-center">
+              <canvas id="categoryChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="col-md-6">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-0">
+              <h6 class="mb-0 text-warning">Top 10 Best-Selling Brands</h6>
+            </div>
+            <div class="card-body text-center">
+              <canvas id="brandChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const productLabels = <%- JSON.stringify(topProducts.map(p => p.name)) %>;
+  const productData = <%- JSON.stringify(topProducts.map(p => p.totalSold)) %>;
 
+  const categoryLabels = <%- JSON.stringify(topCategories.map(c => c.name)) %>;
+  const categoryData = <%- JSON.stringify(topCategories.map(c => c.totalSold)) %>;
 
+  const brandLabels = <%- JSON.stringify(topBrands.map(b => b.brandName)) %>;
+  const brandData = <%- JSON.stringify(topBrands.map(b => b.totalQuantity)) %>;
 
+  const commonOptions = (title) => ({
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#222",
+        titleColor: "#fff",
+        bodyColor: "#fff",
+        cornerRadius: 6,
+        padding: 10
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: "#333",
+          font: { size: 12 }
+        }
+      },
+      x: {
+        ticks: {
+          color: "#333",
+          font: { size: 12 }
+        }
+      }
+    },
+    animation: {
+      duration: 700,
+      easing: 'easeOutQuart'
+    }
+  });
 
-   
+  new Chart(document.getElementById('productChart'), {
+    type: 'bar',
+    data: {
+      labels: productLabels,
+      datasets: [{
+        label: 'Units Sold',
+        data: productData,
+        backgroundColor: 'rgba(13, 110, 253, 0.85)',
+        borderRadius: 8,
+        categoryPercentage: 0.6,
+        barPercentage: 0.5
+      
+      }]
+    },
+    options: commonOptions('Products')
+  });
+
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'bar',
+    data: {
+      labels: categoryLabels,
+      datasets: [{
+        label: 'Units Sold',
+        data: categoryData,
+        backgroundColor: 'rgba(25, 135, 84, 0.85)',
+        borderRadius: 8,
+        categoryPercentage: 0.6,
+        barPercentage: 0.5
+      }]
+    },
+    options: commonOptions('Categories')
+  });
+
+  new Chart(document.getElementById('brandChart'), {
+    type: 'bar',
+    data: {
+      labels: brandLabels,
+      datasets: [{
+        label: 'Units Sold',
+        data: brandData,
+        backgroundColor: 'rgba(255, 193, 7, 0.85)',
+        borderRadius: 8,
+        categoryPercentage: 0.6,
+        barPercentage: 0.5
+      }]
+    },
+    options: commonOptions('Brands')
+  });
+</script>
+
+<%- include("../partials/admin/footer") %>

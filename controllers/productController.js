@@ -16,7 +16,7 @@ const loadProductpage = async (req, res) => {
         //search
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
-        const limit = 6;
+        const limit = 10;
         const skip = (page - 1) * limit;
         let serialNumber = (page - 1) * limit + 1;
 
@@ -123,7 +123,7 @@ const addProduct = async (req, res) => {
 
                 await sharp(buffer)
                     .resize(500, 500, {
-                        fit: "cover", // or "contain", depending on your need
+                        fit: "cover", 
                         kernel: sharp.kernel.lanczos3, // Better quality for resizing
                     })
                     .png({ quality: 100 }) // Optional: max quality for PNG
@@ -142,28 +142,29 @@ const addProduct = async (req, res) => {
             return res.status(400).json({ error: `Brand "${products.brand}" not found` });
         }
 
-        const categoryId = await categoryModel.findOne({ name: products.category })
-        if (!categoryId) {
+        const categoryData = await categoryModel.findOne({ name: products.category },{_id:1,offer:1});
+        if (!categoryData) {
             return res.status(400).send("Invalid Category name");
         }
 
-        let productOffer;
-        if (products.basePrice > products.salesPrice) {
-            productOffer = ((products.basePrice - products.salesPrice) / products.basePrice) * 100;
-            productOffer = Math.round(productOffer);
-            console.log(products.basePrice, products.salesPrice, productOffer);
-        }
+        let discountAmount ;
+        if(categoryData.offer > 0){
+            discountAmount = products.basePrice-((products.basePrice*categoryData.offer)/100);
+            }else{
+              discountAmount = products.basePrice;
+            }
+        
         const newProduct = new productModel({
             image: croppedImagePaths,
             name: products.name,
             description: products.description,
             brand: brandData._id,
-            category: categoryId._id,
+            category: categoryData._id,
             color: products.color,
             basePrice: products.basePrice,
-            salesPrice: products.salesPrice,
+            salesPrice: discountAmount,
             stock: products.stock,
-            discount: productOffer,
+            categoryOffer: categoryData.offer,
             status: 'Available',
             createdOn: new Date()
 
@@ -186,8 +187,8 @@ const addProductOffer = async (req, res) => {
         const product = await productModel.findOne({ _id: productId });
 
         const category = await categoryModel.findOne({ _id: product.category });
-        if (category.offer > percentage) {
-            return res.json({ status: false, message: "This product already has a higher category offer !" })
+        if (category.offer >= percentage) {
+            return res.json({ status: false, message: `This product already has ${category.offer}% category offer !` })
         }
         product.salesPrice = product.basePrice - Math.floor(product.basePrice * (percentage / 100))
 
@@ -204,7 +205,7 @@ const removeProductOffer = async (req, res) => {
     try {
         const { productId } = req.body;
         const product = await productModel.findOne({ _id: productId });
-        const percentage = product.discount;
+        // const percentage = product.discount;
         product.discount = 0;
 
         const category = await categoryModel.findById(product.category);
@@ -314,27 +315,30 @@ const editProduct = async (req, res, next) => {
         const existingImages = product.image;
         const images = [...existingImages, ...updatedImages];
 
-        const categoryId = await categoryModel.findOne({ name: data.category }, { _id: 1 })
+        const categoryData = await categoryModel.findOne({ name: data.category }, { _id: 1 ,offer:1})
         const brandId = await brandModel.findOne({ name: data.brand }, { _id: 1 })
 
+        let discountAmount;
+            if(categoryData.offer>0&&categoryData.offer > product.discount){
+            discountAmount = data.basePrice-((data.basePrice*categoryData.offer)/100);
+            }else if(product.discount>0){
+            discountAmount = data.basePrice-((data.basePrice*product.discount)/100);
+            }else{
+            discountAmount= data.basePrice
+            }
 
-        let productOffer;
-        if (data.basePrice > data.salesPrice) {
-            productOffer = ((data.basePrice - data.salesPrice) / data.basePrice) * 100;
-            productOffer = Math.round(productOffer);
-            // console.log(productOffer);
-        }
-
+      
         const updatedFields = {
             name: data.name,
             description: data.description,
             color: data.color,
             brand: brandId,
-            category: categoryId,
+            category: categoryData._id,
             basePrice: data.basePrice,
-            salesPrice: data.salesPrice,
+            salesPrice: discountAmount,
             stock: data.stock,
-            discount: productOffer,
+            discount: product.discount,
+            categoryOffer:categoryData.offer,
         }
 
         if (images.length > 0) {
@@ -430,7 +434,7 @@ const loadInventory = async (req, res) => {
         console.log("PD", productData);
         res.render("admin/inventory", {
             product: productData,
-            currentPage: page,
+            page: page,
             totalPages: totalPages,
             searched: search
         });

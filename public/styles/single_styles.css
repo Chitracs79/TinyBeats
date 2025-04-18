@@ -829,6 +829,8 @@ section
 	width: auto;
 	height: 40px;
 	background: #fe4c50;
+	color:white;
+	font-weight: bold;
 	border-radius: 3px;
 	-webkit-transition: all 0.3s ease;
 	-moz-transition: all 0.3s ease;
@@ -1088,12 +1090,12 @@ section
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	width: 132px;
+	width: 120px;
 	height: 100%;
 	border: solid 1px #e5e5e5;
 	margin-left: 29px;
 }
-.quantity_selector span
+.quantity_selector input
 {
 	font-weight: 500;
 	color: #232530;

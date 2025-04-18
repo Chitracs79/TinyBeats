@@ -7,6 +7,20 @@ const loadCouponPage = async(req,res,next)=>{
         let coupons = await Coupon.find();
         console.log(coupons);
 
+        //search
+        let search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5 ;
+        const skip = (page -1) * limit;
+        let serialNumber = (page - 1) * limit + 1;
+        
+        // let searchFilter = {
+        //     isDeleted: false,
+        //     name: { $regex: search, $options: "i" } , // Case-insensitive search          
+            
+        // };
+
+
         for (let coupon of coupons) {
           if (coupon.expireOn < new Date() || coupon.createdOn > new Date()) {
             await Coupon.findByIdAndUpdate(
@@ -23,10 +37,22 @@ const loadCouponPage = async(req,res,next)=>{
           }
         }
     
-        const updatedCoupons = await Coupon.find();
+        const updatedCoupons = await Coupon.find()
+        .sort({createdAt : -1})
+        .skip(skip)
+        .limit(limit);
 
+        const totalCoupons = await Coupon.countDocuments();
+        const totalPages = Math.ceil(totalCoupons/limit);
 
-       res.render('admin/coupon',{serialNumber:1,coupons:updatedCoupons});
+       res.render('admin/coupon',{
+        coupons:updatedCoupons,
+        currentPage :page,
+        totalPages:totalPages,
+        totalCoupons:totalCoupons,
+        serialNumber: serialNumber,
+      
+    });
 
     } catch (error) {
 

@@ -75,17 +75,21 @@ const loadCheckoutPage = async (req, res) => {
       } else {
         grandTotal= subtotal;
       }
-     
-
-      res.render("users/checkout", {
-          user,
-          cartItems,
-          subtotal,
-          grandTotal,
-          userAddress: addressData,
-          wallet: wallet || { balance: 0 },
-          coupons,
-      });
+      console.log(grandTotal);
+      if(cartItems.length > 0){
+        res.render("users/checkout", {
+            user,
+            cartItems,
+            subtotal,
+            grandTotal,
+            userAddress: addressData,
+            wallet: wallet || { balance: 0 },
+            coupons,
+        });
+      } else {
+        res.redirect("/cart")
+      }
+      
   } catch (error) {
       console.error("Error in loadCheckoutPage:", error);
       res.redirect("/pageNotFound");
@@ -96,7 +100,9 @@ const  loadCheckoutAddressPage = async (req, res) => {
     try {
         const userId = req.session.user;
         const user = await userModel.findById(userId);
-        res.render('users/checkoutAddress',{user:user});
+        const userAddress = await addressModel.findOne({userId:userId});
+        const address = userAddress?.address?.[0] || {};
+        res.render('users/checkoutAddress',{user:user, address: address});
     } catch (error) {
         res.redirect("/pageNotFound");
     }

@@ -32,8 +32,12 @@
         }
     </style>
    
-    <div class="container mt-5">
-        <h1 style="font-weight: bold; font-size:1.25rem ;">Order List</h1>
+   <div class="container-fluid mt-4">
+    <div class="card">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>Order List</h2>
+        </div>
         
         <form method="GET" action="/admin/order" class="m-4 p-3 bg-light rounded shadow-sm">
             <div class="row g-2 align-items-center">
@@ -89,8 +93,10 @@
         
         
 
+        <div class="card-body">
+            <div class="table-responsive">
         <table class="table  table-hover text-center mt-5"
-            style="table-layout: fixed; width: 100%; border-color: #946B88; font-size: 12px;">
+            style="table-layout: fixed; width: 100%; ; font-size: 14px;">
             <thead style="background-color:#DAADCC; color: white;">
                 <tr>
                    
@@ -167,7 +173,9 @@
                 <% }); %>
             </tbody>
         </table>
-
+        </div>
+    </div>
+</div>
         <!-- Pagination -->
         <div class="pagination">
             <% if (currentPage> 1) { %>

@@ -17,6 +17,7 @@
     padding: 2rem 0;
     background-color: #f8f9f9;
     min-height: 80vh;
+    margin-top:110px ;
   }
 
   .breadcrumb-container {
@@ -308,7 +309,7 @@
                     <div class="discount-badge">-₹20</div>
                   </div>
                   <div class="product-info">
-                    <h5 class="product-name"><a href="/productDetails/<%= product._id %>"><%= product.name %></a></h5>
+                    <h5 class="product-name"><a href="details/<%= product._id %>"><%= product.name %></a></h5>
                     <div class="product-price">
                       <span class="current-price">₹<%= product.salesPrice %></span>
                       <span class="original-price">₹<%= product.basePrice %></span>

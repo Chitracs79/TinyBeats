@@ -28,7 +28,7 @@ const productSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-   basePrice : {
+    basePrice : {
         type : Number,
         required: true,
     },
@@ -44,6 +44,10 @@ const productSchema = new mongoose.Schema({
     discount : {
         type : Number,
         default :  0,
+    },
+    categoryOffer:{
+        type: Number,
+        default : 0,
     },
     ratings : {
         type : Number,

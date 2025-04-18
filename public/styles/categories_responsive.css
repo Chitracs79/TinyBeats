@@ -440,12 +440,12 @@
 		font-size: 12px !important;
 		padding-left: 0px;
 	}
-	#newsletter_email:-moz-placeholder /* older Firefox*/
+	#newsletter_email:-moz-placeholder 
 	{
 		font-size: 12px !important;
 		padding-left: 0px;
 	}
-	#newsletter_email::-moz-placeholder /* Firefox 19+ */ 
+	#newsletter_email::-moz-placeholder  
 	{
 		font-size: 12px !important;
 		padding-left: 0px;

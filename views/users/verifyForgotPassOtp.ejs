@@ -6,7 +6,7 @@
 <div class="container" id="container">
 
     <div class="form-container sign-in-container">
-        <form method="" action="/verifyForgotPassOtp" onsubmit="return validateOTPForm()">
+        <form method="post" action="/verifyForgotPassOtp" onsubmit="return validateOTPForm()">
 
             <span>Enter the OTP received in your registered email.</span>
             <span class="input-fields">
@@ -112,17 +112,19 @@
 
     function validateOTPForm() {
 
+
         let otpArray = Array.from(document.querySelectorAll(".inputs input")).map(input => input.value);
         let otp = otpArray.join(""); // Convert array to a single string
       
-
+        console.log("validateOTPForm called");
         $.ajax({
             type: "POST",
-            url: "verifyForgotPassOtp",
+            url: "/verifyForgotPassOtp",
             data: { otp: otp },
 
             success: function (response) {
                 if (response.success) {
+                    console.log("checking otp correct")
                     Swal.fire({
                         icon: "success",
                         title: "OTP verified successfully",
@@ -134,7 +136,7 @@
                 } else {
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
+                        title: "Error in VFP ",
                         text: response.message
                     })
                 }

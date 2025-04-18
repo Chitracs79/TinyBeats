@@ -8,22 +8,21 @@ const session = require('express-session');
 const fs = require('fs');
 const path = require('path');
 
-// Function to generate a 6-digit OTP
+// Functn to generate a 6-digit OTP
 function generateOtp(length = 6) {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-//Function to send Email Verification 
+//Functn to send Email Verification 
 async function sendVerificationEmail(email, otp) {
     try {
         const transporter = nodemailer.createTransport({
-            service: "gmail", // Use Gmail, Outlook, etc.
-            port: 587,
+            service: "gmail", 
             secure: false,
             requireTLS: true,
             auth: {
-                user: process.env.NODEMAILER_EMAIL, //  email
-                pass: process.env.NODEMAILER_PASSWORD, //  app password
+                user: process.env.NODEMAILER_EMAIL, 
+                pass: process.env.NODEMAILER_PASSWORD, 
             },
         });
 
@@ -37,14 +36,12 @@ async function sendVerificationEmail(email, otp) {
 
         return info.accepted.length > 0
 
-        // res.json({ message: "OTP sent successfully!", otp }); 
-
     } catch (error) {
         console.error("Sending Email", error);
         return false;
     }
 }
-//-----------------loading forgot password page-------------------------------------------
+
 const loadForgotPasswordPage = async (req, res) => {
     try {
         res.render('users/forgotPassword', { user: null });
@@ -56,7 +53,6 @@ const loadForgotPasswordPage = async (req, res) => {
 const forgotEmailValid = async (req, res) => {
     try {
         const { email } = req.body;
-        
         const findUser = await userModel.findOne({ email: email });
 
         if (findUser) {
@@ -66,7 +62,7 @@ const forgotEmailValid = async (req, res) => {
                 req.session.userOtp = otp;
                 req.session.email = email;
                 res.render("users/verifyForgotPassOtp");
-                console.log("OTP Send", otp)
+                console.log("OTP Send from FEV", otp)
 
             } else {
                 return res.json({ success: false, message: "Failed to send OTP ,Please try again" });
@@ -81,19 +77,22 @@ const forgotEmailValid = async (req, res) => {
 }
 
 //--------------------------- OTP Verification----------------------------------------------------------
-const loadVerifyOtp = async (req, res) => {
+const loadverifyForgotPassOtp = async (req, res) => {
     try {
         return res.render('users/verifyForgotPassOtp')
     } catch (error) {
         res.status(500).send("Internal server error");
     }
 }
-const verifyOtp = async (req, res) => {
+const verifyForgotPassOtp = async (req, res) => {
     try {
+        console.log("hai");
         const { otp } = req.body;
         console.log(otp);
 
         if (otp === req.session.userOtp) {
+            req.session.resetAllowed = true;
+            console.log("Checking");    
             res.json({ success: true, redirectUrl: '/resetPassword' })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
@@ -133,6 +132,7 @@ const resendOtp = async (req, res) => {
 //--------------------------loading reset password page---------------------------
 const loadResetPasswordPage = async (req, res) => {
     try {
+        console.log("Reset password page testing")
         res.render('users/resetPassword');
     } catch (error) {
 
@@ -524,8 +524,8 @@ const deleteAddress = async(req,res,next)=>{
 module.exports = {
     loadForgotPasswordPage,
     forgotEmailValid,
-    loadVerifyOtp,
-    verifyOtp,
+    loadverifyForgotPassOtp,
+    verifyForgotPassOtp,
     resendOtp,
     loadResetPasswordPage,
     resetPassword,

@@ -198,7 +198,7 @@ const createOrder = async (req, res, next) => {
     }));
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
-    let finalAmount = totalPrice < 200 ? totalPrice + 50 - cart.discount : totalPrice - cart.discount;
+    let finalAmount = totalPrice < 1000 ? totalPrice + 50 - cart.discount : totalPrice - cart.discount;
 
     const options = {
       amount: finalAmount * 100,
@@ -405,7 +405,7 @@ const cancelOrder = async (req, res, next) => {
     }));
 
     for (let i = 0; i < orderedItems.length; i++) {
-      await Product.findByIdAndUpdate(orderedItems[i].product, {
+      await Product.findByIdAndUpdate(orderedItems[i].product._id, {
         $inc: { stock: orderedItems[i].quantity },
       });
     }
@@ -470,11 +470,9 @@ const orderSearch = async (req, res, next) => {
     const user = await User.findById(userId);
     const search = req.body.query;
 
+    const orders = await Order.find({ orderId: search })
 
-    const orders = await Order.find({ orderId: search }).populate(
-      "orderedItems.product"
-    );
-    if (orders) {
+    if (orders && orders.length > 0) {
       return res.render("users/viewOrders", { order: {}, user: user, orders: orders, currentPage: 0, totalPages: 0 });
     } else {
       return res.render("users/viewOrders", { order: {}, user: {}, orders: {}, currentPage: 0, totalPages: 0 });

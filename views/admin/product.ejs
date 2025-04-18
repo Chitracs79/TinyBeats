@@ -1,187 +1,279 @@
 <%- include('../partials/admin/header') %>
+<style>
+    .quantity-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-direction: row;
+    }
+    .quantity-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 200px;
+    }
+    .quantity-input {
+      width: 80px;
+      padding: 5px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .error-message {
+      color: red;
+      font-size: 12px;
+      margin-top: 2px;
+      display: none;
+      min-height: 16px;
+    }
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 250px;
+    }
+    
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    .pagination {
+              margin-top: 20px;
+              justify-content: center;
+              align-items: center;
+          }
+  
+          .pagination a {
+              padding: 10px;
+              margin: 4px;
+              text-decoration: none;
+              background-color: white;
+              color: black;
+              font-weight: bold;
+              border-radius: 50%;
+              align-items: center;
+          }
+  
+          .pagination a i {
+              padding: 4px;
+          }
+  
+          .pagination a.active {
+              background-color: #DAADCC;
+              font-weight: bold;
+          }
+    
+    
+    @media (min-width: 768px) {
+      .search-container {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+    
+    .search-form {
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .search-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .table-responsive {
+      overflow-x: auto;
+    }
+    
+    @media (max-width: 767px) {
+      .quantity-wrapper {
+        min-width: auto;
+      }
+      
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: auto;
+      }
+      
+      .product-img {
+        height: 60px !important;
+        width: 60px !important;
+      }
+    }
+  </style>
+  
 
     <section>
-        <div class="container mt-5">
-            <h1 style="font-weight: bold; font-size:1.25rem ;">Product List</h1>
-            <div class="row mt-5 mx-3 d-flex mt-5">
-                <!-- Add Product Button to open add Product Page -->
-                <div class="row mt-5">
+        <div class="container-fluid mt-4">
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>Product List</h2>
+                    <!-- Add Product Button to open add Product Page -->
                     <a href="/admin/addProduct" class="btn btn-success "
                         style="width: auto; background-color: #946B88;border: none;">
                         Add Product
                     </a>
                 </div>
 
-            </div>
-            <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/products">
-                <input class="form-control me-2" type="search" name="search" placeholder="Search by product name"
-                    style="width: 300px;" value="<%= search %>" aria-label="Search">
 
-                <button class="btn btn-outline-success me-2" type="submit">Search</button>
+                <div class="search-container m">
+                    <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/products">
+                        <input class="form-control me-2" type="search" name="search"
+                            placeholder="Search by product name" style="width: 300px;" value="<%= search %>"
+                            aria-label="Search">
 
-                <% if (search && search.trim() !=="" ) { %>
-                    <a href="/admin/products" class="btn btn-outline-danger">Clear</a>
-                    <% } %>
-            </form>
+                        <button class="btn btn-outline-success me-2" type="submit">Search</button>
 
-            <table class="table  table-hover text-center mt-5"
-                style="table-layout: fixed; width: 100%; border-color: #946B88; font-size: 12px;">
-                <thead style="background-color:#DAADCC; color: white;">
-                    <tr>
-                        <th style="width: 50px;" scope="col" class="text-center">#</th>
-                        <th style="width: 250px;" scope="col" class="text-center">Name</th>
-                        <th style="width: 100px;" scope="col" class="text-center">Brand</th>
-                        <th style="width: 100px;" scope="col" class="text-center">Category</th>
-                        <th style="width: 100px;" scope="col" class="text-center">BasePrice</th>
-                        <th style="width: 100px;" scope="col" class="text-center">SalesPrice</th>
-                        <th style="width: 100px;" scope="col" class="text-center">Discount</th>
-                        <th style="width: 80px;" scope="col" class="text-center">Offer</th>
-                        <th style="width: 80px;" scope="col" class="text-center">Stock</th>
-                        <th style="width: 80px;" scope="col" class="text-center"></th>
-                        <th style="width: 80px;" scope="col" class="text-center">Action</th>
-                        <th style="width: 80px;" scope="col" class="text-center"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% products.forEach(product=> { %>
-                        <tr>
-                            <td>
-                                <%= serialNumber++ %>
-                            </td>
-                            <td>
-                                <%= product.name %>
-                            </td>
-                            <td>
-                                <%= product.brand.name %>
-                            </td>
-                            <td>
-                                <%= product.category ? product.category.name : "No Category" %>
-                            </td>
-                            <td>
-                                <%= product.basePrice %>
-                            </td>
-                            <td>
-                                <%= product.salesPrice %>
-                            </td>
-                            <td id="discount-<%= product._id %>">
-                               <% if(product.discount != 0) {%>
-                                <span class="text-success">Product Offer <br> <%= product.discount%>%</span>
-                                <% } else if(product.basePrice != product.salesPrice) {%>
-                                 <span class="text-warning">Category Offer <br> <%= ((product.basePrice-product.salesPrice)/product.basePrice)*100 %>% </span>
-                                <% } else {%>
-                                  <span>0%</span>   
-                                <% } %>     
-                            </td>
-                            <td>
-                                <% if(product.discount === 0) { %>
-                                    <button class="btn btn-outline-success" onclick="addOffer('<%= product._id %>')"
-                                        style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#048504">
-                                        Add
-                                    </button>
-                                    <% } else { %>
-                                        <button class="btn btn-outline-danger"
-                                            onclick="removeOffer('<%= product._id %>')"
-                                            style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#db0001;">
-                                            Remove
-                                        </button>
-                                        <% } %>
-                            </td>
-                            <td>
-                                <%= product.stock %>
-                            </td>
-                            <td>
-                                <%if(product.isBlocked){%>
-                                    <button 
-                                        class="btn btn-primary mx-auto me-2"
-                                        style="width:70px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
-                                        onclick="confirmAction('Unblock', '<%= product._id %>')">                                      
-
-                                        Unblock
-                                </button>
-                                    <%} else {%>
-                                        <button
-                                            class="btn btn-danger mx-auto "
-                                            style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
-                                            onclick="confirmAction('Block', '<%= product._id %>')">
-                                            Block
-                                    </button>
-                                        <%}%>
-                            </td>
-
-                            <td>
-                                <a href="/admin/editProduct?id=<%= product._id %>" class="btn btn-warning mx-auto "
-                                    style="width:70px; padding:5px; font-size: 12px; font-weight: bold; color:white">
-                                   Edit
-                                </a>
-                            </td>
-                            <td>
-                                <a href="/admin/products/delete/<%= product._id %>" class="btn btn-danger mx-auto "
-                                    style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
-                                    onclick="return confirm('Are you sure to Delete?')">
-                                    Delete
-                                </a>
-                            </td>
-
-
-
-                        </tr>
-
-                        <% }); %>
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <% if (currentPage> 1) { %>
-                    <a href="/admin/products?page=<%= currentPage - 1 %>">
-                        <i class="fa-solid fa-backward"></i>
-                    </a>
-                    <% } %>
-
-                        <% for (let i=1; i <=totalPages; i++) { %>
-                            <a href="/admin/products?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
-                                <%= i %>
-                            </a>
+                        <% if (search && search.trim() !=="" ) { %>
+                            <a href="/admin/products" class="btn btn-outline-danger">Clear</a>
                             <% } %>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table  table-hover text-center mt-5"
+                            style="table-layout: fixed; width: 100%; border-color: #946B88; font-size: 12px;">
+                            <thead style="background-color:#DAADCC; color: white;">
+                                <tr>
+                                    <th style="width: 50px;" scope="col" class="text-center">#</th>
+                                    <th style="width: 250px;" scope="col" class="text-center">Name</th>
+                                    <th style="width: 100px;" scope="col" class="text-center">Brand</th>
+                                    <th style="width: 100px;" scope="col" class="text-center">Category</th>
+                                    <th style="width: 100px;" scope="col" class="text-center">BasePrice</th>
+                                    <th style="width: 100px;" scope="col" class="text-center">SalesPrice</th>
+                                    <th style="width: 100px;" scope="col" class="text-center">Discount</th>
+                                    <th style="width: 80px;" scope="col" class="text-center">Offer</th>
+                                    <th style="width: 80px;" scope="col" class="text-center">Stock</th>
+                                    <th style="width: 80px;" scope="col" class="text-center"></th>
+                                    <th style="width: 80px;" scope="col" class="text-center">Action</th>
+                                    <th style="width: 80px;" scope="col" class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% products.forEach(product=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= serialNumber++ %>
+                                        </td>
+                                        <td>
+                                            <%= product.name %>
+                                        </td>
+                                        <td>
+                                            <%= product.brand.name %>
+                                        </td>
+                                        <td>
+                                            <%= product.category ? product.category.name : "No Category" %>
+                                        </td>
+                                        <td>
+                                            <%= product.basePrice %>
+                                        </td>
+                                        <td>
+                                            <%= product.salesPrice %>
+                                        </td>
+                                        <td id="discount-<%= product._id %>">
+                                            <% if(product.discount > product.categoryOffer) {%>
+                                                <span class="text-success">Product Offer <br>
+                                                    <%= product.discount%> %
+                                                </span>
+                                                <% } else if(product.discount < product.categoryOffer) {%>
+                                                    <span class="text-warning">Category Offer <br>
+                                                        <%= product.categoryOffer%> %
+                                                    </span>
+                                                    <% } else {%>
+                                                        <span>0%</span>
+                                                        <% } %>
+                                        </td>
+                                        <td>
+                                            <% if(product.discount===0) { %>
+                                                <button class="btn btn-outline-success"
+                                                    onclick="addOffer('<%= product._id %>')"
+                                                    style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#048504">
+                                                    Add
+                                                </button>
+                                                <% } else { %>
+                                                    <button class="btn btn-outline-danger"
+                                                        onclick="removeOffer('<%= product._id %>')"
+                                                        style="width:70px;padding:5px;font-size: 12px;font-weight: bold;color:#db0001;">
+                                                        Remove
+                                                    </button>
+                                                    <% } %>
+                                        </td>
+                                        <td>
+                                            <%= product.stock %>
+                                        </td>
+                                        <td>
+                                            <%if(product.isBlocked){%>
+                                                <button class="btn btn-primary mx-auto me-2"
+                                                    style="width:70px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
+                                                    onclick="confirmAction('Unblock', '<%= product._id %>')">
 
-                                <% if (currentPage < totalPages) { %>
-                                    <a href="/admin/products?page=<%= currentPage + 1 %>">
-                                        <i class="fa-solid fa-forward"></i>
-                                    </a>
-                                    <% } %>
+                                                    Unblock
+                                                </button>
+                                                <%} else {%>
+                                                    <button class="btn btn-danger mx-auto "
+                                                        style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
+                                                        onclick="confirmAction('Block', '<%= product._id %>')">
+                                                        Block
+                                                    </button>
+                                                    <%}%>
+                                        </td>
+
+                                        <td>
+                                            <a href="/admin/editProduct?id=<%= product._id %>"
+                                                class="btn btn-warning mx-auto "
+                                                style="width:70px; padding:5px; font-size: 12px; font-weight: bold; color:white">
+                                                Edit
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/products/delete/<%= product._id %>"
+                                                class="btn btn-danger mx-auto "
+                                                style="width:70px; padding:5px; font-size: 12px; font-weight: bold; "
+                                                onclick="return confirm('Are you sure to Delete?')">
+                                                Delete
+                                            </a>
+                                        </td>
+
+
+
+                                    </tr>
+
+                                    <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <% if (currentPage> 1) { %>
+                        <a href="/admin/products?page=<%= currentPage - 1 %>">
+                            <i class="fa-solid fa-backward"></i>
+                        </a>
+                        <% } %>
+
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <a href="/admin/products?page=<%= i %>"
+                                    class="<%= currentPage === i ? 'active' : '' %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+
+                                    <% if (currentPage < totalPages) { %>
+                                        <a href="/admin/products?page=<%= currentPage + 1 %>">
+                                            <i class="fa-solid fa-forward"></i>
+                                        </a>
+                                        <% } %>
+                </div>
             </div>
         </div>
 
 
     </section>
 
-    <style>
-        .pagination {
-            margin-top: 20px;
-            justify-content: center;
-            align-items: center;
-        }
 
-        .pagination a {
-            padding: 10px;
-            margin: 4px;
-            text-decoration: none;
-            background-color: white;
-            color: black;
-            font-weight: bold;
-            border-radius: 50%;
-            align-items: center;
-        }
-
-        .pagination a i {
-            padding: 4px;
-        }
-
-        .pagination a.active {
-            background-color: #DAADCC;
-            font-weight: bold;
-        }
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -253,45 +345,45 @@
                 console.error(error);
             }
         }
-    
+
         async function confirmAction(action, productId) {
             try {
                 Swal.fire({
                     title: `Are you sure ?`,
                     text: `This action will ${action.toLowerCase()} this product`,
-                    icon: action ==='Block'?'warning':'info',
+                    icon: action === 'Block' ? 'warning' : 'info',
                     showCancelButton: true,
-                    cancelButtonColor: action === 'Block'?'#d33':'#28a745',
+                    cancelButtonColor: action === 'Block' ? '#d33' : '#28a745',
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: `Yes,${action.toLowerCase()} it!`,
-                    
+
 
                 }).then((result) => {
-                    console.log("Result",productId);
+                    console.log("Result", productId);
                     if (result.isConfirmed) {
                         $.ajax({
                             url: `/admin/${action.toLowerCase()}Product?id=${productId}`,
                             method: 'GET',
-                            dataType: 'json', 
+                            dataType: 'json',
                             success: (response) => {
                                 if (response.status === true) {
                                     Swal.fire(`${action.toLowerCase()}ed`, `The product has been ${action.toLowerCase()}ed`, 'success')
-                                    .then(()=>location.reload());
+                                        .then(() => location.reload());
                                 } else {
                                     Swal.fire('Error', `Failed to ${action.toLowerCase()}`, 'error');
                                 }
                             },
                             error: (xhr, status, error) => {
-                    Swal.fire('Error', 'Something went wrong! Try again later.', 'error');
-                    console.error('AJAX Error:', error);
-                }
+                                Swal.fire('Error', 'Something went wrong! Try again later.', 'error');
+                                console.error('AJAX Error:', error);
+                            }
                         })
                     }
                 })
             } catch (error) {
                 console.error(error);
             }
-    }
+        }
 
     </script>
 

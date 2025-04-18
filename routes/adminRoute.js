@@ -76,6 +76,7 @@ router.get('/coupon',adminAuth,couponController.loadCouponPage);
 router.post('/coupon',adminAuth,couponController.addCoupon);
 router.put('/coupon',adminAuth,couponController.editCoupon);
 router.delete('/coupon',adminAuth,couponController.deleteCoupon);
+
 //inventory Management
 router.get('/inventory',adminAuth,productController.loadInventory);
 router.patch('/inventory',adminAuth,productController.updateInventory);
@@ -85,7 +86,7 @@ router.get('/sales',adminAuth,salesController.loadSales);
 router.get('/salesReport',adminAuth,salesController.loadSalesReport);
 
 //wallet
-router.get('/wallet',adminWalletController.loadWallet);
-router.get('/walletTransaction/:id',adminWalletController.loadTransaction);
+router.get('/wallet',adminAuth,adminWalletController.loadWallet);
+router.get('/walletTransaction/:id',adminAuth,adminWalletController.loadTransaction);
 
 module.exports = router;

@@ -24,8 +24,10 @@ const customerInfo = async(req,res) => {
         .limit(limit)
         .skip((page - 1) * limit)
         .exec();
-
+        console.log("------------------------------------------------------")
+        console.log(userData.name);
         const totalCustomers = await userModel.countDocuments(searchFilter);
+        console.log("Total Cusotmers :",totalCustomers)
         const totalPages = Math.ceil(totalCustomers/limit);
      
         res.render('admin/customer',{

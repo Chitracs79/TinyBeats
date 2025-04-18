@@ -211,6 +211,24 @@ const updateReturnStatus = async(req,res,next)=>{
         { new: true }
       );
 
+      await Order.findOneAndUpdate(
+        { _id: orderId },
+        { $set: { status: "cancelled"} },
+        { new: true }
+      );
+  
+      const orderedItems = order.orderedItems.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+      }));
+  
+      console.log(orderedItems);
+      for (let i = 0; i < orderedItems.length; i++) {
+        await Product.findByIdAndUpdate(orderedItems[i].product, {
+          $inc: { stock: orderedItems[i].quantity },
+        });
+      }
+
       const orderData = await Order.findById(orderId);
       const userId = orderData.userId;
 

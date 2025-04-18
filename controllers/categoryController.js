@@ -157,10 +157,10 @@ const addCategoryOffer = async(req,res,next)=>{
           await categoryModel.updateOne({_id:categoryId},{$set:{offer:percentage}});
 
           for (const product of products) {
-            const discountAmount = (product.basePrice * percentage) / 100;
-            product.salesPrice = product.basePrice - discountAmount;
+            const discountAmount = Math.round((product.basePrice * percentage) / 100);
+            product.salesPrice = Math.round(product.basePrice - discountAmount);
             if(product.discount < percentage){
-                product.discount = percentage;  
+                product.categoryOffer = percentage;  
             }
             
             
@@ -199,8 +199,14 @@ const removeCategoryOffer = async(req,res,next)=>{
         const products = await productModel.find({category:categoryId})
 
         for (const product of products) {
-            
-            product.salesPrice = product.basePrice;   
+            if(product.discount > 0){
+                product.salesPrice = Math.round(product.basePrice - ((product.basePrice*product.discount)/100));
+                product.categoryOffer = 0;
+                
+            } else {
+                product.salesPrice = product.basePrice; 
+                product.categoryOffer = 0;
+            }              
             await product.save();
            
           }

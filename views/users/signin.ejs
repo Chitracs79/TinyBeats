@@ -1,72 +1,84 @@
 <link rel="stylesheet" href="styles/signup_styles.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
-    crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <div class="container" id="container">
-        <div class="form-container sign-up-container">
-            <form action="#">
-                <h1>Create Account</h1>
-                <div class="social-container">
-                    <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
-                    <a href="/auth/google" class="social"><i class="fab fa-google-plus-g"></i></a>
-                    <!-- <a href="#" class="social"><i class="fab fa-instagram"></i></a>
+    <div class="form-container sign-up-container">
+        <form action="#">
+            <h1>Create Account</h1>
+            <div class="social-container">
+                <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
+                <a href="/auth/google" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <!-- <a href="#" class="social"><i class="fab fa-instagram"></i></a>
                     <a href="#" class=" social"><i class="fab fa-apple"></i></a> -->
-                </div>
-                <span>or use your email for registration</span>
-                <input type="text" placeholder="Name" />
-                <input type="email" placeholder="Email" />
-                
-                <div style="position: relative;">
-                    <input type="password" id="signupPassword" placeholder="Password" style="width:280px; padding-right: 40px;" />
-                    <i class="fa-solid fa-eye" id="toggleSignupPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                </div>
-                <button>Sign Up</button>
-            </form>
-        </div>
-        <div class="form-container sign-in-container">
-            <form method="post" action="/signin">
-                <h1>Sign in</h1>
-                <div class="social-container">
-                    <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
-                    <a href="/auth/google" class="social"><i class="fab fa-google-plus-g"></i></a>
-                    <!-- <a href="#" class="social"><i class="fab fa-instagram"></i></a>
+            </div>
+            <span>or use your email for registration</span>
+            
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+
+            <div style="position: relative;">
+                <input type="password" id="signupPassword" placeholder="Password"
+                    style="width:280px; padding-right: 40px;" />
+                <i class="fa-solid fa-eye" id="toggleSignupPassword"
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+            </div>
+            <button>Sign Up</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form method="post" action="/signin">
+            <h1>Sign in</h1>
+            <div class="social-container">
+                <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
+                <a href="/auth/google" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <!-- <a href="#" class="social"><i class="fab fa-instagram"></i></a>
                     <a href="#" class=" social"><i class="fab fa-apple"></i></a> -->
-                </div>
-                <span>or use your account</span>
-                <input type="email" name = "email" placeholder="Email" />
+            </div>
+            <span>or use your account</span>
 
-                <div style="position: relative;">
-                    <input type="password" id="signinPassword" name="password" placeholder="Password" style="width:282px;padding-right: 40px;" />
-                    <i class="fa-solid fa-eye" id="toggleSigninPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                </div>
+            <input type="email" name="email" placeholder="Email" id="email" class=form-control
+                onkeyup="validateEmail()" />
+            <span class="error" id="email-error"></span>
+
+            <div style="position: relative;">
+                <input type="password" id="signinPassword" name="password" placeholder="Password" class=form-control
+                    onkeyup="validatePassword()" style="width:282px;padding-right: 40px;" />
+                <i class="fa-solid fa-eye" id="toggleSigninPassword"
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                <span class="error" id="password-error"></span>
+            </div>
 
 
-                <a href="/forgotPassword">Forgot your password?</a>
-                <button type="submit">Sign In</button>
+            <a href="/forgotPassword">Forgot your password?</a>
+            <button type="submit" class="formSubmit" onclick="return validateForm()">Sign In</button>
+            <span class=" error" id="submit-error"></span>
 
-                <% if(locals.message && message.length > 0) { %>
-                    <span style="color: crimson; font-size: 12px; font-weight: bold; padding: 20px;"><%= message %></span>
-                 <% } %>   
-            </form>
-        </div>
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login with your personal info</p>
-                    <button class="ghost" id="signIn">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello, Friend!</h1>
-                    <p>Enter your personal details and start journey with us</p>
-                    <button class="ghost" id="signUp">Sign Up</button>
-                </div>
+            <% if(locals.message && message.length> 0) { %>
+                <span style="color: crimson; font-size: 12px; font-weight: bold; padding: 20px;">
+                    <%= message %>
+                </span>
+                <% } %>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay ">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button class="ghost" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us</p>
+                <button class="ghost" id="signUp">Sign Up</button>
             </div>
         </div>
     </div>
+</div>
 <script src="js/signup.js"></script>
+<script src="js/valSignin.js"></script>
 <script>
     // SIGN UP password toggle
     const toggleSignupPassword = document.getElementById('toggleSignupPassword');

@@ -56,14 +56,14 @@ body
 	background: #FFFFFF;
 	color: #1e1e27;
 }
-div
+/* div
 {
 	display: block;
 	position: relative;
 	-webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
+} */
 ul
 {
 	list-style: none;
@@ -151,13 +151,13 @@ h6::selection
 	font-weight: 500;
 	color: #777777 !important;
 }
-:-moz-placeholder /* older Firefox*/
+:-moz-placeholder 
 {
 	font-size: 16px !important;
 	font-weight: 500;
 	color: #777777 !important;
 }
-::-moz-placeholder /* Firefox 19+ */
+::-moz-placeholder 
 {
 	font-size: 16px !important;
 	font-weight: 500;
@@ -179,7 +179,7 @@ h6::selection
 {
 	color: #db5246;
 }
-section
+ section
 {
 	display: block;
 	position: relative;
@@ -250,13 +250,13 @@ section
 {
 	width: 100%;
 	overflow: hidden;
-}
+} 
 
 /*********************************
 3. Home
 *********************************/
 
-.header
+ .header
 {
 	position: fixed;
 	top: 0;
@@ -278,7 +278,7 @@ section
 	font-size: 13px;
 	color: #b5aec4;
 	text-transform: uppercase;
-}
+} 
 
 /*********************************
 3.1 Currency
@@ -361,13 +361,13 @@ section
 .currency_selection li:last-child a
 {
 	border-bottom: none;
-}
+} 
 
 /*********************************
 3.2 Language
 *********************************/
 
-.language
+ .language
 {
 	display: inline-block;
 	position: relative;
@@ -525,13 +525,13 @@ section
 .account_selection li a i
 {
 	margin-right: 10px;
-}
+} 
 
 /*********************************
 3.4 Main Navigation
 *********************************/
 
-.main_nav_container
+ .main_nav_container
 {
 	width: 100%;
 	background: #FFFFFF;
@@ -624,13 +624,13 @@ section
 	background: #fe4c50;
 	font-size: 12px;
 	color: #FFFFFF;
-}
+} 
 
 /*********************************
 3.5 Hamburger Menu
 *********************************/
 
-.hamburger_container
+ .hamburger_container
 {
 	display: none;
 	margin-left: 40px;
@@ -787,13 +787,13 @@ section
 .menu_selection li:last-child a
 {
 	border-bottom: none;
-}
+} 
 
 /*********************************
 3.6 Logo
 *********************************/
 
-.logo_container
+ .logo_container
 {
 	position: absolute;
 	top: 50%;
@@ -854,13 +854,13 @@ section
 {
 	width: 140px;
 	margin-top: 32px;
-}
+} 
 
 /*********************************
 4. Products
 *********************************/
 
-.products_iso
+ .products_iso
 {
 	width: 100%;
 }
@@ -888,13 +888,13 @@ section
 	height: 5px;
 	background: #fe4c50;
 	content: '';
-}
+} 
 
 /*********************************
 4.1 Product Sorting
 *********************************/
 
-.product_sorting_container_bottom
+ .product_sorting_container_bottom
 {
 	margin-top: 24px;
 }
@@ -1107,13 +1107,13 @@ section
 	line-height: 40px;
 	float: right;
 	margin-right: 34px;
-}
+} 
 
 /*********************************
 5. Breadcrumbs
 *********************************/
 
-.breadcrumbs
+ .breadcrumbs
 {
 	width: 100%;
 	height: 60px;
@@ -1136,20 +1136,56 @@ section
 .breadcrumbs ul li a
 {
 	color: #51545f;
+} 
+
+.breadcrumbs {
+	width: 100%;
+	height: auto; 
+	border-bottom: solid 1px #ebebeb;
+	margin-bottom: 58px;
+	padding: 10px 20px;
+	background-color: #fff; 
 }
+
+ .breadcrumbs ul li {
+	display: inline-block;
+	margin-right: 17px;
+}
+
+.breadcrumbs ul li.active a {
+	color: #b9b4c7;
+}
+
+.breadcrumbs ul li i {
+	margin-right: 8px;
+}
+
+.breadcrumbs ul li a {
+	color: #51545f;
+} 
+
+/* Optional: adjust spacing in form inside breadcrumbs */
+ .breadcrumbs form input {
+	height: 38px;
+}
+.search-input {
+	width: 250px;
+	margin-right: 10px;
+}
+
+.search-btn {
+	margin-right: 10px;
+} 
 
 /*********************************
 6. Sidebar
 *********************************/
 
-.product_section_container
+ .product_section_container
 {
 	margin-top: 150px;
 }
-.product_section
-{
 
-}
 .sidebar
 {
 	float: left;
@@ -1282,7 +1318,7 @@ section
 .show_more span:first-child
 {
 	margin-right: 11px;
-}
+} 
 
 /*********************************
 7. Main Content
@@ -1550,7 +1586,7 @@ section
 .delete:hover::after
 {
 	color: #fe4c50;
-}
+} 
 
 
 /*********************************
@@ -1585,7 +1621,7 @@ section
 .benefit_icon i
 {
 	font-size: 30px;
-	color: #84fe4c;
+	color:  #fe4c50;
 }
 .benefit_content
 {
@@ -1604,7 +1640,7 @@ section
 	line-height: 18px;
 	margin-bottom: 0px;
 	color: #51545f;
-}
+} 
 
 /*********************************
 9. Newsletter
@@ -1659,17 +1695,17 @@ section
 	color: #b9b4c7 !important;
 }
 #newsletter_email:-moz-placeholder /* older Firefox*/
-{
+ {
 	font-size: 14px !important;
 	font-weight: 400;
 	color: #b9b4c7 !important;
 }
 #newsletter_email::-moz-placeholder /* Firefox 19+ */
-{
+ {
 	font-size: 14px !important;
 	font-weight: 400;
 	color: #b9b4c7 !important;
-}
+} 
 #newsletter_email:-ms-input-placeholder
 {
 	font-size: 14px !important;
@@ -1697,13 +1733,13 @@ section
 .newsletter_submit_btn:hover
 {
 	background: #FE7C7F;
-}
+} 
 
 /*********************************
 10. Footer
 *********************************/
 
-.footer_nav_container
+ .footer_nav_container
 {
 	height: 130px;
 }
@@ -1765,4 +1801,4 @@ section
 .footer_social ul li a:hover
 {
 	color: #fe4c50;
-}
+} 

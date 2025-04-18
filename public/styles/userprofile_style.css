@@ -16,13 +16,15 @@ a {
     
 }
 .main-content{
-    padding:30px
+    padding:30px;
+    margin-top:105px;
 }
 .main{
     min-height:100vh;
     width: 100%;
     overflow: hidden;
-    background-color: #faf9f9;   
+    background-color: #faf9f9; 
+    margin-top: 105px;  
 }
 
 #sidebar{
@@ -34,6 +36,7 @@ a {
     flex-direction: column; 
     height: 1300px;  
     margin-right: 10px;
+    margin-top:40px;
 
 }
 
@@ -71,12 +74,12 @@ a {
     font-weight: 800;
     font-size: 1.25rem;
 }
-.sidebar-username h3{
+.sidebar-username {
 
     color:white;
     margin-top: 20px;
     text-align: left;
-    padding:0px 20px;
+    padding:0px 10px;
 
 }
 .sidebar-header {
@@ -133,8 +136,8 @@ a.sidebar-link:hover{
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #fff;
-    margin-top: 120px;
-    margin-left: 50px;
+    margin-top: 10px;
+    margin-left: 35px;
     margin-bottom: 10px;
    
 }

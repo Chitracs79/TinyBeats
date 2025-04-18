@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>TinyBeats</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="Colo Shop Template">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+<link rel="icon" type="image/svg" sizes="20X20" href="images/tinybeats.png">
+<link rel="stylesheet" href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link href="plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
+<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+<link rel="stylesheet" type="text/css" href="styles/responsive.css">
+<link rel="stylesheet" href="/styles/userprofile_style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+
+<body>
+	<!-- Header -->
+
+	<header class="header trans_300">
+
+		<!-- Top Navigation -->
+
+		<div class="top_nav">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="top_nav_left">free shipping on all orders over ₹ 1000 </div>
+					</div>
+					<div class="col-md-6 text-right">
+						<div class="top_nav_right">
+							<ul class="top_nav_menu">
+
+								<!-- Currency / Language / My Account -->
+
+								<li class="currency">
+									<a href="#">
+										₹
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<ul class="currency_selection">
+										<li><a href="#">inr</a></li>
+										<li><a href="#">usd</a></li>
+										<li><a href="#">eur</a></li>
+									</ul>
+								</li>
+								<li class="language">
+									<a href="#">
+										English
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<ul class="language_selection">
+										<li><a href="#">Arabic</a></li>
+										<li><a href="#">French</a></li>
+										
+									</ul>
+								</li>
+								<li class="account">
+									<a href="#">
+										<% if (typeof user !== 'undefined' && user)  { %>
+											<%= user.name %> <!-- Show user name when logged in -->
+										<% } else { %>
+											My Account
+										<% } %>
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<ul class="account_selection">
+									
+										<% if (typeof user !== 'undefined' && user)  { %>
+											<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+											<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+										<% } else { %>
+											<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+											<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+										<% } %>
+										
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main Navigation -->
+
+		<div class="main_nav_container">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 text-right">
+						<div class="logo_container">
+							<a href="#"><img src="images/tinybeats.png" alt="logo" style="width:100px;height:100px"></a>
+						</div>
+						<nav class="navbar">
+							<ul class="navbar_menu">
+								<li><a href="/shop">Shop</a></li>
+								<li><a href="#">Clothes</a></li>
+								<li><a href="#">Essentials</a></li>
+								<li><a href="#">Feeding</a></li>
+								<li><a href="#">Playtime</a></li>
+								<li><a href="#">Travel</a></li>
+								<li><a href="contact.html">contact</a></li>
+							</ul>
+							<ul class="navbar_user">
+								<!-- <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li> -->
+								<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                                <li><a href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+								<li class="checkout">
+									<a href="/cart">
+										<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+										<!-- <span id="checkout_items" class="checkout_items">2</span> -->
+									</a>
+								</li>
+							</ul>
+							<div class="hamburger_container">
+								<i class="fa fa-bars" aria-hidden="true"></i>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</header>
+
+	<div class="fs_menu_overlay"></div>
+	<div class="hamburger_menu">
+		<div class="hamburger_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+		<div class="hamburger_menu_content text-right">
+			<ul class="menu_top_nav">
+				<li class="menu_item has-children">
+					<a href="#">
+						₹
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="menu_selection">
+						<li><a href="#">inr</a></li>
+						<li><a href="#">usd</a></li>
+						<li><a href="#">eur</a></li>
+					</ul>
+				</li>
+				<li class="menu_item has-children">
+					<a href="#">
+						English
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="menu_selection">
+						<li><a href="#">Arabic</a></li>
+						<li><a href="#">French</a></li>
+					</ul>
+				</li>
+				<li class="menu_item has-children">
+					<a href="#">
+						<% if (typeof user !== 'undefined' && user)  { %>
+							<%= user.name %> <!-- Show user name when logged in -->
+						<% } else { %>
+							My Account
+						<% } %>
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="menu_selection">
+						<% if (typeof user !== 'undefined' && user)  { %>
+							<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+							<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+						<% } else { %>
+							<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+							<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+						<% } %>
+					</ul>
+				</li>
+				<li class="menu_item"><a href="/shop">Shop</a></li>
+				<li class="menu_item"><a href="#">Clothes</a></li>
+				<li class="menu_item"><a href="#">Essentials</a></li>
+				<li class="menu_item"><a href="#">Feeding</a></li>
+				<li class="menu_item"><a href="#">Playtime</a></li>
+				<li class="menu_item"><a href="#">Travel</a></li>              
+				<li class="menu_item"><a href="#">Contact</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="super-contianer container-fluid" style="padding-top: 150px; width:100%;">
+<!-- sidebar -->
+<aside id="sidebar" class="sidebar-toggle pt-5">
+
+
+    <!-- sidebar Navigation -->
+    <div class="sidebar-profileImage">
+        <img src="<%= user.profileImage? user.profileImage : 'images/single_2_thumb.jpg' %>" alt="" class="profile-img">
+
+        <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
+            <input type="file" class="inputFile" name="profileImage" required>
+            <button type="submit" class="upload-btn"><i class="fa-solid fa-upload"></i></button>
+        </form>
+    </div>
+    <div class="sidebar-username">
+        <h3>
+            <%=user.name%>
+        </h3>
+    </div>
+    <ul class="sidebar-nav p-0">
+
+        <li class="sidebar-header">
+            Orders
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/userProfile" class="sidebar-link">
+                <i class="fa-solid fa-house"></i>
+                <span> Dashboard </span>
+            </a>
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/orders" class="sidebar-link">
+                <i class="fa fa-shopping-cart"></i>
+                <span> Orders</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/wishlist" class="sidebar-link">
+                <i class="fa fa-heart"></i>
+                <span>Wishlist</span>
+            </a>
+        </li>
+
+        <li class="sidebar-header">
+            Personal
+        </li>
+        <li class="sidebar-item">
+            <a href="/wallet" class="sidebar-link">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/address" class="sidebar-link">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Address</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/userProfile" class="sidebar-link">
+                <i class="fa fa-user"></i>
+                <span>My Profile</span>
+            </a>
+        </li>
+
+    </ul>
+    <!-- Sidebar Navigation Ends -->
+
+    <div class="sidebar-footer">
+        <a href="" class="sidebar-link">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/logout" class="sidebar-link">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</aside>
+<!-- Sidebar Ends -->
+<!-- Main Content -->
+<div class="content">
+    <h4 class="pb-3">My Profile</h4>
+
+    <div class="container mt-4">
+
+        <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="userName" class="form-label">Username</label>
+            <input type="text" class="form-control" id="name" value="<%=user.name%>"
+                placeholder="">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="text" class="form-control" id="email" value="<%=user.email%>"
+                placeholder="">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="phone" class="form-label">Phone No</label>
+            <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
+                placeholder="">
+        </div>
+        <div class="col-md-6 mt-3">
+            <label for="">Referral Code</label>
+           <h5 class="text-success"><% if(user.referralCode) {%>
+                              <%= user.referralCode %> 
+                              <%}%>
+            </h5>
+        </div>
+       
+        <!-- Address part -->
+        <div class="row mt-4">
+            <% if (userAddress) { %>
+                <% userAddress.address.forEach((addr)=> { %>
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= addr.addressType %> Address</h5>
+                                <p class="card-text">
+                                    <strong>Name:</strong> <%= addr.name %> <br>
+                                    <strong>Apartment:</strong> <%= addr.apartment %> <br>
+                                    <strong>Building:</strong> <%= addr.building %> <br>
+                                    <strong>Street:</strong> <%= addr.street %> <br>
+                                    <strong>City:</strong> <%= addr.city %> <br>
+                                    <strong>Landmark:</strong><%= addr.landmark %> <br>
+                                    <strong>State:</strong> <%= addr.state %> <br>
+                                    <strong>Country:</strong> <%= addr.country %> <br>
+                                    <strong>ZIP:</strong> <%= addr.zip %> <br>
+                                    <strong>Phone:</strong> <%= addr.phone %> <br>
+                                    <strong>Alternative Phone:</strong> <%= addr.altPhone %> 
+                                </p> 
+                                                                              
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No addresses found. Please add one.</p>
+            <% } %>
+        </div>
+
+    </div>
+
+    <a href="/editProfile" class="btn btn-primary btn-sm">Edit Profile</a>
+</div>
+<!-- Main Content ends -->
+</div>
+<!-- Footer -->
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="footer_nav_container d-flex flex-sm-row flex-column align-items-center justify-content-lg-start justify-content-center text-center">
+                    <ul class="footer_nav">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Know us Better</a></li>
+                        <li><a href="#">Shipping & Policy</a></li>
+                        <li><a href="contact.html">Contact us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="footer_social d-flex flex-row align-items-center justify-content-lg-end justify-content-center">
+                    <ul>
+                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-skype" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="footer_nav_container">
+                    <div class="cr">©2025 All Rights Reserverd. Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="#">TinyBeats</a><!--  &amp; distributed by <a href="https://themewagon.com">ThemeWagon</a>--></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<script>
+    const toggler = document.querySelector(".toggler-btn");
+    toggler.addEventListener('click',function(){
+    document.querySelector("#sidebar").classList.toggle("collapsed");
+})
+</script>
+ <!-- SweetAlert Cdn-->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="styles/bootstrap4/popper.js"></script>
+<script src="styles/bootstrap4/bootstrap.min.js"></script>
+<script src="plugins/Isotope/isotope.pkgd.min.js"></script>
+<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script src="plugins/easing/easing.js"></script>
+<script src="js/custom.js"></script>
+<script src="plugins/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="js/categories_custom.js"></script>
+<script src="/js/valAddress.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+  
+
+
+
+
+
+
+

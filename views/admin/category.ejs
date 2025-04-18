@@ -1,9 +1,116 @@
 <%- include('../partials/admin/header') %>
+<style>
+  .quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row;
+  }
+  .quantity-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 200px;
+  }
+  .quantity-input {
+    width: 80px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+    display: none;
+    min-height: 16px;
+  }
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 250px;
+  }
+  
+  .search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+  .pagination {
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination a {
+            padding: 10px;
+            margin: 4px;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            font-weight: bold;
+            border-radius: 50%;
+            align-items: center;
+        }
+
+        .pagination a i {
+            padding: 4px;
+        }
+
+        .pagination a.active {
+            background-color: #DAADCC;
+            font-weight: bold;
+        }
+  
+  
+  @media (min-width: 768px) {
+    .search-container {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+  
+  .search-form {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .search-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  @media (max-width: 767px) {
+    .quantity-wrapper {
+      min-width: auto;
+    }
+    
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: auto;
+    }
+    
+    .product-img {
+      height: 60px !important;
+      width: 60px !important;
+    }
+  }
+</style>
 
     <section>
-        <div class="container mt-5">
-            <h1 style="font-weight: bold; font-size:1.25rem ;">Category List</h1>
-            <div class="row mt-5 mx-3">
+        
+      <div class="container-fluid mt-4">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>Category List</h2>
+            
                 <!-- Add Category Button to Open Modal -->
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal"
                     style="width: auto; background-color: #946B88;border: none;">
@@ -11,9 +118,10 @@
                 </button>
 
             </div>
+            <div class="search-container m">
             <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/category">
                 <input class="form-control me-2" type="search" name="search" placeholder="Search by category name" style="width: 300px;"
-                    value="<%= search %>" aria-label="Search">
+                    value="<%= search %>" value="<%= typeof searched !== 'undefined' ? searched : '' %>" aria-label="Search">
             
                 <button class="btn btn-outline-success me-2" type="submit">Search</button>
             
@@ -21,7 +129,9 @@
                     <a href="/admin/category" class="btn btn-outline-danger">Clear</a>
                 <% } %>
             </form>
-
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
             <table class="table  table-hover text-center mt-5" style="border-color: #946B88; font-size: 12px;">
                 <thead style="background-color:#DAADCC; color: white;">
                     <tr>
@@ -69,11 +179,13 @@
                             </td>
                             <td>
                                 <button class="btn btn-warning" data-bs-toggle="modal"
+                                style="width:80px; padding:5px; font-size: 12px; font-weight: bold;color:white;margin-bottom: 5px; "
                                     data-bs-target="#editCategoryModal<%= category._id %>">
                                     Edit
                                 </button>
 
-                                <button class="btn btn-danger mx-auto" style="width:80px"
+                                <button class="btn btn-danger mx-auto" 
+                                style="width:80px; padding:5px; font-size: 12px; font-weight: bold;color:white; "
                                 onclick="confirmDeleteCategory('<%= category._id %>')">
                                 Delete
                                  </button>
@@ -123,7 +235,8 @@
                         <% }); %>
                 </tbody>
             </table>
-
+            </div>
+            </div>
             <!-- Pagination -->
             <div class="pagination">
                 <% if (currentPage> 1) { %>
@@ -173,6 +286,7 @@
                 </div>
             </div>
         </div>
+      </div>
 
        
 

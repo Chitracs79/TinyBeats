@@ -2,19 +2,20 @@
     <link rel="stylesheet" href="/styles/userprofile_style.css">
 
 
-    <section>
+    
 
-        <body>
-            <div class="d-flex pt-5">
+       
+            <div class="super_container">
+               
+                <div class="d-flex pt-5">
                 <%- include('../../views/partials/user/sidebar',{user:user}) %>
-                    <!-- Main Content -->
-                    <div class="main">
-                        <nav class="navbar nav-expand border-bottom">
-                            <button class="toggler-btn" type="button">
-                                <i class="fa-solid fa-align-left"></i>
-                            </button>
-                        </nav>
-
+                        <!-- Main Content -->
+                        <div class="main">
+                            <nav class="navbar nav-expand border-bottom">
+                                <button class="toggler-btn" type="button">
+                                    <i class="fa-solid fa-align-left"></i>
+                                </button>
+                            </nav>
                         <div class="content">
                             <h4 class="pb-3">My Address</h4>
 
@@ -77,14 +78,20 @@
                             </div>
 
                             <div>
+                                
+                                
                                 <a href="/addAddress" class="btn btn-primary btn-sm">Add Address</a>
                             </div>
                         </div>
+                      
+                </div>
+                </div>
+                </div>
 
 
 
 
-    </section>
+   
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -135,6 +142,9 @@
                 });
             });
         });
+
+ 
+
    
     </script>
 

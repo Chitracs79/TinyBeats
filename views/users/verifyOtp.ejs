@@ -118,7 +118,7 @@
 
         $.ajax({
             type: "POST",
-            url: "verifyOtp",
+            url: "/verifyOtp",
             data: { otp: otp },
 
             success: function (response) {
@@ -134,7 +134,7 @@
                 } else {
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
+                        title: "Error verifying OTP",
                         text: response.message
                     })
                 }

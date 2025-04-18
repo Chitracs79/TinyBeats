@@ -35,6 +35,33 @@
     th:nth-child(5), td:nth-child(5) {
       width: 200px;
     }
+
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination a {
+            padding: 10px;
+            margin: 4px;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            font-weight: bold;
+            border-radius: 50%;
+            align-items: center;
+        }
+
+        .pagination a i {
+            padding: 4px;
+        }
+
+        .pagination a.active {
+            background-color: #DAADCC;
+            font-weight: bold;
+        }
+  
     
   </style>
 </head>
@@ -130,35 +157,30 @@
   </div>
   
     
-    <div class="pagination-container d-flex justify-content-center mt-4 mb-4">
-        <nav aria-label="Page navigation">
-          <ul class="pagination pagination-sm flex-wrap">
-            <% if (page > 1) { %>
-            <li class="page-item">
-              <a href="?page=<%= page - 1 %>&search=<%= search %>" class="page-link">&laquo; Previous</a>
-            </li>
-            <% } %>
-            <% for (let i = 1; i <= totalPagesCalc; i++) { %>
-              <% if (i === page) { %>
-                <li class="page-item active">
-                  <span class="page-link"><%= i %></span>
-                </li>
-              <% } else { %>
-                <li class="page-item">
-                  <a href="?page=<%= i %>&search=<%= search %>" class="page-link"><%= i %></a>
-                </li>
-              <% } %>
-            <% } %>
-            <% if (page < totalPagesCalc) { %>
-            <li class="page-item">
-              <a href="?page=<%= page + 1 %>&search=<%= search %>" class="page-link">Next &raquo;</a>
-            </li>
-            <% } %>
-          </ul>
-        </nav>
-      </div>
+  <!-- Pagination -->
+  <div class="pagination">
+    <% if (page > 1) { %>
+        <a href="/admin/wallet?page=<%= page - 1 %>">
+            <i class="fa-solid fa-backward"></i>
+        </a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPagesCalc; i++) { %>
+        <a href="/admin/wallet?page=<%= i %>" class="<%= page === i ? 'active' : '' %>">
+            <%= i %>
+        </a>
+    <% } %>
+
+    <% if (page < totalPagesCalc) { %>
+        <a href="/admin/wallet?page=<%= page + 1 %>">
+            <i class="fa-solid fa-forward"></i>
+        </a>
+    <% } %>
+</div>
       
   </div>
+
+
 </div>
 
 <script>

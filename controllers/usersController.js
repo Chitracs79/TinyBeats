@@ -15,13 +15,8 @@ const passport = require("passport");
 const filter = async (req, res, next) => {
     try {
         const user = req.session.user;
-       
         const category = req.query.category;
-       
         const brand = req.query.brand;
-      
-
-
 
         const findCategory = category ? await categoryModel.findOne({ _id: category }) : null;
         const findBrand = brand ? await brandModel.findOne({ _id: brand }) : null;
@@ -136,6 +131,7 @@ const search = async (req, res,next) => {
         const user = req.session.user;
         const userData = await userModel.findOne({ _id: user });
         const search = req.body.search || "";
+        
     
 
         const brands = await brandModel.find({}).lean();
@@ -185,6 +181,7 @@ const search = async (req, res,next) => {
                 count:searchResult.length,
                 selectedCategory:null,
                 selectedBrand:null,
+                searchValue: search,
 
             })
 
@@ -269,22 +266,15 @@ const sort = async(req,res)=>{
         const skip = (page - 1) * limit;
 
         let products;
-
-       
-
         
             if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
-              products = req.session. filteredProducts;
-                
-            } else {
-              
-                
+              products = req.session. filteredProducts;               
+            } else {                              
              products =   await productModel.find({
                     isBlocked: false,
                     category: { $in: categoryIds },
                     stock: { $gt: 0 }
-                    })
-              
+                    })              
             }    
             if(sort==="a-z"){
                 products = products.sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
@@ -325,6 +315,7 @@ const sort = async(req,res)=>{
                 totalPages: totalPages,
                 selectedCategory: req.query.category || null,
                 selectedBrand: req.query.brand || null,
+                 searchValue: '',
             }
         )
 
@@ -599,8 +590,10 @@ function generateReferralCode(input) {
   }
 const verifyOtp = async (req, res) => {
     try {
+        console.log("Hai OTP");
+        console.log(req.body);
         const { otp } = req.body;
-        console.log(otp);
+        console.log("Otp Verified:",otp);
 
         if (otp === req.session.userOtp) {
             const user = req.session.userData

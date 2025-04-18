@@ -76,11 +76,7 @@
                                 <input type="text" class="form-control" id="basePrice" name="basePrice"placeholder="₹">
                                 <span class="error-message" id="basePrice-error"></span>
                             </div>
-                            <div class="mb-3">
-                                <label for="productSalesPrice" class="form-label">Sales Pricing</label>
-                                <input type="text" class="form-control" id="salesPricing" name="salesPrice"placeholder="₹">
-                                <span class="error-message" id="salesPrice-error"></span>
-                            </div>
+                          
                             <div class="mb-3">
                                 <label for="productStock" class="form-label">Stock</label>
                                 <input type="text" class="form-control" id="productStock" name="stock">
@@ -342,8 +338,7 @@ function validateAndSubmit() {
             let productColor = document.getElementById("productColor").value.trim();
             let productBrand = document.querySelector("select[name='brand']").value;
             let productCategory = document.querySelector("select[name='category']").value;
-            let basePrice = document.getElementById("basePrice").value.trim();
-            let salesPrice = document.getElementById("salesPricing").value.trim();
+            let basePrice = document.getElementById("basePrice").value.trim();          
             let stock = document.getElementById("productStock").value.trim();
             // let discount = document.getElementById("productDiscount").value.trim();
 
@@ -374,10 +369,7 @@ function validateAndSubmit() {
                 errorMessage += "Enter a valid base price.\n";
                 isValid = false;
             }
-            if (salesPrice === "" || isNaN(salesPrice) || Number(salesPrice) <= 0) {
-                errorMessage += "Enter a valid sales price.\n";
-                isValid = false;
-            }
+           
             if (stock === "" || isNaN(stock) || Number(stock) < 0) {
                 errorMessage += "Enter a valid stock quantity.\n";
                 isValid = false;

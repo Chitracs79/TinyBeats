@@ -1,109 +1,212 @@
 <%- include('../partials/admin/header') %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .quantity-container {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-direction: row;
+        }
+        .quantity-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          min-width: 200px;
+        }
+        .quantity-input {
+          width: 80px;
+          padding: 5px;
+          text-align: center;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+        .error-message {
+          color: red;
+          font-size: 12px;
+          margin-top: 2px;
+          display: none;
+          min-height: 16px;
+        }
+        th:nth-child(5),
+        td:nth-child(5) {
+          width: 250px;
+        }
+        
+        .search-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+          width: 100%;
+        }
+        .pagination {
+                  margin-top: 20px;
+                  justify-content: center;
+                  align-items: center;
+              }
+      
+              .pagination a {
+                  padding: 10px;
+                  margin: 4px;
+                  text-decoration: none;
+                  background-color: white;
+                  color: black;
+                  font-weight: bold;
+                  border-radius: 50%;
+                  align-items: center;
+              }
+      
+              .pagination a i {
+                  padding: 4px;
+              }
+      
+              .pagination a.active {
+                  background-color: #DAADCC;
+                  font-weight: bold;
+              }
+        
+        
+        @media (min-width: 768px) {
+          .search-container {
+            flex-direction: row;
+            justify-content: center;
+          }
+        }
+        
+        .search-form {
+          width: 100%;
+          max-width: 400px;
+        }
+        
+        .search-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
+        
+        .table-responsive {
+          overflow-x: auto;
+        }
+        
+        @media (max-width: 767px) {
+          .quantity-wrapper {
+            min-width: auto;
+          }
+          
+          th:nth-child(5),
+          td:nth-child(5) {
+            width: auto;
+          }
+          
+          .product-img {
+            height: 60px !important;
+            width: 60px !important;
+          }
+        }
+      </style>
     <section>
-        <div class="container mt-5">
-            <h1 style="font-weight: bold; font-size:1.25rem ;">Brand List</h1>
-            <div class="row mt-5">
+        <div class="container-fluid mt-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>Brands List</h2>
+                    <!-- Add brand Button to Open Modal -->
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBrandModal"
+                        style="width: auto; background-color: #946B88;border: none;">
+                        Add Brand
+                    </button>
+                </div>
+                <div class="search-container m">
+                    <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/brand">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Search by brand name"
+                            style="width: 300px;" value="<%= search %>" aria-label="Search">
 
-                <!-- Add brand Button to Open Modal -->
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBrandModal"
-                    style="width: auto; background-color: #946B88;border: none;">
-                    Add Brand
-                </button>
+                        <button class="btn btn-outline-success me-2" type="submit">Search</button>
 
-            </div>
-            <form class="d-flex mt-5 justify-content-end" method="GET" action="/admin/brand">
-                <input class="form-control me-2" type="search" name="search" placeholder="Search by brand name"
-                    style="width: 300px;" value="<%= search %>" aria-label="Search">
-
-                <button class="btn btn-outline-success me-2" type="submit">Search</button>
-
-                <% if (search && search.trim() !=="" ) { %>
-                    <a href="/admin/brand" class="btn btn-outline-danger">Clear</a>
-                    <% } %>
-            </form>
-
-            <table class="table  table-hover text-center mt-5" style="border-color: #946B88; font-size: 12px;">
-                <thead style="background-color:#DAADCC; color: white;">
-                    <tr>
-                        <th scope="col" class="text-center">#</th>
-                        <th scope="col" class="text-center">Logo</th>
-                        <th scope="col" class="text-center">Brand</th>
-                        <th scope="col" class="text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% brands.forEach(brand=> { %>
-                        <tr>
-                            <td>
-                                <%= serialNumber++ %>
-                            </td>
-                            <td>
-
-                                <img src="/uploads/re-image/<%= brand.image %>" alt="Brand Logo" width="40px" height="40px">
-                                   
-                            </td>
-                            <td>
-                                <%= brand.name %>
-                            </td>
-                           
-
-                            <td>
-                                <%if(brand.isBlocked){%>
-                                    <a href="/admin/unblockBrand?id=<%= brand._id %>"
-                                        class="btn btn-primary mx-auto me-2"
-                                        style="width:80px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
-                                        onclick="return confirm('Are you sure to block?')">
-
-                                        Unblock
-                                    </a>
-                                    <%} else {%>
-                                        <a href="/admin/blockBrand?id=<%= brand._id %>" class="btn btn-danger mx-auto "
-                                            style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
-                                            onclick="return confirm('Do you really want to unblock?')">
-                                            Block
-                                        </a>
-                                        <%}%>
-
-                                            <a href="/admin/brand/delete/<%= brand._id %>"
-                                                class="btn btn-danger mx-auto "
-                                                style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
-                                                onclick="return confirm('Are you sure to Delete?')">
-                                                Delete
-                                            </a>
-
-
-                            </td>
-
-                        </tr>
-
-
-
-
-
-                        <% }); %>
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <% if (currentPage> 1) { %>
-                    <a href="/admin/brand=<%= currentPage - 1 %>">
-                        <i class="fa-solid fa-backward"></i>
-                    </a>
-                    <% } %>
-
-                        <% for (let i=1; i <=totalPages; i++) { %>
-                            <a href="/admin/brand=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
-                                <%= i %>
-                            </a>
+                        <% if (search && search.trim() !=="" ) { %>
+                            <a href="/admin/brand" class="btn btn-outline-danger">Clear</a>
                             <% } %>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table  table-hover text-center mt-5"
+                            style="border-color: #946B88; font-size: 12px;">
+                            <thead style="background-color:#DAADCC; color: white;">
+                                <tr>
+                                    <th scope="col" class="text-center">#</th>
+                                    <th scope="col" class="text-center">Logo</th>
+                                    <th scope="col" class="text-center">Brand</th>
+                                    <th scope="col" class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% brands.forEach(brand=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= serialNumber++ %>
+                                        </td>
+                                        <td>
 
-                                <% if (currentPage < totalPages) { %>
-                                    <a href="/admin/brand=<%= currentPage + 1 %>">
-                                        <i class="fa-solid fa-forward"></i>
-                                    </a>
-                                    <% } %>
+                                            <img src="/uploads/re-image/<%= brand.image %>" alt="Brand Logo"
+                                                width="40px" height="40px">
+
+                                        </td>
+                                        <td>
+                                            <%= brand.name %>
+                                        </td>
+
+
+                                        <td>
+                                            <%if(brand.isBlocked){%>
+                                                <a href="/admin/unblockBrand?id=<%= brand._id %>"
+                                                    class="btn btn-primary mx-auto me-2"
+                                                    style="width:80px;padding:5px; font-size: 12px; font-weight: bold; background-color: #946B88;border:none;outline:none"
+                                                    onclick="return confirm('Are you sure to block?')">
+
+                                                    Unblock
+                                                </a>
+                                                <%} else {%>
+                                                    <a href="/admin/blockBrand?id=<%= brand._id %>"
+                                                        class="btn btn-danger mx-auto "
+                                                        style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
+                                                        onclick="return confirm('Do you really want to unblock?')">
+                                                        Block
+                                                    </a>
+                                                    <%}%>
+
+                                                        <a href="/admin/brand/delete/<%= brand._id %>"
+                                                            class="btn btn-danger mx-auto "
+                                                            style="width:80px; padding:5px; font-size: 12px; font-weight: bold; "
+                                                            onclick="return confirm('Are you sure to Delete?')">
+                                                            Delete
+                                                        </a>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <% if (currentPage> 1) { %>
+                        <a href="/admin/brand=<%= currentPage - 1 %>">
+                            <i class="fa-solid fa-backward"></i>
+                        </a>
+                        <% } %>
+
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <a href="/admin/brand=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+
+                                    <% if (currentPage < totalPages) { %>
+                                        <a href="/admin/brand=<%= currentPage + 1 %>">
+                                            <i class="fa-solid fa-forward"></i>
+                                        </a>
+                                        <% } %>
+                </div>
             </div>
         </div>
 
@@ -121,14 +224,6 @@
                                 <label for="brandName" class="form-label">Brand Name</label>
                                 <input type="text" class="form-control" id="brandName" name="name" required>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="brandStatus" class="form-label">Brand Status</label>
-                                <select class="form-select" id="brandStatus">
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
                             <!-- Brand Image -->
                             <div class="mb-3">
                                 <label for="brandImage" class="form-label" name="image">Brand Image</label>
@@ -145,33 +240,7 @@
 
     </section>
 
-    <style>
-        .pagination {
-            margin-top: 20px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .pagination a {
-            padding: 10px;
-            margin: 4px;
-            text-decoration: none;
-            background-color: white;
-            color: black;
-            font-weight: bold;
-            border-radius: 50%;
-            align-items: center;
-        }
-
-        .pagination a i {
-            padding: 4px;
-        }
-
-        .pagination a.active {
-            background-color: #DAADCC;
-            font-weight: bold;
-        }
-    </style>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

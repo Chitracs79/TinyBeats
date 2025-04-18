@@ -1,5 +1,5 @@
 <%- include('../../views/partials/user/header',{user:user}) %>
-
+<link rel="stylesheet" href="/styles/userprofile_style.css">
 <style>
     .order-details-card {
         border-radius: 10px;
@@ -53,7 +53,8 @@
     }
 </style>
 
-<section class="banner-area organic-breadcrumb">
+
+<!-- <section class="banner-area organic-breadcrumb">
     <div class="container">
         <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
             <div class="col-first">
@@ -67,7 +68,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <div class="container my-5">
     <div class="row">
@@ -234,7 +235,11 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal:</span>
-                                    <span>₹ <%= order.totalPrice %></span>
+                                    <span>₹ <%= (order.totalPrice - (order.totalPrice*.18)) %></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>GST:</span>
+                                    <span>₹ <%= order.totalPrice*.18 %></span>
                                 </div>
                                 <% if (order.discount > 0) { %>
                                     <div class="d-flex justify-content-between mb-2 text-success">
@@ -244,7 +249,7 @@
                                 <% } %>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Delivery Charge:</span>
-                                    <%if(order.totalPrice < 200) {%>
+                                    <%if(order.totalPrice < 1000) {%>
                                     <span>₹ 50</span>
                                     <% } else {%>
                                     <span  class="text-success">Free Shipping</span>
@@ -276,9 +281,9 @@
                             </div>
                         </div>
 
-                        <%if(order.status === 'delivered'){%>
+                       
                             <a href="/downloadInvoice?orderId=<%= order.orderId %>" class="btn btn-primary mt-2">View Invoice</a>
-                        <%}%>
+                     
 
                         <!-- Order Actions -->
                         <div class="order-actions mt-4">
