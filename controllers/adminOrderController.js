@@ -98,7 +98,6 @@ const updateStatus = async(req,res)=>{
 const orderCancel = async(req,res)=>{
   try {
     const { orderId } = req.body;
-    console.log(orderId);
 
     const order = await Order.findById(orderId);
 
@@ -113,7 +112,6 @@ const orderCancel = async(req,res)=>{
       quantity: item.quantity,
     }));
 
-    console.log(orderedItems);
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product, {
         $inc: { stock: orderedItems[i].quantity },
@@ -182,7 +180,6 @@ const updateReturnStatus = async(req,res,next)=>{
     const { orderId,status} = req.body;
     if (status === "returning") {
     
-
       const order = await Order.findByIdAndUpdate(
         orderId,
         { $set: { status: status,updatedAt:new Date()} },
@@ -211,18 +208,18 @@ const updateReturnStatus = async(req,res,next)=>{
         { new: true }
       );
 
-      await Order.findOneAndUpdate(
-        { _id: orderId },
-        { $set: { status: "cancelled"} },
-        { new: true }
-      );
+      // await Order.findOneAndUpdate(
+      //   { _id: orderId },
+      //   { $set: { status: "returned"} },
+      //   { new: true }
+      // );
   
       const orderedItems = order.orderedItems.map((item) => ({
         product: item.product,
         quantity: item.quantity,
       }));
   
-      console.log(orderedItems);
+     
       for (let i = 0; i < orderedItems.length; i++) {
         await Product.findByIdAndUpdate(orderedItems[i].product, {
           $inc: { stock: orderedItems[i].quantity },

@@ -55,18 +55,18 @@ const orderModel = new Schema({
         required:true
     },
     address: {
-      addressType: { type: String, required: true },
-      name: { type: String, required: true },
-      apartment: { type: String, required: true },
-      building: { type: String, required: true },
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      landmark: { type: String, required: true },
-      state: { type: String, required: true },
-      country: { type: String, required: true },
-      zip: { type: String, required: true },
-      phone: { type: String, required: true },
-      altPhone: { type: String, required: true },
+      addressType: { type: String, required: function() { return this.status !== 'Pending'; }},
+      name: { type: String, required: function() { return this.status !== 'Pending'; } },
+      apartment: { type: String, required: function() { return this.status !== 'Pending'; } },
+      building: { type: String, required: function() { return this.status !== 'Pending'; }},
+      street: { type: String, required: function() { return this.status !== 'Pending'; }},
+      city: { type: String, required: function() { return this.status !== 'Pending'; } },
+      landmark: { type: String, required: function() { return this.status !== 'Pending'; } },
+      state: { type: String, required: function() { return this.status !== 'Pending'; }},
+      country: { type: String, required: function() { return this.status !== 'Pending'; }},
+      zip: { type: String, required: function() { return this.status !== 'Pending'; }},
+      phone: { type: String, required: function() { return this.status !== 'Pending'; }},
+      altPhone: { type: String, required: function() { return this.status !== 'Pending'; }},
     },
     invoiceDate:{
         type:Date
@@ -120,7 +120,16 @@ const orderModel = new Schema({
     updatedAt:{
       type:Date,
     },
-    
+    razorpayOrderId: {
+      type: String,
+      unique: true,
+      sparse: true, // prevents errors if null
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Success', 'Failed'],
+      default: 'Pending'
+    }
 });
 
 

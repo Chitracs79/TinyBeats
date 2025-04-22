@@ -1,8 +1,8 @@
 
 
   
-const emailError = document.getElementById("email-error");   
-const passwordError = document.getElementById("password-error");
+const emailError = document.getElementById("signinEmail-error");   
+const passwordError = document.getElementById("signinPassword-error");
 const cpasswordError = document.getElementById("confirmPassword-error");
 const submitError = document.getElementById("submit-error");
 
@@ -14,7 +14,7 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d
 
 
 function validateEmail() {
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("signinEmail").value;
 
     if (email.length == 0) {
         emailError.textContent = "This field is required";
@@ -65,7 +65,7 @@ function validateConfirmPassword()
     return true;
 }
 
-function validateForm() {
+function validateSigninForm() {
     if ( !validateEmail() ||  !validatePassword()||!validateConfirmPassword() ) {
         submitError.style.display = "block";
         submitError.textContent = "Please fill all fields and then submit";

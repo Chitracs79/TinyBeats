@@ -47,12 +47,13 @@ const categoryInfo = async(req, res) => {
 //----------------------------add Category-----------------------------------
 const addCategory = async(req,res) => {
 
-    const {name, description } = req.body;
+    const name  = req.body.name.trim().toUpperCase();
+    const description = req.body.description;
     try {
        
-        const existingCategory = await categoryModel.findOne({name});
+        const existingCategory = await categoryModel.findOne({name:new RegExp(`^${name}$`, 'i')});
         if(existingCategory){
-            return res.status(400).json({error: "Category already exists ."});
+            return res.status(400).json({error: "Category name already exists ."});
         }
        
         const newCategory = new categoryModel({
@@ -70,20 +71,29 @@ const addCategory = async(req,res) => {
 }
 //----------------------------edit Category-----------------------------------
 
-const Category = require("../models/categoryModel");
-
-// Edit Category
 const updateCategory = async (req, res) => {
+
+        const name  = req.body.name.trim().toUpperCase();
+        const description = req.body.description;
     try {
-        const { name, description } = req.body;
+        
         const categoryId = req.params.id;
 
         if (!name || !description) {
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
 
-        await Category.findByIdAndUpdate(categoryId, { name, description });
+        const existingCategory = await categoryModel.findOne({
+            _id:{$ne:categoryId},
+            name: { $regex: `^${name}$`, $options: 'i' }
+        })
+        
+        if(existingCategory){
+            return res.status(400).json({error:"Category name already exists."})
+        }
 
+        await categoryModel.findByIdAndUpdate(categoryId, { name, description });
+      
         return res.json({ success: true, message: "Category updated successfully!" });
 
     } catch (error) {

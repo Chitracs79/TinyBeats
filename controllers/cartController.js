@@ -188,7 +188,7 @@ const changeQuantity = async (req, res) => {
 const removeFromCart = async (req, res, next) => {
     try {
         const productId = req.query.productId;
-        console.log("TestProductId", productId);
+        
 
         const userId = req.session.user;
         const user = await userModel.findById(userId);

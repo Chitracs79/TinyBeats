@@ -5,7 +5,7 @@ const loadCouponPage = async(req,res,next)=>{
     try {
         
         let coupons = await Coupon.find();
-        console.log(coupons);
+     
 
         //search
         let search = req.query.search || "";

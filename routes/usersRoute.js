@@ -28,6 +28,10 @@ router.get('/details',userAuth,userController.details);
 //loading signup page
 router.get('/signup',redirect,userController.loadSignupPage)
 router.post('/signup',userController.signup);
+//loading signin page
+ router.get('/signin', redirect,userController.loadSigninPage);
+router.post('/signin',userController.signin);
+
 
 //OTP verification page
 router.get("/verifyOtp", userController.loadVerifyOtp);
@@ -40,9 +44,6 @@ router.get(
     passport.authenticate("google", { failureRedirect: "/signup" }),
     userController.googleSession, 
   );
-//loading signin page
-router.get('/signin', redirect,userController.loadSigninPage);
-router.post('/signin',userController.signin);
 
 
 //Profile management
@@ -117,6 +118,8 @@ router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 //razorPay
 router.post("/order/createOrder",userAuth,orderController.createOrder)
 router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
+router.get('/paymentFailure',userAuth,orderController.loadPaymentFailure);
+// router.get('/order/retry/:orderId', userAuth, orderController.retryOrderPayment);
 
 
 //logout routing

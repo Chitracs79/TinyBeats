@@ -48,7 +48,7 @@ const adminAuth = (req, res, next) => {
 }
 const redirect = async(req,res,next)=>{
     if(req.session.user && req.session){
-        console.log(req.session.user);
+     
         return res.redirect('/');
     } 
 

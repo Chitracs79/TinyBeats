@@ -1,35 +1,268 @@
-<%- include("../partials/user/header") %>
-<link rel="stylesheet" href="/styles/userprofile_style.css" />
-
-<link
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyBeats</title>
+    <link rel="icon" type="image/svg" sizes="20X20" href="images/tinybeats.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <link
   href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css"
   rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/responsive.css">
+    <link rel="stylesheet" href="/styles/userprofile_style.css">
+    <style>
+      :root {
+        --primary-color: #3a86ff;
+        --secondary-color: #ff006e;
+        --light-bg: #f8f9fa;
+        --dark-bg: #212529;
+        --border-color: #dee2e6;
+        --success-color: #38b000;
+        --warning-color: #ffbe0b;
+        --danger-color: #d90429;
+      }
+      
+      body {
+        font-family: 'poppins', sans-serif;
+        background-color: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-<style>
-  .sidebar {
-    background-color: white;
+      /* Header & Nav Styles
+      .top-nav {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+      }
+
+      .navbar-brand img {
+        height: 40px;
+      }
+       */
+      .breadcrumb-wrap {
+        background-color: var(--light-bg);
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-top: 150px;
+      }
+      
+      .breadcrumb {
+        margin-bottom: 0;
+        font-size: 0.9rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      
+      .breadcrumb a {
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      
+      .breadcrumb a:hover {
+        color: var(--primary-color);
+      }
+      
+      .toggle-btn {
+        margin-left: auto;
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: #6c757d;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+      }
+      
+      .toggle-btn:hover {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+      }
+      
+      .toggle-btn i {
+        margin-right: 0.25rem;
+      }
+
+      /* Sidebar Styles */
+      .page-container {
+        display: flex;
+        flex: 1;
+      }
+      
+      #sidebar {
+        width: 280px;
+        background-color: #f8f9fa; /* Original sidebar background color */
+        border-right: 1px solid var(--border-color);
+        transition: all 0.3s;
+        z-index: 1000;
+        position: fixed;
+        height: calc(100vh - 110px); /* Adjusted height to account for header */
+        overflow-y: auto;
+        top: 110px; /* Position below nav and breadcrumb */
+      }
+      
+      .sidebar-collapsed #sidebar {
+        margin-left: -280px;
+      }
+      
+   
+      
+      .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
+        color: var(--dark-bg);
+        text-decoration: none;
+        border-radius: 0.375rem;
+        margin-bottom: 0.25rem;
+        transition: all 0.2s;
+      }
+      
+      .sidebar-link:hover {
+        background-color: rgba(0,0,0,0.05);
+      }
+      
+      .sidebar-link.active {
+        background-color: rgba(0,0,0,0.1);
+        font-weight: 500;
+      }
+      
+      .sidebar-link i {
+        margin-right: 0.75rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        flex: 1;
+        transition: all 0.3s;
+        margin-left: 280px;
+        padding: 1.5rem;
+      }
+      
+      .sidebar-collapsed .main-content {
+        margin-left: 0;
+      }
+      
+      .section-header {
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.75rem;
+      }
+
+      /* Address Card Styles */
+      .address-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.05);
+        height: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+      
+      .address-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+      }
+      
+      .address-card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+      }
+      
+      .address-card-body {
+        padding: 1.25rem;
+      }
+      
+      .address-card-footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 1.25rem;
+        background-color: var(--light-bg);
+        border-top: 1px solid var(--border-color);
+      }
+      
+      .btn-edit {
+        background-color: var(--warning-color);
+        color: white;
+        border: none;
+      }
+      
+      .btn-delete {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+      }
+      
+      .btn-add-address {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      
+      .btn-add-address:hover {
+        background-color: #2563eb;
+        color: white;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 991.98px) {
+        #sidebar {
+          margin-left: -280px;
+        }
+        
+        .sidebar-expanded #sidebar {
+          margin-left: 0;
+        }
+        
+        .main-content {
+          margin-left: 0;
+        }
+        
+        .sidebar-expanded .main-content {
+          margin-left: 280px;
+        }
+        
+        /* Add overlay when sidebar is expanded on mobile */
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0,0,0,0.5);
+          z-index: 999;
+        }
+        
+        .sidebar-expanded .sidebar-overlay {
+          display: block;
+        }
+      }
+
+    .main-content {
+    background-color: transparent;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  .sidebar a {
-    color: #333;
-    display: block;
-    padding: 10px 0;
-    text-decoration: none;
-  }
-  .sidebar a.active {
-    color: #ff6600;
-  }
-  .sidebar a:hover {
-    color: #ff6600;
-  }
-  .sidebar a i {
-    margin-right: 10px;
-  }
-  .main-content {
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
   }
   .main-content h2 {
     margin-bottom: 20px;
@@ -132,7 +365,8 @@
     color: #ffffff;
   }
   .unique-balance-card.available {
-    background-color: #4a5568;
+    background-color: #000000;
+   
   }
   .unique-balance-card.reward {
     background-color: #48bb78;
@@ -150,7 +384,7 @@
   .wallet-action-button {
     display: inline-block;
     padding: 12px 24px;
-    background-color: #4a5568;
+    background-color: #000000;
     color: white;
     text-decoration: none;
     border-radius: 8px;
@@ -214,119 +448,375 @@
 		background-color: #DAADCC;
 		font-weight: bold;
 	}
+      
+      @media (max-width: 767.98px) {
+        .breadcrumb {
+          font-size: 0.8rem;
+        }
+        
+        .section-header {
+          text-align: center;
+        }
+        
+        .profile-img {
+          width: 80px;
+          height: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Navigation -->
+    <!-- Header -->
 
-</style>
+	<header class="header trans_300">
 
+		<!-- Top Navigation -->
 
+		<div class="top_nav">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="top_nav_left">free shipping on all orders over ₹ 1000 </div>
+					</div>
+					<div class="col-md-6 text-right">
+						<div class="top_nav_right">
+							<ul class="top_nav_menu">
 
-<div class="container-fluid">
-  <div class="row">
-    <%- include('../../views/partials/user/sidebar',{user:user}) %>
-    <!-- Main Content -->
-    <div class="col-md-10 main-content"  style="padding-top: 200px;">
-      <div class="unique-container">
-        <h2 class="unique-title">Wallet & Transactions</h2>
-        <div class="row mb-4">
-          <div class="col-md-4 mb-3">
-            <div id="add-money-button" class="unique-balance-card available">
-              <p class="amount">
-                ₹
-                <% if(wallet.balance){%>
-                <span id="availableBalance"
-                  ><%= wallet.balance.toFixed(2) %></span>
-                 <%} else {%> 
-                    <span id="availableBalance"> 0 </span>
-                <%}%>
-              </p>
-              <p>Available Balance</p>
-            </div>
-          </div>
-        </div>
-        <div class="unique-button-group mb-4">
-          <button
-            class="wallet-action-button"
-            data-bs-toggle="modal"
-            data-bs-target="#addMoneyModal"
-          >
-            <i class="fas fa-plus-square"></i> Add Balance
-          </button>
-          <button
-            class="wallet-action-button"
-            data-bs-toggle="modal"
-            data-bs-target="#withdrawModal"
-          >
-            <i class="fas fa-minus-square"></i> Withdraw
-          </button>
-        </div>
-        <div class="unique-transaction-history">
-          <h3>Transaction History</h3>
-          <table class="table unique-transaction-table">
-            <thead>
-              <tr>
-                <th>Amount</th>
-                <th>Purpose</th>
-                <th>Date</th>
-                <th>Type</th>
-              </tr>
-            </thead>
-            <tbody>
-                <% if (transactions && transactions.length > 0) { %> 
-                <%transactions.forEach((transaction)=>{%>
-            
-              
-              <tr>
-                <td>₹<%= transaction?.amount.toFixed(2) %></td>
-                <td><%= transaction.description %></td>
-                <td>
-                  <%= new Date(transaction.date).toLocaleDateString() %>
-                </td>
-                <td>
-                  <span
-                    class="transaction-status <%= transaction.type === 'credit' ? 'status-credit' : 'status-debit' %>"
-                  >
-                    <%= transaction.type.charAt(0).toUpperCase() +
-                    transaction.type.slice(1) %>
-                  </span>
-                </td>
-              </tr>
-              <%})%> <% } else { %>
-              <tr>
-                <td colspan="4" class="text-center">No transactions found</td>
-              </tr>
-              <% } %>
-            </tbody>            
-          </table>
-          				 <!-- Pagination -->
-				 <div class="pagination-container">
-					<div class="pagination">
-						<% if (currentPage> 1) { %>
-							<a href="?page=<%= currentPage - 1 %>">
-								<i class="fa-solid fa-backward"></i>
-							</a>
-						<% } %>
+								<!-- Currency / Language / My Account -->
 
-						<% for (let i=1; i <=totalPages; i++) { %>
-							<a href="?page=<%= i %>"
-									class="<%= currentPage === i ? 'active' : '' %>">
-								<%= i %>
-							</a>
-						<% } %>
-
-						<% if (currentPage < totalPages) { %>
-								<a href="?page=<%= currentPage + 1 %>">
-									<i class="fa-solid fa-forward"></i>
-								</a>
-						<% } %>
+								<li class="currency">
+									<a href="#">
+										₹
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<ul class="currency_selection">
+										<li><a href="#">inr</a></li>
+										<li><a href="#">usd</a></li>
+										<li><a href="#">eur</a></li>
+									</ul>
+								</li>
+								<li class="language">
+									<a href="#">
+										English
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<ul class="language_selection">
+										<li><a href="#">Arabic</a></li>
+										<li><a href="#">French</a></li>
+										
+									</ul>
+								</li>
+								<li class="account">
+									<a href="#">
+										<% if (typeof user !== 'undefined' && user)  { %>
+											<%= user.name %> <!-- Show user name when logged in -->
+										<% } else { %>
+											My Account
+										<% } %>
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<ul class="account_selection">
+									
+										<% if (typeof user !== 'undefined' && user)  { %>
+											<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+											<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+										<% } else { %>
+											<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+											<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+										<% } %>
+										
+									</ul>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
-				<!-- pagination ends -->
+			</div>
+		</div>
+
+		<!-- Main Navigation -->
+
+		<div class="main_nav_container">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 text-right">
+						<div class="logo_container">
+							<a href="#"><img src="images/tinybeats.png" alt="logo" style="width:100px;height:100px"></a>
+						</div>
+						<nav class="navbar">
+							<ul class="navbar_menu">
+								<li><a href="/shop">Shop</a></li>
+								<li><a href="#">Clothes</a></li>
+								<li><a href="#">Essentials</a></li>
+								<li><a href="#">Feeding</a></li>
+								<li><a href="#">Playtime</a></li>
+								<li><a href="#">Travel</a></li>
+								<li><a href="contact.html">contact</a></li>
+							</ul>
+							<ul class="navbar_user">
+								<!-- <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li> -->
+								<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                                <li><a href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+								<li class="checkout">
+									<a href="/cart">
+										<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+										<!-- <span id="checkout_items" class="checkout_items">2</span> -->
+									</a>
+								</li>
+							</ul>
+							<div class="hamburger_container">
+								<i class="fa fa-bars" aria-hidden="true"></i>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</header>
+
+	<div class="fs_menu_overlay"></div>
+	<div class="hamburger_menu">
+		<div class="hamburger_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+		<div class="hamburger_menu_content text-right">
+			<ul class="menu_top_nav">
+				<li class="menu_item has-children">
+					<a href="#">
+						₹
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="menu_selection">
+						<li><a href="#">inr</a></li>
+						<li><a href="#">usd</a></li>
+						<li><a href="#">eur</a></li>
+					</ul>
+				</li>
+				<li class="menu_item has-children">
+					<a href="#">
+						English
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="menu_selection">
+						<li><a href="#">Arabic</a></li>
+						<li><a href="#">French</a></li>
+					</ul>
+				</li>
+				<li class="menu_item has-children">
+					<a href="#">
+						<% if (typeof user !== 'undefined' && user)  { %>
+							<%= user.name %> <!-- Show user name when logged in -->
+						<% } else { %>
+							My Account
+						<% } %>
+						<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="menu_selection">
+						<% if (typeof user !== 'undefined' && user)  { %>
+							<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+							<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+						<% } else { %>
+							<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+							<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+						<% } %>
+					</ul>
+				</li>
+				<li class="menu_item"><a href="/shop">Shop</a></li>
+				<li class="menu_item"><a href="#">Clothes</a></li>
+				<li class="menu_item"><a href="#">Essentials</a></li>
+				<li class="menu_item"><a href="#">Feeding</a></li>
+				<li class="menu_item"><a href="#">Playtime</a></li>
+				<li class="menu_item"><a href="#">Travel</a></li>              
+				<li class="menu_item"><a href="#">Contact</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+    <!-- Breadcrumb Navigation with Toggle Button -->
+    <div class="breadcrumb-wrap">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="breadcrumb">
+            <a href="/home" rel="nofollow">Home &nbsp; > &nbsp;</a>
+            <a href="/wallet" rel="nofollow">Wallet &nbsp; > &nbsp;</a>
+          </div>
+          <button id="sidebarToggle" class="toggle-btn">
+            <i class="fas fa-bars"></i> Menu
+          </button>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Add Money Modal -->
+    <div class="page-container">
+      <!-- Sidebar Overlay (Mobile only) -->
+      <div class="sidebar-overlay"></div>
+      
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="p-4">
+          <!-- Profile Image -->
+         
+          <div class="sidebar-profileImage ">
+            <img src="<%= user.profileImage? user.profileImage : 'images/single_2_thumb.jpg' %>" alt="" class="profile-img">
+    
+            <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
+                <input type="file" class="inputFile" name="profileImage" required>
+                <button type="submit" class="upload-btn"><i class="fa-solid fa-upload"></i></button>
+            </form>
+
+            <h4 class="sidebar-username" ><%= user.name %></h4>
+        </div>
+          
+          
+          <!-- Navigation -->
+          <div class="sidebar-nav">
+            <div class="sidebar-section mb-3">
+              <p class=" text-uppercase small fw-bold mb-2 "style="color: white;">Orders</p>
+              <a href="/orders" class="sidebar-link">
+                <i class="fa fa-shopping-cart"></i>
+                <span>Orders</span>
+              </a>
+              <a href="/wishlist" class="sidebar-link">
+                <i class="fa fa-heart"></i>
+                <span>Wishlist</span>
+              </a>
+            </div>
+            
+            <div class="sidebar-section">
+              <p class=" text-uppercase small fw-bold mb-2 "style="color: white;">Personal</p>
+              <a href="/userprofile" class="sidebar-link">
+                <i class="fa fa-user"></i>
+                <span>My Profile</span>
+              </a>
+              <a href="/wallet" class="sidebar-link active">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
+              </a>
+              <a href="/address" class="sidebar-link ">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Address</span>
+              </a>
+              
+            </div>
+            <div class="mt-4 pt-3 border-top">
+                <a href="#" class="sidebar-link" id="logoutBtn">
+                  <i class="fa-solid fa-right-from-bracket"></i>
+                  <span>Logout</span>
+                </a>
+              </div>              
+          </div>
+          
+
+        </div>
+      </aside>
+
+     <!-- ------------------------------------------------------------- -->
+
+      <!-- Main Content -->
+    <div class="col-md-10 main-content" >
+        <div class="unique-container">
+          <h2 class="unique-title">Wallet & Transactions</h2>
+          <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+              <div id="add-money-button" class="unique-balance-card available">
+                <p class="amount">
+                  ₹
+                  <% if(wallet.balance){%>
+                  <span id="availableBalance"
+                    ><%= wallet.balance.toFixed(2) %></span>
+                   <%} else {%> 
+                      <span id="availableBalance"> 0 </span>
+                  <%}%>
+                </p>
+                <p>Available Balance</p>
+              </div>
+            </div>
+          </div>
+          <div class="unique-button-group mb-4">
+            <button
+              class="wallet-action-button"
+              data-bs-toggle="modal"
+              data-bs-target="#addMoneyModal"
+            >
+              <i class="fas fa-plus-square"></i> Add Balance
+            </button>
+            <button
+              class="wallet-action-button"
+              data-bs-toggle="modal"
+              data-bs-target="#withdrawModal"
+            >
+              <i class="fas fa-minus-square"></i> Withdraw
+            </button>
+          </div>
+          <div class="unique-transaction-history">
+            <h3>Transaction History</h3>
+            <table class="table unique-transaction-table">
+              <thead>
+                <tr>
+                  <th>Amount</th>
+                  <th>Purpose</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <% if (transactions && transactions.length > 0) { %> 
+                  <%transactions.forEach((transaction)=>{%>
+              
+                
+                <tr>
+                  <td>₹<%= transaction?.amount.toFixed(2) %></td>
+                  <td><%= transaction.description %></td>
+                  <td>
+                    <%= new Date(transaction.date).toLocaleDateString() %>
+                  </td>
+                  <td>
+                    <span
+                      class="transaction-status <%= transaction.type === 'credit' ? 'status-credit' : 'status-debit' %>"
+                    >
+                      <%= transaction.type.charAt(0).toUpperCase() +
+                      transaction.type.slice(1) %>
+                    </span>
+                  </td>
+                </tr>
+                <%})%> <% } else { %>
+                <tr>
+                  <td colspan="4" class="text-center">No transactions found</td>
+                </tr>
+                <% } %>
+              </tbody>            
+            </table>
+                             <!-- Pagination -->
+                   <div class="pagination-container">
+                      <div class="pagination">
+                          <% if (currentPage> 1) { %>
+                              <a href="?page=<%= currentPage - 1 %>">
+                                  <i class="fa-solid fa-backward"></i>
+                              </a>
+                          <% } %>
+  
+                          <% for (let i=1; i <=totalPages; i++) { %>
+                              <a href="?page=<%= i %>"
+                                      class="<%= currentPage === i ? 'active' : '' %>">
+                                  <%= i %>
+                              </a>
+                          <% } %>
+  
+                          <% if (currentPage < totalPages) { %>
+                                  <a href="?page=<%= currentPage + 1 %>">
+                                      <i class="fa-solid fa-forward"></i>
+                                  </a>
+                          <% } %>
+                      </div>
+                  </div>
+                  <!-- pagination ends -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Add Money Modal -->
 <div class="modal fade" id="addMoneyModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -411,8 +901,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-  function setAmount(amount) {
+     <!-- ------------------------------------------------------------------- -->
+    
+  <script>
+      function setAmount(amount) {
     document.getElementById("amount").value = amount;
   }
 
@@ -526,6 +1018,64 @@
         alert("Failed to withdraw money. Please try again.");
       }
     });
-</script>
 
-<%- include("../partials/user/footer") %>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Toggle sidebar functionality
+        const body = document.body;
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.querySelector('.sidebar-overlay');
+        
+        // Default state for different screen sizes
+        if (window.innerWidth < 992) {
+          body.classList.add('sidebar-collapsed');
+        } else {
+          body.classList.remove('sidebar-collapsed');
+        }
+        
+        // Toggle sidebar on button click
+        sidebarToggle.addEventListener('click', () => {
+          if (window.innerWidth < 992) {
+            body.classList.toggle('sidebar-expanded');
+          } else {
+            body.classList.toggle('sidebar-collapsed');
+          }
+        });
+        
+        // Close sidebar when clicking overlay (mobile only)
+        sidebarOverlay.addEventListener('click', () => {
+          body.classList.remove('sidebar-expanded');
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 992) {
+            body.classList.remove('sidebar-expanded');
+          } else {
+            body.classList.add('sidebar-collapsed');
+          }
+        });
+      });
+
+  document.getElementById('logoutBtn').addEventListener('click', function (e) {
+    e.preventDefault(); // prevent default navigation
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, logout'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Redirect to logout
+        window.location.href = '/logout';
+      }
+    });
+  });
+
+
+    </script>
+
+<%- include('../../views/partials/user/footer') %>

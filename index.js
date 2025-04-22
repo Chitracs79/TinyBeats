@@ -5,6 +5,7 @@ const nocache = require("nocache")
 const session = require("express-session");
 const passport = require("./config/passport");
 const flash = require("connect-flash");
+const multer = require('multer');
 const middleware = require('./middlewares/middleware');
 const usersRouter = require('./routes/usersRoute');
 const adminRouter = require('./routes/adminRoute');
@@ -46,17 +47,24 @@ connectDB();
 app.use('/',usersRouter)
 app.use('/admin',adminRouter);
 
-
-
-//error handling middleware
+//Error Handler
 app.use((err, req, res, next) => {
-    console.error(err.stack); 
+    console.error("Error caught:", err);
+
+    if (err instanceof multer.MulterError) {
+     
+        return res.status(400).json({ success: false, message: err.message });
+    } else if (err && err.message === "Only image files are allowed!") {
+      
+        return res.status(400).json({ success: false, message: err.message });
+    }
 
     res.status(err.status || 500).json({
         success: false,
         message: err.message || 'Internal Server Error'
     });
 });
+
 
 //start server
 const port  = process.env.PORT || 3000;

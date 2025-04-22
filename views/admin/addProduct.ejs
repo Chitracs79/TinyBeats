@@ -108,13 +108,14 @@
                 </div>
             </form>
     </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.getElementById("imageInput").addEventListener("change", handleImageUpload);
         let croppers = {};
 
         function handleImageUpload(event) {
             const files = event.target.files;
-            console.log("selected Files ", files);
             if (files.length === 0) {
                 console.error("No files selected!");
             }
@@ -122,8 +123,16 @@
             imagePreviewContainer.innerHTML = ""; // Clear previous images
 
             Array.from(files).forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function () {
+                if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
+                    Swal.fire({
+                    icon: "error",
+                    title: "Invalid File Type",
+                    text: `File "${file.name}" is not a valid image. Only JPG, PNG, and JPEG are allowed.`,
+                    });
+                    return;
+                    }
+                     const reader = new FileReader();
+                     reader.onload = function () {
                     const dataURL = reader.result;
 
                     // Create image preview element
@@ -148,8 +157,8 @@
                     cropButton.style.left = "5px";
                     cropButton.setAttribute("type", "button");
                     cropButton.addEventListener("click", (event) => {
-                        event.preventDefault(); //Stop unintended behavior
-                        event.stopPropagation(); // Prevent bubbling issues
+                        event.preventDefault(); 
+                        event.stopPropagation(); 
                         openCropper(index, dataURL);
                     });
 
@@ -167,13 +176,13 @@
             }
 
 
-            // Remove any existing modal to prevent duplicates
+         
             const existingModal = document.getElementById("cropperModal");
             if (existingModal) {
                 existingModal.parentNode.removeChild(existingModal);
             }
 
-            // Create modal element
+            
             const cropperModal = document.createElement("div");
             cropperModal.setAttribute("id", "cropperModal");
             cropperModal.innerHTML = `
@@ -198,12 +207,11 @@
 
             document.body.appendChild(cropperModal);
 
-            // Ensure croppers object is defined globally
             if (typeof croppers === "undefined") {
                 window.croppers = {};
             }
 
-            // Initialize CropperJS
+          
             const imageElement = document.getElementById(`cropImage${index}`);
             croppers[index] = new Cropper(imageElement, {
                 aspectRatio: 1,
@@ -217,10 +225,6 @@
         function cropAndSave(index) {
             const croppedCanvas = croppers[index].getCroppedCanvas({ width: 200, height: 200 });
             const croppedImagesContainer = document.getElementById("croppedImagesContainer");
-
-            // croppedCanvas.toBlob(blob => {
-            //     const file = new File([blob], `cropped_${Date.now()}.png`, { type: "image/png" });
-
             croppedCanvas.toBlob(blob => {
         if (!blob) {
             console.error("Cropped image blob is null!");
@@ -229,15 +233,15 @@
 
         const file = new File([blob], `cropped_image_${index}.png`, { type: 'image/png' });
 
-                //  Create a new hidden input for each cropped image
+               
                 const input = document.createElement("input");
                 input.type = "hidden";
-                input.name = "croppedImages"; // Use name="croppedImages" to receive them in `req.body`
+                input.name = "croppedImages"; 
 
-                // Convert Blob to Base64 (workaround since `input[type=file]` doesn’t allow programmatic file assignment)
+              
                 const reader = new FileReader();
                 reader.onloadend = function () {
-                    input.value = reader.result;  // Store Base64 image data
+                    input.value = reader.result;  
                 };
                 reader.readAsDataURL(blob);
 
@@ -271,24 +275,28 @@
     <script>
 
 function validateAndSubmit() {
-    // Validate the form first
+   
     
     if (validateForm()) {
 
-        // Check if all images are cropped before submitting
+       
         if (Object.keys(croppers).length > 0) {
-            alert("Please crop all images before submitting.");
+           Swal.fire({
+            icon:"warning",
+            title:"Error",
+            text:"Please crop all the images before submission."
+           })
             return false;
         }
 
-        // Prepare the form data
+     
         let form = document.forms[0];
         let formData = new FormData(form);
 
-        // Log submission to the console for debugging
+        
         console.log("Submitting form via fetch...");
 
-        // Use fetch to submit the form asynchronously
+      
         fetch(form.action, {
             method: "POST",
             body: formData
@@ -309,15 +317,14 @@ function validateAndSubmit() {
             })
                 
             }
-           
-           console.log("Success:", data);
-            // After fetch success, submit the form normally
-            console.log("Form submission successful, now submitting the form normally...");
-            // document.forms[0].submit();
         })
         .catch(error => {
-            console.error("Error:", error);
-            alert("There was an error submitting the form.");
+            console.error("Fetch Error:", error);
+            Swal.fire({
+                icon:"error",
+                title: "Submission Failed",
+                text:"An unexpected occur, please try again later."
+            });
         });
     }
 }
@@ -389,7 +396,11 @@ function validateAndSubmit() {
 
             // Show error messages if validation fails
             if (!isValid) {
-                alert(errorMessage);
+                Swal.fire({
+                    icon:"warning",
+                    title:"Validation Error",
+                    html: errorMessage.replace(/\n/g, "<br>"), 
+                });
             }
 
             return isValid;

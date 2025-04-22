@@ -62,17 +62,20 @@
                                 <span class="error" id="landmark-error"></span>
                               </div>
 
-                              <div class="col-md-6">
-                                <label for="state" class="form-label" >State</label>
-                                <input type="text" id="state" class="form-control" name="state" value="<%= address.state%>" onkeyup="validateState()">
-                                <span class="error" id="state-error"></span>
+                              <div class="col-md-6 form-group">
+                                <label for="country">Country</label>
+                                <select id="country" class="form-control" name="country">
+                                  <option value="">Select Country</option>
+                                </select>
                               </div>
-
-                            <div class="col-md-6">
-                              <label for="country" class="form-label">Country</label>
-                              <input type="text" id="country" class="form-control" name="country" value="<%= address.country%>" onkeyup="validateCountry()">
-                              <span class="error" id="country-error"></span>
-                            </div>
+                          
+                              <!-- State Dropdown -->
+                              <div class="col-md-6 form-group mt-3">
+                                <label for="state">State</label>
+                                <select id="state" class="form-control" name="state">
+                                  <option value="">Select State </option>
+                                </select>
+                              </div>
 
                             <div class="col-md-6 ">
                               <label for="zip" class="form-label">Zip</label>
@@ -109,6 +112,57 @@
 
     </section>
     <script>
+      // Country/State Dropdown Integration
+      const countrySelect = document.getElementById('country');
+      const stateSelect = document.getElementById('state');
+
+      if (countrySelect && stateSelect) {
+          // Load countries
+          fetch("https://countriesnow.space/api/v0.1/countries/positions")
+              .then(res => res.json())
+              .then(data => {
+                  data.data.forEach(country => {
+                      const option = document.createElement("option");
+                      option.value = country.name;
+                      option.textContent = country.name;
+                      countrySelect.appendChild(option);
+                  });
+              });
+
+          // On change of country, load states
+          countrySelect.addEventListener("change", () => {
+              const selectedCountry = countrySelect.value;
+              stateSelect.innerHTML = '<option value="">Select State</option>';
+
+              if (!selectedCountry) return;
+
+              fetch("https://countriesnow.space/api/v0.1/countries/states", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ country: selectedCountry })
+              })
+                  .then(res => res.json())
+                  .then(data => {
+                      const states = data.data.states;
+                      if (!states || states.length === 0) {
+                          const opt = document.createElement("option");
+                          opt.textContent = "No states found";
+                          stateSelect.appendChild(opt);
+                          return;
+                      }
+
+                      states.forEach(state => {
+                          const opt = document.createElement("option");
+                          opt.value = state.name;
+                          opt.textContent = state.name;
+                          stateSelect.appendChild(opt);
+                      });
+                  })
+                  .catch(err => {
+                      console.error("Failed to fetch states", err);
+                  });
+          });
+      }
         document.querySelector("#editAddressForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             

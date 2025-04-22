@@ -373,7 +373,7 @@ const loadShoppingPage = async (req, res, next) => {
         const categoryIds = categories.map(category => category._id);
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 6;
+        const limit = 8;
         const skip = (page - 1) * limit;
 
         const products = await productModel.find({
@@ -468,11 +468,13 @@ const loadHomePage = async (req, res) => {
 // ------------------------------------------loading signup page----------------------------------------------------------------------------
 const loadSignupPage = async (req, res) => {
     try {
-        return res.render('users/signup')
+        // const { tab } = req.query; // tab=signin or signup
+        res.render('users/signup', { tab: 'signup' });
     } catch (error) {
-        res.status(500).send("Server errror");
+        res.status(500).send("Server error");
     }
 }
+
 
 // Function to generate a 6-digit OTP
 function generateOtp(length = 6) {
@@ -590,8 +592,7 @@ function generateReferralCode(input) {
   }
 const verifyOtp = async (req, res) => {
     try {
-        console.log("Hai OTP");
-        console.log(req.body);
+        
         const { otp } = req.body;
         console.log("Otp Verified:",otp);
 
@@ -619,7 +620,7 @@ const verifyOtp = async (req, res) => {
       
       
             const referralCode =  generateReferralCode(user.name);
-            console.log(referralCode)    
+              
 
             const saveUserData = new userModel({
                 name: user.name,
@@ -679,7 +680,7 @@ const resendOtp = async (req, res) => {
 const loadSigninPage = async (req, res) => {
 
     try {
-        return res.render('users/signin');
+        res.render('users/signup', { tab: 'signin' });
     }
     catch (error) {
         res.redirect("/pageNotFound");
@@ -723,7 +724,7 @@ const logout = async (req, res) => {
 
         req.session.destroy((err) => {
             if (err) {
-                console.log("Session destruction errro", err);
+                console.log("Session destruction error", err);
                 return res.redirect('pageNotFound');
             }
             return res.redirect('/');
@@ -750,11 +751,7 @@ const loadPageNotFound = async (req, res) => {
 const googleSession = async (req, res) => {
 
     req.session.user = req.user._id;
-    console.log("rsu",req.session.user);
     res.redirect("/");
-
-
-
 }
 
 
@@ -765,7 +762,7 @@ module.exports = {
     loadPageNotFound,
     loadSignupPage, signup,
     loadVerifyOtp, verifyOtp, resendOtp,
-    loadSigninPage, signin,
+    loadSigninPage,signin,
     logout, googleSession,
 
 }

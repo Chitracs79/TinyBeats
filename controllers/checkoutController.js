@@ -75,7 +75,7 @@ const loadCheckoutPage = async (req, res) => {
       } else {
         grandTotal= subtotal;
       }
-      console.log(grandTotal);
+     
       if(cartItems.length > 0){
         res.render("users/checkout", {
             user,
@@ -176,7 +176,7 @@ const applyCoupon = async(req,res,next)=>{
 
        await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:coupon.offerPrice}},{new:true});
        res.status(200).json({success:true, message:"Coupon applied", coupon});
-       console.log(coupon);
+       
     } catch (error) {
         next(error)
     }

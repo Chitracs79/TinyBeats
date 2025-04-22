@@ -1,31 +1,37 @@
 <link rel="stylesheet" href="styles/signup_styles.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
     integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <div class="container" id="container">
+
     <div class="form-container sign-up-container">
+
         <form method="post" action="/signup" id="signup-form">
             <h1>Create Account</h1>
+
             <div class="social-container">
-                <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
-                <a href="/auth/google" class="social"><i class="fab fa-google"></i></a>
-                  <!-- <a href="#" class="social"><i class="fab fa-instagram"></i></a>
-                <a href="#" class=" social"><i class="fab fa-apple"></i></a> --->
+                <a href="/auth/google" class="social"><i class="fab fa-google"></i></a>             
             </div>
+
             <span>or use your email for registration</span>
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
             <input type="text" name="name" placeholder="Name" id="name" class=form-control onkeyup="validateName()" />
             <span class="error" id="name-error"></span>
 
-            <input type="email" name="email" placeholder="Email" id="email" class=form-control onkeyup="validateEmail()"/>
-            <span class="error" id="email-error"></span>
+            <input type="email" name="email" placeholder="Email" id="signupEmail" class=form-control onkeyup="validateEmail()"/>
+            <span class="error" id="signupEmail-error"></span>
 
             <input type="text" name="phone" placeholder="Phone Number" id="phone" class=form-control onkeyup="validatePhone()"/>
             <span class="error" id="phone-error"></span>
-
-            <input type="password" name="password" placeholder="Password" id="password" class=form-control onkeyup="validatePassword()"/>
-            <span class="error" id="password-error"></span>
+             
+            <div style="position: relative;">
+                <input type="password" id="signupPassword" name="password" placeholder="Password" class=form-control
+                    onkeyup="validatePassword()" style="width:282px;padding-right: 40px;" />
+                <i class="fa-solid fa-eye" id="toggleSignupPassword"
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                <span class="error" id="signupPassword-error"></span>
+            </div>
 
             <input type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword"
                 class=form-control onkeyup="validateConfirmPassword() " />
@@ -35,7 +41,7 @@
             <input type="text" name="referral" placeholder="Referral code (Optional)" id="referral" class=form-control />
             
 
-            <button type="submit" class="formSubmit" onclick="return validateForm()">Sign Up</button>
+            <button type="submit" class="formSubmit" onclick="return validateSignupForm()">Sign Up</button>
             <span class=" error" id="submit-error"></span>
 
             <% if(locals.message && message.length > 0) { %>
@@ -45,25 +51,42 @@
         </form>
     </div>
 
-    <!---------------------------------------------------------------------------- ----------------------------------------------------------------------------- -->
     <div class="form-container sign-in-container">
+
         <form method="post" action="/signin">
+
             <h1>Sign in</h1>
-            <div class="social-container">
-                <!-- <a href="#" class="social"><i class="fab fa-facebook-f"></i></a> -->
-                <a href="/auth/google" class="social"><i class="fab fa-google"></i></a>
-                <!-- <a href="#" class="social"><i class="fab fa-instagram"></i></a>
-                <a href="#" class=" social"><i class="fab fa-apple"></i></a> -->
+
+            <div class="social-container">                          
+                <a href="/auth/google" class="social"><i class="fab fa-google"></i></a>               
             </div>
             <span>or use your account</span>
-            <input type="email" name="email" placeholder="Email" />
-            <input type="password" name = "password"placeholder="Password" />
-            <a href="/forgotPassword">Forgot your password?</a>
-            <button>Sign In</button>
+            <input type="email" name="email" placeholder="Email" id="signinEmail" class=form-control
+                onkeyup="validateEmail()" />
+            <span class="error" id="signinEmail-error"></span>
 
+            <div style="position: relative;">
+                <input type="password" id="signinPassword" name="password" placeholder="Password" class=form-control
+                    onkeyup="validatePassword()" style="width:282px;padding-right: 40px;" />
+                <i class="fa-solid fa-eye" id="toggleSigninPassword"
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                <span class="error" id="signinPassword-error"></span>
+            </div>
+
+
+            <a href="/forgotPassword">Forgot your password?</a>
+            <button type="submit" class="formSubmit" onclick="return validateSigninForm()">Sign In</button>
+            <span class=" error" id="submit-error"></span>
+
+            <% if(locals.message && message.length> 0) { %>
+                <span style="color: crimson; font-size: 12px; font-weight: bold; padding: 20px;">
+                    <%= message %>
+                </span>
+                <% } %>
            
         </form>
     </div>
+
     <div class="overlay-container">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
@@ -81,3 +104,32 @@
 </div>
 <script src="js/signup.js"></script>
 <script src="js/valSignup.js"></script>
+<script src="js/valSignin.js"></script>
+<script>
+    // SIGN UP password toggle
+    const toggleSignupPassword = document.getElementById('toggleSignupPassword');
+    const signupPassword = document.getElementById('signupPassword');
+
+    toggleSignupPassword.addEventListener('click', () => {
+        const type = signupPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        signupPassword.setAttribute('type', type);
+        toggleSignupPassword.classList.toggle('fa-eye');
+        toggleSignupPassword.classList.toggle('fa-eye-slash');
+    });
+
+    // SIGN IN password toggle
+    const toggleSigninPassword = document.getElementById('toggleSigninPassword');
+    const signinPassword = document.getElementById('signinPassword');
+
+    toggleSigninPassword.addEventListener('click', () => {
+        const type = signinPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        signinPassword.setAttribute('type', type);
+        toggleSigninPassword.classList.toggle('fa-eye');
+        toggleSigninPassword.classList.toggle('fa-eye-slash');
+    });
+
+    <% if (tab === 'signup') { %>
+        document.getElementById('container').classList.add('right-panel-active');
+    <% } %>
+
+</script>

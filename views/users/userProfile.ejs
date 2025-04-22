@@ -269,6 +269,9 @@
           width: 80px;
           height: 80px;
         }
+        .form-control{
+            width:350px;
+        }
       }
     </style>
   </head>
@@ -445,7 +448,7 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <div class="breadcrumb">
-            <a href="/home" rel="nofollow">Home &nbsp; > &nbsp;</a>
+            <a href="/" rel="nofollow">Home &nbsp; > &nbsp;</a>
             <a href="/profile" rel="nofollow">Profile &nbsp; > &nbsp;</a>
           </div>
           <button id="sidebarToggle" class="toggle-btn">
@@ -492,7 +495,7 @@
             
             <div class="sidebar-section">
               <p class=" text-uppercase small fw-bold mb-2 "style="color: white;">Personal</p>
-              <a href="/profile" class="sidebar-link">
+              <a href="/userprofile" class="sidebar-link  active">
                 <i class="fa fa-user"></i>
                 <span>My Profile</span>
               </a>
@@ -500,7 +503,7 @@
                 <i class="fa-solid fa-wallet"></i>
                 <span>Wallet</span>
               </a>
-              <a href="/address" class="sidebar-link active">
+              <a href="/address" class="sidebar-link">
                 <i class="fa-solid fa-location-dot"></i>
                 <span>Address</span>
               </a>
@@ -522,24 +525,24 @@
         <div class="container mt-4">
             <h4 class="pb-3">My Profile</h4>
             <div class="row">
-            <div class="col-md-6 mb-3">
+            <div class="col-md-6 col-12 mb-3">
                 <label for="userName" class="form-label">Username</label>
                 <input type="text" class="form-control" id="name" value="<%=user.name%>"
                     placeholder="">
             </div>
 
-            <div class="col-md-6 mb-3">
+            <div class="col-md-6 col-12 mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="text" class="form-control" id="email" value="<%=user.email%>"
                     placeholder="">
             </div>
 
-            <div class="col-md-6 mb-3">
+            <div class="col-md-6 col-12 mb-3">
                 <label for="phone" class="form-label">Phone No</label>
                 <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
                     placeholder="">
             </div>
-            <div class="col-md-6 mt-3">
+            <div class="col-md-6 col-12 mt-3">
                 <label for="">Referral Code</label>
                <h5 class="text-success"><% if(user.referralCode) {%>
                                   <%= user.referralCode %> 

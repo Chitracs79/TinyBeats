@@ -86,13 +86,13 @@ const loadverifyForgotPassOtp = async (req, res) => {
 }
 const verifyForgotPassOtp = async (req, res) => {
     try {
-        console.log("hai");
+       
         const { otp } = req.body;
         console.log(otp);
 
         if (otp === req.session.userOtp) {
             req.session.resetAllowed = true;
-            console.log("Checking");    
+             
             res.json({ success: true, redirectUrl: '/resetPassword' })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
@@ -132,7 +132,7 @@ const resendOtp = async (req, res) => {
 //--------------------------loading reset password page---------------------------
 const loadResetPasswordPage = async (req, res) => {
     try {
-        console.log("Reset password page testing")
+      
         res.render('users/resetPassword');
     } catch (error) {
 
@@ -194,13 +194,12 @@ const uploadProfile = async (req, res, next) => {
         if (!req.file) {
             return res.status(400).send("No file uploaded.");
         }
-
         const updatedUser = await userModel.findByIdAndUpdate(
-            req.session.user._id,
+            req.session.user,
             { profileImage: '/uploads/re-image/' + req.file.filename },
             { new: true }
         );
-        console.log(updatedUser);
+        
         
         if (!updatedUser) {
             return next(new Error("User not found."));
@@ -236,7 +235,7 @@ const changeEmail = async (req, res) => {
         const { currentEmail, newEmail } = req.body;
 
         const user = await userModel.findById(userid);
-        console.log("user in changeEmail is ", user);
+      ;
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -267,29 +266,29 @@ const loadChangePassword = async (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const { currentPassword, password, confirmPassword } = req.body;
+      
         const userId = req.session.user;
+      
         const user = await userModel.findById(userId);
         const match = await bcrypt.compare(currentPassword,user.password);
 
         if(!match){
-            return res.render('users/changePassword',{ message: "Incorrect current password" })
+            return res.status(400).json({ success: false, message: "Incorrect current password" });
         }
 
-        if (password === confirmPassword) {
-            const passwordHash = await securePassword(password);
-            await userModel.updateOne(
-                { _id: userId },
-                { $set: { password: passwordHash } }
-            )
-           
-            res.redirect('/signin')
-        } else {
-            res.render('users/changePassword', { message: "password doesnot match" });
+        if (password !== confirmPassword) {
+            return res.status(400).json({ success: false, message: "Passwords do not match" });
         }
+
+        const passwordHash = await securePassword(password);
+        await userModel.updateOne({ _id: userId }, { $set: { password: passwordHash } });
+
+        res.status(200).json({ success: true, message: "Password updated successfully" });
     } catch (error) {
-        res.redirect('/pageNotFound');
+        res.status(500).json({ success: false, message: "Server error" });
     }
 }
+
 
 const emailValid = async (req, res) => {
     try {
@@ -353,7 +352,7 @@ const addAddressPage = async (req, res) => {
         if (mongoose.isValidObjectId(userId)) {
             const userData = await userModel.findOne({ _id: userId });
             const { addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone } = req.body;
-            console.log(req.body);
+          
             const userAddress = await addressModel.findOne({ userId: userData._id });
             if (!userAddress) {
                 const newAddress = new addressModel({
@@ -374,11 +373,11 @@ const addAddressPage = async (req, res) => {
                     }]
                 });
                 await newAddress.save();
-                console.log("Address Saved!");
+            
             } else {
                 userAddress.address.push({ addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone });
                 await userAddress.save();
-                console.log("Appended Address saved!")
+             
             }
 
             res.redirect("/address");
@@ -407,7 +406,7 @@ const loadEditAddress = async (req, res) => {
             }
 
             const addressData = currentAddress.address.find(addr => addr._id == addressId);
-            console.log(addressData);
+          
             if (!addressData) {
                 return res.status(404).send("Address not found");
             }

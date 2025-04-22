@@ -134,38 +134,38 @@ function validateLandmark() {
      landmarkError.textContent = '';
     return true;
 }
-function validateState() {
-    const state = document.getElementById("state").value;
+// function validateState() {
+//     const state = document.getElementById("state").value;
 
-    if (state.length == 0) {
-        stateError.textContent = "This field is required";
-        return false;
-    }
+//     if (state.length == 0) {
+//         stateError.textContent = "This field is required";
+//         return false;
+//     }
 
-    if (!cityRegex.test(state)) {
-        stateError.textContent = "State should be valid";
-        return false;
-    }
+//     if (!cityRegex.test(state)) {
+//         stateError.textContent = "State should be valid";
+//         return false;
+//     }
 
-     stateError.textContent = '';
-    return true;
-}
-function validateCountry() {
-    const country = document.getElementById("country").value;
+//      stateError.textContent = '';
+//     return true;
+// }
+// function validateCountry() {
+//     const country = document.getElementById("country").value;
 
-    if (country.length == 0) {
-        countryError.textContent = "This field is required";
-        return false;
-    }
+//     if (country.length == 0) {
+//         countryError.textContent = "This field is required";
+//         return false;
+//     }
 
-    if (!cityRegex.test(country)) {
-        countryError.textContent = "Country should be valid";
-        return false;
-    }
+//     if (!cityRegex.test(country)) {
+//         countryError.textContent = "Country should be valid";
+//         return false;
+//     }
 
-     countryError.textContent = '';
-    return true;
-}
+//      countryError.textContent = '';
+//     return true;
+// }
 
 function validateZip() {
     const zip = document.getElementById('zip').value;
@@ -223,8 +223,6 @@ function validateForm() {
                     validateStreet() &&
                     validateCity() &&
                     validateLandmark() &&
-                    validateState() &&
-                    validateCountry() &&
                     validateZip() &&
                     validatePhone() &&
                     validateAlternativePhone();

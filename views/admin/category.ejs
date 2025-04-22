@@ -320,8 +320,16 @@
         }
     </style>
     <script>
+         const existingCategories = <%- JSON.stringify(categories.map(cat => cat.name)) %>;
         document.getElementById("addCategoryForm").addEventListener("submit", function (event) {
             event.preventDefault(); 
+            
+            const nameInput = document.getElementById("categoryName").value.trim();
+            const descriptionInput = document.getElementById("categoryDescription").value.trim();
+            if (existingCategories.some(cat => cat.toLowerCase() === nameInput.toLowerCase())) {
+            Swal.fire("Error", "Category name already exists!", "error");
+            return;
+            }
 
             const formData = new FormData(this);
             fetch("/admin/category/add", {

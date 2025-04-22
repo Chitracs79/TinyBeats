@@ -47,14 +47,14 @@ const addBrand = async (req, res) => {
         if (!findBrand) {
             const newBrand = new brandModel({name,image})
             await newBrand.save();
-            // res.redirect('admin/brand')
+           
             res.json({ success: true, redirectUrl:"/admin/brand" });
         } else {
             res.status(400).json({ success: false, message: "Brand already exists!" });
         }
     } catch (error) {
         res.status(500).json({ success: false, message: "Internal server error" });
-        // res.redirect('/admin/pageError');
+      
     }
 }
 //-------------------------------brand blocking------------------------------------------

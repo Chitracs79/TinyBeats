@@ -1,412 +1,1227 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<title>TinyBeats</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Colo Shop Template">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
-<link rel="icon" type="image/svg" sizes="20X20" href="images/tinybeats.png">
-<link rel="stylesheet" href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link href="plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
-<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-<link rel="stylesheet" type="text/css" href="styles/responsive.css">
-<link rel="stylesheet" href="/styles/userprofile_style.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TinyBeats</title>
+  <link rel="icon" type="image/svg" sizes="20X20" href="images/tinybeats.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+  <script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+  <link rel="stylesheet" type="text/css" href="styles/responsive.css">
+  <link rel="stylesheet" type="text/css" href="styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="styles/categories_responsive.css">
+  <link rel="stylesheet" href="/styles/userprofile_style.css">
+  <style>
+    :root {
+      --primary-color: #fe4c50;
+      --secondary-color: #ff006e;
+      --light-bg: #f8f9fa;
+      --dark-bg: #212529;
+      --border-color: #dee2e6;
+      --success-color: #38b000;
+      --warning-color: #ffbe0b;
+      --danger-color: #d90429;
+    }
+
+    body {
+      font-family: 'poppins', sans-serif;
+      background-color: #f5f7fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .breadcrumb-wrap {
+      background-color: var(--light-bg);
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-top: 150px;
+    }
+
+    .breadcrumb {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .breadcrumb a {
+      color: #6c757d;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary-color);
+    }
+
+    .toggle-btn {
+      margin-left: auto;
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: #6c757d;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--light-bg);
+      color: var(--primary-color);
+    }
+
+    .toggle-btn i {
+      margin-right: 0.25rem;
+    }
+
+    /* Sidebar Styles */
+    .page-container {
+      display: flex;
+      flex: 1;
+    }
+
+    #sidebar {
+      width: 280px;
+      background-color: #f8f9fa;
+      border-right: 1px solid var(--border-color);
+      transition: all 0.3s;
+      z-index: 1000;
+      position: fixed;
+      height: calc(100vh - 110px);
+      overflow-y: auto;
+      top: 110px;
+    }
+
+    .sidebar-collapsed #sidebar {
+      margin-left: -280px;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.25rem;
+      color: var(--dark-bg);
+      text-decoration: none;
+      border-radius: 0.375rem;
+      margin-bottom: 0.25rem;
+      transition: all 0.2s;
+    }
+
+    .sidebar-link:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-link.active {
+      background-color: rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+
+    .sidebar-link i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      transition: all 0.3s;
+      margin-left: 280px;
+      padding: 1.5rem;
+    }
+
+    .sidebar-collapsed .main-content {
+      margin-left: 0;
+    }
+
+    .section-header {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+
+
+    /* Content area styles */
+    .content {
+      flex: 1;
+      padding: 1.5rem;
+      transition: all 0.3s;
+      margin-left: 280px;
+      width: calc(100% - 280px);
+    }
+
+    .sidebar-collapsed .content {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    /* Form styles */
+    .form-control {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .error {
+      color: var(--danger-color);
+      font-size: 0.8rem;
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    /* Profile image styles */
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-profileImage {
+      text-align: center;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-username {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    .inputFile {
+      width: 100%;
+      max-width: 160px;
+      margin: 0.5rem auto;
+      font-size: 0.8rem;
+    }
+
+    .upload-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .upload-btn:hover {
+      background-color: var(--secondary-color);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1199.98px) {
+      .content {
+        padding: 1.25rem;
+      }
+    }
+
+    .wishlist-container {
+      padding: 2rem 0;
+      background-color: #f8f9f9;
+      min-height: 80vh;
+      margin-top: 110px;
+    }
+
+    section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .filter-container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-dropdown {
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      background-color: white;
+      transition: all 0.3s ease;
+    }
+
+    .filter-dropdown:hover {
+      border-color: var(--primary-color);
+    }
+
+    .product-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image-container {
+      position: relative;
+      height: 250px;
+      overflow: hidden;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      color: var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0.8;
+    }
+
+    .delete-btn:hover {
+      background-color: var(--primary-color);
+      color: white;
+      opacity: 1;
+    }
+
+    .discount-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+
+    .product-name {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      color: var(--text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-name a {
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .product-name a:hover {
+      color: var(--primary-color);
+    }
+
+    .product-price {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .current-price {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      color: var(--light-text);
+      font-size: 0.9rem;
+    }
+
+    .add-to-cart-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
+
+    .empty-wishlist {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--light-text);
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 991.98px) {
+      #sidebar {
+        margin-left: -280px;
+      }
+
+      .sidebar-expanded #sidebar {
+        margin-left: 0;
+      }
+
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .sidebar-expanded .content {
+        margin-left: 280px;
+        width: calc(100% - 280px);
+      }
+
+      /* Add overlay when sidebar is expanded on mobile */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .sidebar-expanded .sidebar-overlay {
+        display: block;
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .sidebar-container {
+        margin-bottom: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    .pagination {
+      margin-top: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .pagination a {
+      padding: 10px;
+      margin: 4px;
+      text-decoration: none;
+      background-color: white;
+      color: black;
+      font-weight: bold;
+      border-radius: 50%;
+      align-items: center;
+    }
+
+    .pagination a i {
+      padding: 4px;
+    }
+
+    .pagination a.active {
+      background-color: #DAADCC;
+      font-weight: bold;
+    }
+
+    .card-green {
+      background-color: #ADD8E6;
+    }
+
+    .main {
+      padding: 30px 0;
+    }
+
+    .dashboard-menu {
+      background-color: #cce3e6;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-menu .nav-link {
+      font-weight: bold;
+      color: #30683c;
+      box-shadow: 0 4px 10px rgba(123, 131, 112, 0.3), 0 4px 20px rgba(0, 191, 255, 0.2);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link:hover {
+      color: #00bfff;
+      box-shadow: 0 4px 15px rgba(173, 255, 47, 0.5), 0 6px 25px rgba(0, 191, 255, 0.4);
+    }
+
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: #487379;
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .profile-image-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .rounded-circle {
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .ml-3 {
+      margin-left: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-menu {
+        padding: 10px;
+      }
+
+      .card {
+        margin-bottom: 15px;
+      }
+    }
+
+    body {
+      background-color: #f7f7f7;
+    }
+
+    .sidebar {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar a {
+      color: #333;
+      display: block;
+      padding: 10px 0;
+      text-decoration: none;
+    }
+
+    .sidebar a.active {
+      color: #ff6600;
+    }
+
+    .sidebar a:hover {
+      color: #ff6600;
+    }
+
+    .sidebar a i {
+      margin-right: 10px;
+    }
+
+    .main-content {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-content h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+    }
+
+    .form-group span {
+      color: red;
+    }
+
+    .btn-orange {
+      background-color: #ff6600;
+      color: white;
+    }
+
+    .btn-orange:hover {
+      background-color: #e65c00;
+    }
+
+    .btn-blue {
+      background-color: #0000ff;
+      color: white;
+    }
+
+    .btn-blue:hover {
+      background-color: #0000cc;
+    }
+
+    .photo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .order-header {
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+
+    .order-body {
+      padding: 20px;
+    }
+
+    .order-footer {
+      padding: 10px;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    .order-card {
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .order-status {
+      color: red;
+    }
+
+    .order-ship-to {
+      color: green;
+    }
+
+    .order-link {
+      color: blue;
+      text-decoration: none;
+    }
+
+    .order-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-orange {
+      background-color: orange;
+      color: white;
+    }
+
+    .product-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 767.98px) {
+      .breadcrumb-wrap {
+        margin-top: 130px;
+      }
+
+      .breadcrumb {
+        font-size: 0.8rem;
+      }
+
+      .section-header {
+        text-align: center;
+      }
+
+      .profile-img {
+        width: 80px;
+        height: 80px;
+      }
+
+      .content {
+        padding: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .breadcrumb-wrap {
+        margin-top: 120px;
+      }
+
+      .sidebar-profileImage {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .profile-img {
+        width: 70px;
+        height: 70px;
+      }
+
+      .sidebar-username {
+        font-size: 1rem;
+      }
+
+      .toggle-btn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .content {
+        padding: 0.75rem;
+      }
+
+      h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .form-label {
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .form-control {
+        width: 350px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-	<!-- Header -->
+  <!-- Top Navigation -->
+  <!-- Header -->
+  <header class="header trans_300">
+    <!-- Top Navigation -->
+    <div class="top_nav">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="top_nav_left">free shipping on all orders over ₹ 1000 </div>
+          </div>
+          <div class="col-md-6 text-right">
+            <div class="top_nav_right">
+              <ul class="top_nav_menu">
+                <!-- Currency / Language / My Account -->
+                <li class="currency">
+                  <a href="#">
+                    ₹
+                    <i class="fa fa-angle-down"></i>
+                  </a>
+                  <ul class="currency_selection">
+                    <li><a href="#">inr</a></li>
+                    <li><a href="#">usd</a></li>
+                    <li><a href="#">eur</a></li>
+                  </ul>
+                </li>
+                <li class="language">
+                  <a href="#">
+                    English
+                    <i class="fa fa-angle-down"></i>
+                  </a>
+                  <ul class="language_selection">
+                    <li><a href="#">Arabic</a></li>
+                    <li><a href="#">French</a></li>
+                  </ul>
+                </li>
+                <li class="account">
+                  <a href="#">
+                    <% if (typeof user !=='undefined' && user) { %>
+                      <%= user.name %> <!-- Show user name when logged in -->
+                        <% } else { %>
+                          My Account
+                          <% } %>
+                            <i class="fa fa-angle-down"></i>
+                  </a>
+                  <ul class="account_selection">
+                    <% if (typeof user !=='undefined' && user) { %>
+                      <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+                      <li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+                      <% } else { %>
+                        <li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+                        <li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+                        <% } %>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<header class="header trans_300">
+    <!-- Main Navigation -->
+    <div class="main_nav_container">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-right">
+            <div class="logo_container">
+              <a href="#"><img src="images/tinybeats.png" alt="logo" style="width:100px;height:100px"></a>
+            </div>
+            <nav class="navbar">
+              <ul class="navbar_menu">
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="#">Clothes</a></li>
+                <li><a href="#">Essentials</a></li>
+                <li><a href="#">Feeding</a></li>
+                <li><a href="#">Playtime</a></li>
+                <li><a href="#">Travel</a></li>
+                <li><a href="contact.html">contact</a></li>
+              </ul>
+              <ul class="navbar_user">
+                <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                <li><a href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+                <li class="checkout">
+                  <a href="/cart">
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                  </a>
+                </li>
+              </ul>
+              <div class="hamburger_container">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-		<!-- Top Navigation -->
+  <div class="fs_menu_overlay"></div>
+  <div class="hamburger_menu">
+    <div class="hamburger_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+    <div class="hamburger_menu_content text-right">
+      <ul class="menu_top_nav">
+        <li class="menu_item has-children">
+          <a href="#">
+            ₹
+            <i class="fa fa-angle-down"></i>
+          </a>
+          <ul class="menu_selection">
+            <li><a href="#">inr</a></li>
+            <li><a href="#">usd</a></li>
+            <li><a href="#">eur</a></li>
+          </ul>
+        </li>
+        <li class="menu_item has-children">
+          <a href="#">
+            English
+            <i class="fa fa-angle-down"></i>
+          </a>
+          <ul class="menu_selection">
+            <li><a href="#">Arabic</a></li>
+            <li><a href="#">French</a></li>
+          </ul>
+        </li>
+        <li class="menu_item has-children">
+          <a href="#">
+            <% if (typeof user !=='undefined' && user) { %>
+              <%= user.name %> <!-- Show user name when logged in -->
+                <% } else { %>
+                  My Account
+                  <% } %>
+                    <i class="fa fa-angle-down"></i>
+          </a>
+          <ul class="menu_selection">
+            <% if (typeof user !=='undefined' && user) { %>
+              <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+              <li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+              <% } else { %>
+                <li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+                <li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+                <% } %>
+          </ul>
+        </li>
+        <li class="menu_item"><a href="/shop">Shop</a></li>
+        <li class="menu_item"><a href="#">Clothes</a></li>
+        <li class="menu_item"><a href="#">Essentials</a></li>
+        <li class="menu_item"><a href="#">Feeding</a></li>
+        <li class="menu_item"><a href="#">Playtime</a></li>
+        <li class="menu_item"><a href="#">Travel</a></li>
+        <li class="menu_item"><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
 
-		<div class="top_nav">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="top_nav_left">free shipping on all orders over ₹ 1000 </div>
-					</div>
-					<div class="col-md-6 text-right">
-						<div class="top_nav_right">
-							<ul class="top_nav_menu">
+  <!-- Breadcrumb Navigation with Toggle Button -->
+  <div class="breadcrumb-wrap">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="breadcrumb">
+          <a href="/home" rel="nofollow">Home &nbsp; > &nbsp;</a>
+          <a href="/profile" rel="nofollow">Profile &nbsp; > &nbsp;</a>
+        </div>
+        <button id="sidebarToggle" class="toggle-btn">
+          <i class="fas fa-bars"></i> Menu
+        </button>
+      </div>
+    </div>
+  </div>
 
-								<!-- Currency / Language / My Account -->
+  <div class="page-container">
+    <!-- Sidebar Overlay (Mobile only) -->
+    <div class="sidebar-overlay"></div>
 
-								<li class="currency">
-									<a href="#">
-										₹
-										<i class="fa fa-angle-down"></i>
-									</a>
-									<ul class="currency_selection">
-										<li><a href="#">inr</a></li>
-										<li><a href="#">usd</a></li>
-										<li><a href="#">eur</a></li>
-									</ul>
-								</li>
-								<li class="language">
-									<a href="#">
-										English
-										<i class="fa fa-angle-down"></i>
-									</a>
-									<ul class="language_selection">
-										<li><a href="#">Arabic</a></li>
-										<li><a href="#">French</a></li>
-										
-									</ul>
-								</li>
-								<li class="account">
-									<a href="#">
-										<% if (typeof user !== 'undefined' && user)  { %>
-											<%= user.name %> <!-- Show user name when logged in -->
-										<% } else { %>
-											My Account
-										<% } %>
-										<i class="fa fa-angle-down"></i>
-									</a>
-									<ul class="account_selection">
-									
-										<% if (typeof user !== 'undefined' && user)  { %>
-											<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
-											<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
-										<% } else { %>
-											<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
-											<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
-										<% } %>
-										
-									</ul>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="p-4">
+        <!-- Profile Image -->
+        <div class="sidebar-profileImage">
+          <img src="<%= user.profileImage? user.profileImage : 'images/single_2_thumb.jpg' %>" alt=""
+            class="profile-img">
 
-		<!-- Main Navigation -->
-
-		<div class="main_nav_container">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-12 text-right">
-						<div class="logo_container">
-							<a href="#"><img src="images/tinybeats.png" alt="logo" style="width:100px;height:100px"></a>
-						</div>
-						<nav class="navbar">
-							<ul class="navbar_menu">
-								<li><a href="/shop">Shop</a></li>
-								<li><a href="#">Clothes</a></li>
-								<li><a href="#">Essentials</a></li>
-								<li><a href="#">Feeding</a></li>
-								<li><a href="#">Playtime</a></li>
-								<li><a href="#">Travel</a></li>
-								<li><a href="contact.html">contact</a></li>
-							</ul>
-							<ul class="navbar_user">
-								<!-- <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li> -->
-								<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                                <li><a href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-								<li class="checkout">
-									<a href="/cart">
-										<i class="fa fa-shopping-cart" aria-hidden="true"></i>
-										<!-- <span id="checkout_items" class="checkout_items">2</span> -->
-									</a>
-								</li>
-							</ul>
-							<div class="hamburger_container">
-								<i class="fa fa-bars" aria-hidden="true"></i>
-							</div>
-						</nav>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	</header>
-
-	<div class="fs_menu_overlay"></div>
-	<div class="hamburger_menu">
-		<div class="hamburger_close"><i class="fa fa-times" aria-hidden="true"></i></div>
-		<div class="hamburger_menu_content text-right">
-			<ul class="menu_top_nav">
-				<li class="menu_item has-children">
-					<a href="#">
-						₹
-						<i class="fa fa-angle-down"></i>
-					</a>
-					<ul class="menu_selection">
-						<li><a href="#">inr</a></li>
-						<li><a href="#">usd</a></li>
-						<li><a href="#">eur</a></li>
-					</ul>
-				</li>
-				<li class="menu_item has-children">
-					<a href="#">
-						English
-						<i class="fa fa-angle-down"></i>
-					</a>
-					<ul class="menu_selection">
-						<li><a href="#">Arabic</a></li>
-						<li><a href="#">French</a></li>
-					</ul>
-				</li>
-				<li class="menu_item has-children">
-					<a href="#">
-						<% if (typeof user !== 'undefined' && user)  { %>
-							<%= user.name %> <!-- Show user name when logged in -->
-						<% } else { %>
-							My Account
-						<% } %>
-						<i class="fa fa-angle-down"></i>
-					</a>
-					<ul class="menu_selection">
-						<% if (typeof user !== 'undefined' && user)  { %>
-							<li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
-							<li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
-						<% } else { %>
-							<li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
-							<li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
-						<% } %>
-					</ul>
-				</li>
-				<li class="menu_item"><a href="/shop">Shop</a></li>
-				<li class="menu_item"><a href="#">Clothes</a></li>
-				<li class="menu_item"><a href="#">Essentials</a></li>
-				<li class="menu_item"><a href="#">Feeding</a></li>
-				<li class="menu_item"><a href="#">Playtime</a></li>
-				<li class="menu_item"><a href="#">Travel</a></li>              
-				<li class="menu_item"><a href="#">Contact</a></li>
-			</ul>
-		</div>
-	</div>
-</div>
-
-<div class="super-contianer container-fluid" style="padding-top: 150px; width:100%;">
-<!-- sidebar -->
-<aside id="sidebar" class="sidebar-toggle pt-5">
-
-
-    <!-- sidebar Navigation -->
-    <div class="sidebar-profileImage">
-        <img src="<%= user.profileImage? user.profileImage : 'images/single_2_thumb.jpg' %>" alt="" class="profile-img">
-
-        <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
+          <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
             <input type="file" class="inputFile" name="profileImage" required>
             <button type="submit" class="upload-btn"><i class="fa-solid fa-upload"></i></button>
-        </form>
-    </div>
-    <div class="sidebar-username">
-        <h3>
-            <%=user.name%>
-        </h3>
-    </div>
-    <ul class="sidebar-nav p-0">
+          </form>
 
-        <li class="sidebar-header">
-            Orders
-        </li>
+          <h4 class="sidebar-username">
+            <%= user.name %>
+          </h4>
+        </div>
 
-        <li class="sidebar-item">
-            <a href="/userProfile" class="sidebar-link">
-                <i class="fa-solid fa-house"></i>
-                <span> Dashboard </span>
-            </a>
-        </li>
-
-        <li class="sidebar-item">
+        <!-- Navigation -->
+        <div class="sidebar-nav">
+          <div class="sidebar-section mb-3">
+            <p class="text-uppercase small fw-bold mb-2" style="color: white;">Orders</p>
             <a href="/orders" class="sidebar-link">
-                <i class="fa fa-shopping-cart"></i>
-                <span> Orders</span>
+              <i class="fa fa-shopping-cart"></i>
+              <span>Orders</span>
             </a>
-        </li>
-        <li class="sidebar-item">
             <a href="/wishlist" class="sidebar-link">
-                <i class="fa fa-heart"></i>
-                <span>Wishlist</span>
+              <i class="fa fa-heart"></i>
+              <span>Wishlist</span>
             </a>
-        </li>
+          </div>
 
-        <li class="sidebar-header">
-            Personal
-        </li>
-        <li class="sidebar-item">
+          <div class="sidebar-section">
+            <p class="text-uppercase small fw-bold mb-2" style="color: white;">Personal</p>
+            <a href="/userprofile" class="sidebar-link active">
+              <i class="fa fa-user"></i>
+              <span>My Profile</span>
+            </a>
             <a href="/wallet" class="sidebar-link">
-                <i class="fa-solid fa-wallet"></i>
-                <span>Wallet</span>
+              <i class="fa-solid fa-wallet"></i>
+              <span>Wallet</span>
             </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a href="/address" class="sidebar-link">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Address</span>
+            <a href="/address" class="sidebar-link ">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Address</span>
             </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="/userProfile" class="sidebar-link">
-                <i class="fa fa-user"></i>
-                <span>My Profile</span>
+          </div>
+          <div class="mt-4 pt-3 border-top">
+            <a href="#" class="sidebar-link" id="logoutBtn">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Logout</span>
             </a>
-        </li>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-    </ul>
-    <!-- Sidebar Navigation Ends -->
+              
+    <div class="main_content">
+                   
+      <!-- Products -->
 
-    <div class="sidebar-footer">
-        <a href="" class="sidebar-link">
-            <i class="fa-solid fa-gear"></i>
-            <span>Setting</span>
-        </a>
-    </div>
-    <div class="sidebar-footer">
-        <a href="/logout" class="sidebar-link">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Logout</span>
-        </a>
-    </div>
-</aside>
-<!-- Sidebar Ends -->
-<!-- Main Content -->
-<div class="content">
-    <h4 class="pb-3">My Profile</h4>
-
-    <div class="container mt-4">
-
+      <div class="products_iso">
         <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="userName" class="form-label">Username</label>
-            <input type="text" class="form-control" id="name" value="<%=user.name%>"
-                placeholder="">
-        </div>
+          <div class="col">
 
-        <div class="col-md-6 mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="text" class="form-control" id="email" value="<%=user.email%>"
-                placeholder="">
-        </div>
+            <!-- Product Sorting -->
 
-        <div class="col-md-6 mb-3">
-            <label for="phone" class="form-label">Phone No</label>
-            <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
-                placeholder="">
-        </div>
-        <div class="col-md-6 mt-3">
-            <label for="">Referral Code</label>
-           <h5 class="text-success"><% if(user.referralCode) {%>
-                              <%= user.referralCode %> 
-                              <%}%>
-            </h5>
-        </div>
-       
-        <!-- Address part -->
-        <div class="row mt-4">
-            <% if (userAddress) { %>
-                <% userAddress.address.forEach((addr)=> { %>
-                    <div class="col-md-6 mb-3">
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= addr.addressType %> Address</h5>
-                                <p class="card-text">
-                                    <strong>Name:</strong> <%= addr.name %> <br>
-                                    <strong>Apartment:</strong> <%= addr.apartment %> <br>
-                                    <strong>Building:</strong> <%= addr.building %> <br>
-                                    <strong>Street:</strong> <%= addr.street %> <br>
-                                    <strong>City:</strong> <%= addr.city %> <br>
-                                    <strong>Landmark:</strong><%= addr.landmark %> <br>
-                                    <strong>State:</strong> <%= addr.state %> <br>
-                                    <strong>Country:</strong> <%= addr.country %> <br>
-                                    <strong>ZIP:</strong> <%= addr.zip %> <br>
-                                    <strong>Phone:</strong> <%= addr.phone %> <br>
-                                    <strong>Alternative Phone:</strong> <%= addr.altPhone %> 
-                                </p> 
-                                                                              
-                            </div>
-                        </div>
-                    </div>
-                <% }) %>
-            <% } else { %>
-                <p>No addresses found. Please add one.</p>
-            <% } %>
-        </div>
+            
 
+            <!-- Product Grid -->
+
+            <div class="product-grid">
+
+              <!-- Product 1 -->
+                                <% if(wishlist.length > 0) {%>
+                                    <% for(product of wishlist){%>
+              <div class="product-item men"  id="product-<%= product._id %>">
+                <div class="product discount product_filter">
+                  <div class="product_image">
+                    <img src="uploads/re-image/<%= product.image[0]%>" alt="">
+                  </div>
+                                        <div class="delete delete_left" onclick="confirmToRemove('<%= product._id %>')"></div> 
+                  <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center"><span>-$20</span></div>
+                  <div class="product_info">
+                    <h6 class="product_name"><a href="/productDetails"><%= product.name%></a></h6>
+                    <div class="product_price">AED <%= product.basePrice %><span>AED <%= product.salesPrice %></span></div>
+                  </div>
+                                        
+                                          
+                                        
+                </div>
+                <!-- <div class="red_button add_to_cart_button"><a href="/cart">add to cart</a></div> -->
+                <button class="btn btn-primary flex-grow-1 me-2 addToCartBtn "  style="background:#fe4c50;border:none;width:245px;" data-id="<%= product._id %>">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to cart
+                </button>
+              </div>
+                                <%}%>
+                            <% } else{%>
+                                <span>No products found in wishlist. </span>
+                            <% } %>
+              
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <a href="/editProfile" class="btn btn-primary btn-sm">Edit Profile</a>
+  </div>
 </div>
-<!-- Main Content ends -->
 </div>
-<!-- Footer -->
 
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="footer_nav_container d-flex flex-sm-row flex-column align-items-center justify-content-lg-start justify-content-center text-center">
-                    <ul class="footer_nav">
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Know us Better</a></li>
-                        <li><a href="#">Shipping & Policy</a></li>
-                        <li><a href="contact.html">Contact us</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="footer_social d-flex flex-row align-items-center justify-content-lg-end justify-content-center">
-                    <ul>
-                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-skype" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
-                    </ul>
-                </div>
-            </div>
+      <!-- Pagination -->
+      <% if (wishlist.length> 0) { %>
+        <div class="pagination-container">
+          <nav aria-label="Wishlist pagination">
+            <ul class="pagination">
+              <% if (currentPage> 1) { %>
+                <li class="page-item">
+                  <a class="page-link" href="/wishlist?page=<%= currentPage - 1 %>" aria-label="Previous">
+                    <i class="fas fa-chevron-left"></i>
+                  </a>
+                </li>
+                <% } %>
+
+                  <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="/wishlist?page=<%= i %>">
+                        <%= i %>
+                      </a>
+                    </li>
+                    <% } %>
+
+                      <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                          <a class="page-link" href="/wishlist?page=<%= currentPage + 1 %>" aria-label="Next">
+                            <i class="fas fa-chevron-right"></i>
+                          </a>
+                        </li>
+                        <% } %>
+            </ul>
+          </nav>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="footer_nav_container">
-                    <div class="cr">©2025 All Rights Reserverd. Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="#">TinyBeats</a><!--  &amp; distributed by <a href="https://themewagon.com">ThemeWagon</a>--></div>
-                </div>
-            </div>
-        </div>
+        <% } %>
     </div>
-</footer>
-<script>
-    const toggler = document.querySelector(".toggler-btn");
-    toggler.addEventListener('click',function(){
-    document.querySelector("#sidebar").classList.toggle("collapsed");
-})
-</script>
- <!-- SweetAlert Cdn-->
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="js/jquery-3.2.1.min.js"></script>
-<script src="styles/bootstrap4/popper.js"></script>
-<script src="styles/bootstrap4/bootstrap.min.js"></script>
-<script src="plugins/Isotope/isotope.pkgd.min.js"></script>
-<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
-<script src="plugins/easing/easing.js"></script>
-<script src="js/custom.js"></script>
-<script src="plugins/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
-<script src="js/categories_custom.js"></script>
-<script src="/js/valAddress.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </div>
+  </div>
 
-</body>
+  <!-- SweetAlert2 for dialogs -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll(".addToCartBtn").forEach(button => {
+      button.addEventListener("click", async () => {
+        const productId = button.getAttribute("data-id");
 
-</html>
+        try {
+          const response = await fetch(`/cart/${productId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity: 1 })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            Swal.fire({
+              icon: "success",
+              title: "Product added to Cart",
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Failed to add to cart",
+              text: result.message,
+              showConfirmButton: false,
+              timer: 1000
+            });
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+    });
+
+    async function confirmToRemove(productId) {
+      const result = await Swal.fire({
+        title: "Remove from wishlist?",
+        text: "This product will be removed from your wishlist",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#fe4c50",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, remove it",
+        cancelButtonText: "Cancel",
+        borderRadius: "10px"
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`/wishlist?productId=${productId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            await Swal.fire({
+              icon: "success",
+              title: "Removed!",
+              text: data.message,
+              confirmButtonColor: "#fe4c50",
+              timer: 1500
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: data.error || "Failed to remove product.",
+              confirmButtonColor: "#fe4c50"
+            });
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong. Please try again.",
+            confirmButtonColor: "#fe4c50"
+          });
+        }
+      }
+    }
+
   
+    document.addEventListener("DOMContentLoaded", () => {
+      // Toggle sidebar functionality
+      const body = document.body;
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebarOverlay = document.querySelector('.sidebar-overlay');
 
+      // Default state for different screen sizes
+      if (window.innerWidth < 992) {
+        body.classList.add('sidebar-collapsed');
+      } else {
+        body.classList.remove('sidebar-collapsed');
+      }
 
+      // Toggle sidebar on button click
+      sidebarToggle.addEventListener('click', () => {
+        if (window.innerWidth < 992) {
+          body.classList.toggle('sidebar-expanded');
+        } else {
+          body.classList.toggle('sidebar-collapsed');
+        }
+      });
 
+      // Close sidebar when clicking overlay (mobile only)
+      sidebarOverlay.addEventListener('click', () => {
+        body.classList.remove('sidebar-expanded');
+      });
 
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 992) {
+          body.classList.remove('sidebar-expanded');
+        } else {
+          body.classList.add('sidebar-collapsed');
+        }
+      });
+    });
 
+    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+      e.preventDefault(); // prevent default navigation
 
-
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, logout'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirect to logout
+          window.location.href = '/logout';
+        }
+      });
+    });
+  </script>
+  <%- include('../../views/partials/user/footer') %>

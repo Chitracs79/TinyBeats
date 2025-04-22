@@ -122,6 +122,8 @@
                 </div>
             </form>
     </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.getElementById("imageInput").addEventListener("change", handleImageUpload);
         let croppers = {};
@@ -291,7 +293,11 @@ function validateAndSubmit() {
 
         // Check if all images are cropped before submitting
         if (Object.keys(croppers).length > 0) {
-            alert("Please crop all images before submitting.");
+            Swal.fire({
+                icon:"warning",
+                title:"Cropping Validation",
+                text:"Please crop all images before submission",
+            })
             return false;
         }
 
@@ -393,12 +399,24 @@ function validateAndSubmit() {
                 isValid = false;
             }
            
+            let existingImages = document.querySelectorAll('.sub-container img').length;
+            let newImages = document.getElementById("imageInput").files.length;
+            let croppedImages = document.querySelectorAll("input[name='croppedImages']").length;
+
+            if (existingImages === 0 ) {
+                errorMessage += "At least one product image is required.\n";
+                isValid = false;
+            }
 
            
 
             // Show error messages if validation fails
             if (!isValid) {
-                alert(errorMessage);
+              Swal.fire({
+                icon:"warning",
+                title:"Validation Error",
+                html: errorMessage.replace(/\n/g, "<br>"), 
+              })
             }
 
             return isValid;

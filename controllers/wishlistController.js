@@ -48,7 +48,6 @@ const wishlist = async(req,res,next)=>{
 const addToWishlist = async(req,res,next)=>{
     try {
         const productId = req.body.productId;
-        console.log("TestProductId",productId);
 
         const userId = req.session.user;
         const user = await userModel.findById(userId);
@@ -86,7 +85,6 @@ const addToWishlist = async(req,res,next)=>{
 const removeFromWishlist = async(req,res,next)=>{
     try {
         const productId = req.query.productId;
-        console.log("TestProductId",productId);
 
         const userId = req.session.user;
         const user = await userModel.findById(userId);

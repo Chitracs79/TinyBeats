@@ -1,9 +1,9 @@
 
 
 const nameError = document.getElementById("name-error");      // const is the constiable declaration where the name of the constiable is nameError 
-const emailError = document.getElementById("email-error");    // 
+const emailError = document.getElementById("signupEmail-error");    // 
 const phoneError = document.getElementById("phone-error");
-const passwordError = document.getElementById("password-error");
+const passwordError = document.getElementById("signupPassword-error");
 const cpasswordError = document.getElementById("confirmPassword-error");
 const submitError = document.getElementById("submit-error");
 
@@ -31,7 +31,7 @@ function validateName() {
 }
 
 function validateEmail() {
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("signupEmail").value;
 
     if (email.length == 0) {
         emailError.textContent = "This field is required";
@@ -64,7 +64,7 @@ function validatePhone() {
 
 
 function validatePassword() {
-    const password = document.getElementById('password').value;
+    const password = document.getElementById('signupPassword').value;
 
     if (password.length == 0) {
         passwordError.textContent = "This field is required";
@@ -82,7 +82,7 @@ function validatePassword() {
 }
 function validateConfirmPassword() 
 {
-    const password = document.getElementById('password').value;
+    const password = document.getElementById('signupPassword').value;
     const cpassword = document.getElementById('confirmPassword').value;
 
     if (cpassword.length == 0) {
@@ -98,7 +98,7 @@ function validateConfirmPassword()
     return true;
 }
 
-function validateForm() {
+function validateSignupForm() {
     if (!validateName() || !validateEmail() || !validatePhone() || !validatePassword()||!validateConfirmPassword() ) {
         submitError.style.display = "block";
         submitError.textContent = "Please fill all fields and then submit";

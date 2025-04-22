@@ -1,89 +1,700 @@
-<%- include('../../views/partials/user/header',{user:user}) %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyBeats</title>
+    <link rel="icon" type="image/svg" sizes="20X20" href="images/tinybeats.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <script src="https://kit.fontawesome.com/c4265f3711.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/responsive.css">
     <link rel="stylesheet" href="/styles/userprofile_style.css">
+    <style>
+      :root {
+        --primary-color: #fe4c50;
+        --secondary-color: #ff006e;
+        --light-bg: #f8f9fa;
+        --dark-bg: #212529;
+        --border-color: #dee2e6;
+        --success-color: #38b000;
+        --warning-color: #ffbe0b;
+        --danger-color: #d90429;
+      }
+      
+      body {
+        font-family: 'poppins', sans-serif;
+        background-color: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .breadcrumb-wrap {
+        background-color: var(--light-bg);
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-top: 150px;
+      }
+      
+      .breadcrumb {
+        margin-bottom: 0;
+        font-size: 0.9rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      
+      .breadcrumb a {
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      
+      .breadcrumb a:hover {
+        color: var(--primary-color);
+      }
+      
+      .toggle-btn {
+        margin-left: auto;
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: #6c757d;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+      }
+      
+      .toggle-btn:hover {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+      }
+      
+      .toggle-btn i {
+        margin-right: 0.25rem;
+      }
+
+      /* Sidebar Styles */
+      .page-container {
+        display: flex;
+        flex: 1;
+      }
+      
+      #sidebar {
+        width: 280px;
+        background-color: #f8f9fa;
+        border-right: 1px solid var(--border-color);
+        transition: all 0.3s;
+        z-index: 1000;
+        position: fixed;
+        height: calc(100vh - 110px);
+        overflow-y: auto;
+        top: 110px;
+      }
+      
+      .sidebar-collapsed #sidebar {
+        margin-left: -280px;
+      }
+      
+      .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
+        color: var(--dark-bg);
+        text-decoration: none;
+        border-radius: 0.375rem;
+        margin-bottom: 0.25rem;
+        transition: all 0.2s;
+      }
+      
+      .sidebar-link:hover {
+        background-color: rgba(0,0,0,0.05);
+      }
+      
+      .sidebar-link.active {
+        background-color: rgba(0,0,0,0.1);
+        font-weight: 500;
+      }
+      
+      .sidebar-link i {
+        margin-right: 0.75rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        flex: 1;
+        transition: all 0.3s;
+        margin-left: 280px;
+        padding: 1.5rem;
+      }
+      
+      .sidebar-collapsed .main-content {
+        margin-left: 0;
+      }
+      
+      .section-header {
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.75rem;
+      }
+
+      /* Address Card Styles */
+      .address-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.05);
+        height: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+      
+      .address-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+      }
+      
+      .address-card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+      }
+      
+      .address-card-body {
+        padding: 1.25rem;
+      }
+      
+      .address-card-footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 1.25rem;
+        background-color: var(--light-bg);
+        border-top: 1px solid var(--border-color);
+      }
+      
+      .btn-edit {
+        background-color: var(--warning-color);
+        color: white;
+        border: none;
+      }
+      
+      .btn-delete {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+      }
+      
+      .btn-add-address {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      
+      .btn-add-address:hover {
+        background-color: #2563eb;
+        color: white;
+      }
+
+      /* Content area styles */
+      .content {
+        flex: 1;
+        padding: 1.5rem;
+        transition: all 0.3s;
+        margin-left: 280px;
+        width: calc(100% - 280px);
+      }
+      
+      .sidebar-collapsed .content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      /* Form styles */
+      .form-control {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .error {
+        color: var(--danger-color);
+        font-size: 0.8rem;
+        display: block;
+        margin-top: 0.25rem;
+      }
+
+      /* Profile image styles */
+      .profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+      }
+
+      .sidebar-profileImage {
+        text-align: center;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .sidebar-username {
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
+      }
+
+      .inputFile {
+        width: 100%;
+        max-width: 160px;
+        margin: 0.5rem auto;
+        font-size: 0.8rem;
+      }
+
+      .upload-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+      }
+
+      .upload-btn:hover {
+        background-color: var(--secondary-color);
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 1199.98px) {
+        .content {
+          padding: 1.25rem;
+        }
+      }
+
+      @media (max-width: 991.98px) {
+        #sidebar {
+          margin-left: -280px;
+        }
+        
+        .sidebar-expanded #sidebar {
+          margin-left: 0;
+        }
+        
+        .content {
+          margin-left: 0;
+          width: 100%;
+        }
+        
+        .sidebar-expanded .content {
+          margin-left: 280px;
+          width: calc(100% - 280px);
+        }
+        
+        /* Add overlay when sidebar is expanded on mobile */
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0,0,0,0.5);
+          z-index: 999;
+        }
+        
+        .sidebar-expanded .sidebar-overlay {
+          display: block;
+        }
+      }
+      
+      @media (max-width: 767.98px) {
+        .breadcrumb-wrap {
+          margin-top: 130px;
+        }
+
+        .breadcrumb {
+          font-size: 0.8rem;
+        }
+        
+        .section-header {
+          text-align: center;
+        }
+        
+        .profile-img {
+          width: 80px;
+          height: 80px;
+        }
+
+        .content {
+          padding: 1rem;
+        }
+        
+        .form-group {
+          margin-bottom: 1rem;
+        }
+        
+        h4 {
+          font-size: 1.25rem;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .breadcrumb-wrap {
+          margin-top: 120px;
+        }
+        
+        .sidebar-profileImage {
+          padding-bottom: 1rem;
+          margin-bottom: 1rem;
+        }
+        
+        .profile-img {
+          width: 70px;
+          height: 70px;
+        }
+        
+        .sidebar-username {
+          font-size: 1rem;
+        }
+        
+        .toggle-btn {
+          padding: 0.2rem 0.5rem;
+          font-size: 0.8rem;
+        }
+        
+        .content {
+          padding: 0.75rem;
+        }
+        
+        h4 {
+          font-size: 1.1rem;
+          margin-bottom: 0.75rem;
+        }
+        
+        .form-label {
+          font-size: 0.9rem;
+        }
+        
+        .btn {
+          padding: 0.375rem 0.75rem;
+          font-size: 0.9rem;
+        }
+        .form-control{
+            width:350px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Navigation -->
+    <!-- Header -->
+    <header class="header trans_300">
+      <!-- Top Navigation -->
+      <div class="top_nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="top_nav_left">free shipping on all orders over ₹ 1000 </div>
+            </div>
+            <div class="col-md-6 text-right">
+              <div class="top_nav_right">
+                <ul class="top_nav_menu">
+                  <!-- Currency / Language / My Account -->
+                  <li class="currency">
+                    <a href="#">
+                      ₹
+                      <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="currency_selection">
+                      <li><a href="#">inr</a></li>
+                      <li><a href="#">usd</a></li>
+                      <li><a href="#">eur</a></li>
+                    </ul>
+                  </li>
+                  <li class="language">
+                    <a href="#">
+                      English
+                      <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="language_selection">
+                      <li><a href="#">Arabic</a></li>
+                      <li><a href="#">French</a></li>
+                    </ul>
+                  </li>
+                  <li class="account">
+                    <a href="#">
+                      <% if (typeof user !== 'undefined' && user)  { %>
+                        <%= user.name %> <!-- Show user name when logged in -->
+                      <% } else { %>
+                        My Account
+                      <% } %>
+                      <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="account_selection">
+                      <% if (typeof user !== 'undefined' && user)  { %>
+                        <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+                        <li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+                      <% } else { %>
+                        <li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+                        <li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+                      <% } %>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Navigation -->
+      <div class="main_nav_container">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12 text-right">
+              <div class="logo_container">
+                <a href="#"><img src="images/tinybeats.png" alt="logo" style="width:100px;height:100px"></a>
+              </div>
+              <nav class="navbar">
+                <ul class="navbar_menu">
+                  <li><a href="/shop">Shop</a></li>
+                  <li><a href="#">Clothes</a></li>
+                  <li><a href="#">Essentials</a></li>
+                  <li><a href="#">Feeding</a></li>
+                  <li><a href="#">Playtime</a></li>
+                  <li><a href="#">Travel</a></li>
+                  <li><a href="contact.html">contact</a></li>
+                </ul>
+                <ul class="navbar_user">
+                  <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                  <li><a href="/wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
+                  <li class="checkout">
+                    <a href="/cart">
+                      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                    </a>
+                  </li>
+                </ul>
+                <div class="hamburger_container">
+                  <i class="fa fa-bars" aria-hidden="true"></i>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="fs_menu_overlay"></div>
+    <div class="hamburger_menu">
+      <div class="hamburger_close"><i class="fa fa-times" aria-hidden="true"></i></div>
+      <div class="hamburger_menu_content text-right">
+        <ul class="menu_top_nav">
+          <li class="menu_item has-children">
+            <a href="#">
+              ₹
+              <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="menu_selection">
+              <li><a href="#">inr</a></li>
+              <li><a href="#">usd</a></li>
+              <li><a href="#">eur</a></li>
+            </ul>
+          </li>
+          <li class="menu_item has-children">
+            <a href="#">
+              English
+              <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="menu_selection">
+              <li><a href="#">Arabic</a></li>
+              <li><a href="#">French</a></li>
+            </ul>
+          </li>
+          <li class="menu_item has-children">
+            <a href="#">
+              <% if (typeof user !== 'undefined' && user)  { %>
+                <%= user.name %> <!-- Show user name when logged in -->
+              <% } else { %>
+                My Account
+              <% } %>
+              <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="menu_selection">
+              <% if (typeof user !== 'undefined' && user)  { %>
+                <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i>Profile</a></li>
+                <li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+              <% } else { %>
+                <li><a href="/signin"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+                <li><a href="/signup"><i class="fa fa-user-plus" aria-hidden="true"></i>Sign Up</a></li>
+              <% } %>
+            </ul>
+          </li>
+          <li class="menu_item"><a href="/shop">Shop</a></li>
+          <li class="menu_item"><a href="#">Clothes</a></li>
+          <li class="menu_item"><a href="#">Essentials</a></li>
+          <li class="menu_item"><a href="#">Feeding</a></li>
+          <li class="menu_item"><a href="#">Playtime</a></li>
+          <li class="menu_item"><a href="#">Travel</a></li>              
+          <li class="menu_item"><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Breadcrumb Navigation with Toggle Button -->
+    <div class="breadcrumb-wrap">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="breadcrumb">
+            <a href="/home" rel="nofollow">Home &nbsp; > &nbsp;</a>
+            <a href="/profile" rel="nofollow">Profile &nbsp; > &nbsp;</a>
+          </div>
+          <button id="sidebarToggle" class="toggle-btn">
+            <i class="fas fa-bars"></i> Menu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-container">
+      <!-- Sidebar Overlay (Mobile only) -->
+      <div class="sidebar-overlay"></div>
+      
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="p-4">
+          <!-- Profile Image -->
+          <div class="sidebar-profileImage">
+            <img src="<%= user.profileImage? user.profileImage : 'images/single_2_thumb.jpg' %>" alt="" class="profile-img">
+    
+            <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
+                <input type="file" class="inputFile" name="profileImage" required>
+                <button type="submit" class="upload-btn"><i class="fa-solid fa-upload"></i></button>
+            </form>
+
+            <h4 class="sidebar-username"><%= user.name %></h4>
+          </div>
+          
+          <!-- Navigation -->
+          <div class="sidebar-nav">
+            <div class="sidebar-section mb-3">
+              <p class="text-uppercase small fw-bold mb-2" style="color: white;">Orders</p>
+              <a href="/orders" class="sidebar-link">
+                <i class="fa fa-shopping-cart"></i>
+                <span>Orders</span>
+              </a>
+              <a href="/wishlist" class="sidebar-link">
+                <i class="fa fa-heart"></i>
+                <span>Wishlist</span>
+              </a>
+            </div>
+            
+            <div class="sidebar-section">
+              <p class="text-uppercase small fw-bold mb-2" style="color: white;">Personal</p>
+              <a href="/userprofile" class="sidebar-link active">
+                <i class="fa fa-user"></i>
+                <span>My Profile</span>
+              </a>
+              <a href="/wallet" class="sidebar-link">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
+              </a>
+              <a href="/address" class="sidebar-link ">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Address</span>
+              </a>
+            </div>
+            <div class="mt-4 pt-3 border-top">
+              <a href="#" class="sidebar-link" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+              </a>
+            </div>              
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="content">
+        <h4 class="pb-3">Update Credentials</h4>
+
+        <div class="row">
+          <div class="mb-3">
+              <label for="userName" class="form-label">Username</label>
+              <input type="text" class="form-control" id="name" value="<%=user.name%>"
+                  placeholder="" disabled>
+          </div>
+
+          <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="text" class="form-control" id="email" value="<%=user.email%>"
+                  placeholder="" disabled>
+          </div>
+
+          <div class="mb-3">
+              <label for="phone" class="form-label">Phone No</label>
+              <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
+                  placeholder="" readonly>
+          </div>
+
+          <div class="mb-3">
+            <a href="/changePassword" class="btn btn-primary">Change Password</a>
+          </div>
+      </div>
+  </div>
+  <!-- Add Category Button to Open Modal -->
+  <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailChangeModal">
+      Change Email
+  </button> -->
+  <!-- <a href="/changePassword" class="btn btn-primary btn-sm m-3">Change Password</a> -->
+</div>
+</div>
 
 
-    <section>
-
-        <body>
-            <div class="d-flex pt-5">
-                <%- include('../../views/partials/user/sidebar',{user:user}) %>
-                    <!-- Main Content -->
-                    <div class="main">
-                        <nav class="navbar nav-expand border-bottom">
-                            <button class="toggler-btn" type="button">
-                                <i class="fa-solid fa-align-left"></i>
-                            </button>
-                        </nav>
-
-                        <div class="content">
-                            <h4 class="pb-3">Edit Profile</h4>
-
-                            <div class="container mt-4">
-
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="userName" class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="name" value="<%=user.name%>"
-                                            placeholder="" readonly>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="text" class="form-control" id="email" value="<%=user.email%>"
-                                            placeholder="" readonly>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="phone" class="form-label">Phone No</label>
-                                        <input type="text" class="form-control" id="phone" value="<%=user.phone%>"
-                                            placeholder="" readonly>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <!-- Add Category Button to Open Modal -->
-                            <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailChangeModal">
-                                Change Email
-                            </button> -->
-                            <a href="/changePassword" class="btn btn-primary btn-sm m-3">Change Password</a>
-                        </div>
-                    </div>
+<!-- Modal -->
+<div class="modal fade" id="emailChangeModal" tabindex="-1">
+<div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title">Change Email</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+          <form id="emailUpdateForm">
+              <div class="mb-3">
+                  <label for="currentEmail" class="form-label">Current Email</label>
+                  <input type="email" class="form-control" id="currentEmail"
+                      name="currentEmail" required>
+              </div>
+              <div class="mb-3">
+                  <label for="newEmail" class="form-label">New Email</label>
+                  <input type="email" class="form-control" id="newEmail" name="newEmail"
+                      required>
+              </div>
+              <button type="submit" class="btn btn-primary">Update Email</button>
+          </form>
+      </div>
+  </div>
+</div>
+</div>
 
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="emailChangeModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Change Email</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="emailUpdateForm">
-                                        <div class="mb-3">
-                                            <label for="currentEmail" class="form-label">Current Email</label>
-                                            <input type="email" class="form-control" id="currentEmail"
-                                                name="currentEmail" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newEmail" class="form-label">New Email</label>
-                                            <input type="email" class="form-control" id="newEmail" name="newEmail"
-                                                required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Update Email</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-    </section>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.querySelector("#emailUpdateForm").addEventListener("submit", async (e) => {
+     document.querySelector("#emailUpdateForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const currentEmail = document.querySelector("#currentEmail").value.trim();
             const newEmail = document.querySelector("#newEmail").value.trim();
@@ -117,6 +728,61 @@
                 Swal.fire(data.error);
             }
         });
-    </script>
 
-    <%- include('../../views/partials/user/footer') %>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Toggle sidebar functionality
+        const body = document.body;
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.querySelector('.sidebar-overlay');
+        
+        // Default state for different screen sizes
+        if (window.innerWidth < 992) {
+          body.classList.add('sidebar-collapsed');
+        } else {
+          body.classList.remove('sidebar-collapsed');
+        }
+        
+        // Toggle sidebar on button click
+        sidebarToggle.addEventListener('click', () => {
+          if (window.innerWidth < 992) {
+            body.classList.toggle('sidebar-expanded');
+          } else {
+            body.classList.toggle('sidebar-collapsed');
+          }
+        });
+        
+        // Close sidebar when clicking overlay (mobile only)
+        sidebarOverlay.addEventListener('click', () => {
+          body.classList.remove('sidebar-expanded');
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 992) {
+            body.classList.remove('sidebar-expanded');
+          } else {
+            body.classList.add('sidebar-collapsed');
+          }
+        });
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function (e) {
+        e.preventDefault(); // prevent default navigation
+
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You will be logged out.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, logout'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Redirect to logout
+            window.location.href = '/logout';
+          }
+        });
+      });
+    </script>
+<%- include('../../views/partials/user/footer') %>

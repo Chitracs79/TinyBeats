@@ -653,7 +653,8 @@ function processWalletOrder(orderData) {
            body: JSON.stringify(orderData)
        })
        
-       const order = await response.json();
+    const order = await response.json();
+    console.log("failure order:",order)
 
       const options = {
       key: "<%= process.env.RAZORPAY_KEY_ID %>",
@@ -689,29 +690,43 @@ function processWalletOrder(orderData) {
             window.location.href = "/confirmation";
           });
         } else {
-          Swal.fire({
-            title: "Error!",
-            text: "Payment Verification Failed",
-            icon: "error",
-            confirmButtonText: "Try Again",
-          });
+        //   Swal.fire({
+        //     title: "Error!",
+        //     text: "Payment Verification Failed",
+        //     icon: "error",
+        //     confirmButtonText: "Try Again",
+        //   });
+        window.location.href = `/paymentFailure?orderId=${order.orderId}`;
         }
+        
       },
       prefill: {
         email: "<%= user.email %>",
         contact: "<%= user.phone %>",
       },
       theme: { color: "#3399cc" },
+      modal: {
+         ondismiss: function () {
+      //  Razorpay closed without paying
+      window.location.href = `/paymentFailure?orderId=${order.orderId}`;
+    },
+  }
     };
 
     const paymentObject = new Razorpay(options);
+    paymentObject.on("payment.failed", function (response) {
+        window.location.href = `/paymentFailure?orderId=${order.orderId}`;
+    });
+
     paymentObject.open();
     }
+
+
 
     function showShippingCharge() {
         Swal.fire({
             title: 'Shipping Charge',
-            text: 'Shipping charge is ₹ 50.00 For All Orders below 200',
+            text: 'Shipping charge is ₹ 50.00 For All Orders below 1000',
             icon: 'info',
             confirmButtonText: 'OK'
         });
