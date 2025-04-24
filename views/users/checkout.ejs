@@ -298,7 +298,7 @@
     </div>
 
  <!-- Coupon Modal -->
-<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+ <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -306,7 +306,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body ">
-          <div class="coupon-cards ">
+          <div class="coupon-cards">
             <% if (coupons && coupons.length > 0) { %>
               <div class="row">
                 <% coupons.forEach((coupon) => { %>
@@ -314,23 +314,32 @@
                     <div class="card h-100 shadow-sm border-primary w-100">
                       <div class="card-body d-flex align-items-center">
                         <input
-                          class="form-check-input ms-1 me-2"
+                          class="form-check-input me-3"
                           type="radio"
                           name="selectedCoupon"
                           id="coupon_<%= coupon._id %>"
                           value="<%= coupon._id %>"
-                          <%if(coupon.minimumPrice>subtotal){%>
-                          disabled
-                          <%}%>
+                          <% if(coupon.minimumPrice > subtotal) { %>
+                            disabled
+                          <% } %>
                         />
                         <label class="form-check-label w-100" for="coupon_<%= coupon._id %>">
                           <h6 class="text-primary fw-bold mb-1"><%= coupon.name %></h6>
                           <p class="text-muted mb-1 small">
-                           <span class="text-success"> <strong><%= coupon.offerPrice %> Off</strong></span> On Orders Above <%= coupon.minimumPrice %>
-                            <br>Expires on <span class="text-warning"><%= new Date(coupon.expireOn).toDateString() %></span><br>
-                            <%if(coupon.minimumPrice>subtotal){%>
-                              <span>Add Items worth <strong class="text-danger"><%=coupon.minimumPrice-subtotal%></strong> to avail this Offer</span>
-                            <%}%>
+                            <% if (coupon.offerPrice) { %>
+                              <span class="text-success"> <strong><%= coupon.offerPrice %> Off</strong></span> On Orders Above <%= coupon.minimumPrice %>
+                            <% } else if (coupon.discountPercentage) { %>
+                              <span class="text-success"> <strong><%= coupon.discountPercentage %>% Off</strong></span> On Orders Above <%= coupon.minimumPrice %>
+                            <% } %>
+                            <br>Expires on <span class="text-warning"><%= new Date(coupon.expireOn).toDateString() %></span>
+                            
+                            <% if (coupon.minimumPrice > subtotal) { %>
+                              <br><span>Add Items worth <strong class="text-danger"><%= coupon.minimumPrice - subtotal %></strong> to avail this Offer</span>
+                            <% } %>
+  
+                            <% if (coupon.discountPercentage && coupon.maxDiscountAmount) { %>
+                              <br><span >Max Discount: <strong class="text-danger"><%= coupon.maxDiscountAmount %></strong></span>
+                            <% } %>
                           </p>
                         </label>
                       </div>
@@ -348,6 +357,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary mt-2" onclick="clearCouponSelection()">Clear Selection</button>
+  
           <button type="button" class="btn btn-primary" id="applyCouponBtn">Proceed</button>
         </div>
       </div>
@@ -490,15 +500,32 @@ function updateOrderSummary() {
     const subtotal = parseFloat(subtotalElement.textContent);
     let discount = 0;
 
+
     if (appliedCoupon) {
-        discount = appliedCoupon.offerPrice;
+        // If the coupon has a percentage discount
+        if (appliedCoupon.discountPercentage) {
+            // Calculate the discount based on percentage
+            discount = (subtotal * appliedCoupon.discountPercentage) / 100;
+
+            // If the coupon has a max discount, limit the discount
+            if (appliedCoupon.maxDiscountAmount && discount > appliedCoupon.maxDiscountAmount) {
+                discount = appliedCoupon.maxDiscountAmount;
+            }
+        } else {
+            // Otherwise, use the offer price discount
+            discount = appliedCoupon.offerPrice;
+        }
     }
+
     let grandTotal;
-    if(subtotal < 200){
-    grandTotal = subtotal - discount + 50 ;
+    // Add delivery charge if subtotal is less than 15,000
+    if (subtotal < 1000) {
+        grandTotal = subtotal - discount + 50;
     } else {
-    grandTotal = subtotal - discount ;  
+        grandTotal = subtotal - discount;
     }
+
+    // Update the UI with the calculated discount and grand total
     couponDiscountElement.textContent = discount.toFixed(2);
     grandTotalElement.textContent = grandTotal.toFixed(2);
 }

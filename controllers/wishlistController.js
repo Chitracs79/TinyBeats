@@ -17,8 +17,8 @@ const wishlist = async(req,res,next)=>{
         const skip = (page - 1) * limit;
 
 
-    const cart = await cartModel.findOne({ userId })
-    const  cartProductIds = cart.products.map(item=>item.productId);
+    const cart = await cartModel.findOne({ userId });
+    const cartProductIds = cart ? cart.products.map((item) => item.productId) : [];
 
     const products = await productModel.find({_id:{$in:user.wishlist,$nin: cartProductIds },isBlocked:false})
     .populate("category")

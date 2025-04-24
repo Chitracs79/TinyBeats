@@ -173,7 +173,6 @@ const logout = async(req,res) =>{
                 console.log("Error destroying admin session",err)
                 res.redirect("/admin/pageError");
             } 
-            console.log("Logout from admin")
             res.redirect("/admin");            
         })
     } catch (error) {

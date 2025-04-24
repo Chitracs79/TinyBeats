@@ -35,14 +35,19 @@ const loadWallet = async (req, res, next) => {
           wallets = await Wallet.find({ userId: { $in: matchedUserIds } })
             .populate("userId")
             .lean();
-  
+
+            wallets.forEach(wallet => {
+              wallet.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            });
           totalWallets = wallets.length;
         }
       } else {
         wallets = await Wallet.find()
           .populate("userId")
           .lean();
-  
+          wallets.forEach(wallet => {
+            wallet.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+          });
         totalWallets = wallets.length;
       }
   
@@ -65,15 +70,10 @@ const loadWallet = async (req, res, next) => {
         "transactions.transactionId": transactionId
       }).populate("userId").lean();
   
-      
-  
-  
       const transaction = wallet.transactions.find(
         (data) => data.transactionId === transactionId
       );
-     
-  
-  
+       
       res.render('admin/walletTransaction',{wallet,transaction})
     } catch (error) {
       next(error)

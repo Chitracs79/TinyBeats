@@ -174,7 +174,22 @@ const applyCoupon = async(req,res,next)=>{
         return res.status(400).json({success:false,message:"You have already used this coupon."});
        }
 
-       await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:coupon.offerPrice}},{new:true});
+       let discount = 0;
+
+      if (coupon.offerPrice) {
+      discount = coupon.offerPrice;
+      }
+
+      else if (coupon.discountPercentage) {
+      discount = (subtotal * coupon.discountPercentage) / 100;
+
+
+      if (coupon.maxDiscountAmount && discount > coupon.maxDiscountAmount) {
+        discount = coupon.maxDiscountAmount;
+      }
+     }
+
+       await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:discount}},{new:true});
        res.status(200).json({success:true, message:"Coupon applied", coupon});
        
     } catch (error) {

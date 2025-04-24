@@ -340,7 +340,7 @@ function validateAndSubmit() {
             let errorMessage = "";
 
             // Get form values
-            let productName = document.getElementById("productName").value.trim();
+            let productName = document.getElementById("productName").value.trim().toUpperCase();
             let productDescription = document.getElementById("productDescription").value.trim();
             let productColor = document.getElementById("productColor").value.trim();
             let productBrand = document.querySelector("select[name='brand']").value;
@@ -353,6 +353,9 @@ function validateAndSubmit() {
             if (productName === "") {
                 errorMessage += "Product name is required.\n";
                 isValid = false;
+            }else if (!/^[A-za-z0-9]{3,30}$/.test(productName)) {
+                 errorMessage += "Product name must start with alphabets , should have 3 characters atleast\n";
+                isValid = false;
             }
             if (productDescription === "") {
                 errorMessage += "Product description is required.\n";
@@ -360,6 +363,9 @@ function validateAndSubmit() {
             }
             if (productColor === "") {
                 errorMessage += "Product color is required.\n";
+                isValid = false;
+            }else if (!/^[A-Za-z\s]+$/.test(productColor)) {
+                 errorMessage += "Product color must contain alphabets only.\n";
                 isValid = false;
             }
             if (productBrand === "Select") {
@@ -377,8 +383,8 @@ function validateAndSubmit() {
                 isValid = false;
             }
            
-            if (stock === "" || isNaN(stock) || Number(stock) < 0) {
-                errorMessage += "Enter a valid stock quantity.\n";
+            if (stock === "" || isNaN(stock) || Number(stock) <= 0) {
+                errorMessage += "Enter a valid stock quantity (must be greater than 0)\n";
                 isValid = false;
             }
             // if (discount !== "" && (isNaN(discount) || Number(discount) < 0)) {

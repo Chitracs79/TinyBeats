@@ -85,7 +85,7 @@ const addToCart = async (req, res) => {
                         cart.products[itemIndex].quantity * cart.products[itemIndex].price;
                 }
             } else {
-                console.log(quantity);
+               
                 cart.products.push({
                     productId,
                     quantity,

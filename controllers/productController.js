@@ -272,12 +272,12 @@ const editProduct = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Product not found!" });
         }
 
-        if (data.name !== product.name) {
-            const existingProduct = await productModel.findOne({ name: data.name });
+        if (data.name.trim() !== product.name.trim()) {
+            const existingProduct = await productModel.findOne({ name: data.name.trim(), _id: { $ne: productId } });
             if (existingProduct) {
                 return res.status(400).json({ success: false, message: "Product with this name already exists!" });
             }
-        }
+        }        
         
         //---------------------------------------------------------------------------------------------------
         const outputDir = path.join(__dirname, "../public/uploads/re-image");
@@ -322,8 +322,13 @@ const editProduct = async (req, res, next) => {
                 : data.remainingImages.split(","); // Convert comma-separated string to array
         }
 
+        console.log('Remaining:', remainingImages);
+        console.log('Updated:', updatedImages);
+        console.log('Cropped:', croppedImagePaths);
+       
+
         const allImages = [...remainingImages, ...updatedImages, ...croppedImagePaths];
-     
+        console.log('All:', allImages);
 
         if (allImages.length === 0) {
             return res.status(400).json({ success: false, message: "At least one image is required." });

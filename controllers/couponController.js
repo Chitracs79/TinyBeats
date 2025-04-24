@@ -61,76 +61,165 @@ const loadCouponPage = async(req,res,next)=>{
     }
 }
 
-const addCoupon = async(req,res,next)=>{
+const addCoupon = async (req, res, next) => {
     try {
-        const data = {
-            name:req.body.couponName,
-            startDate:new Date(req.body.startDate+"T00:00:00"),
-            endDate:new Date(req.body.endDate+"T00:00:00"),
-            offerPrice:parseInt(req.body.offerPrice),
-            minimumPrice:parseInt(req.body.minimumPrice)
-         }
-         const existingCoupon = await Coupon.find({name: data.name});
-         if(existingCoupon.length>0){
-            return res.status(400).json({success:false, message:"Coupon with this name already exists"})
-         }
-    
-        const newCoupon = new Coupon({
-            name:data.name,
-            createdOn:data.startDate,
-            expireOn:data.endDate,
-            offerPrice:data.offerPrice,
-            minimumPrice:data.minimumPrice
-        })
-
-        const saved = await newCoupon.save();
-        if(saved){
-            return res.status(200).json({success:true, message:"Coupon added Successfully"});
-        }else{
-            return res.status(400).json({success:false, message:"Failed to add coupon."}) 
-        }
-      
+      const {
+        couponName,
+        startDate,
+        endDate,
+        offerPrice,
+        discountPercentage,
+        maxDiscountAmount,
+        minimumPrice
+      } = req.body;
+  
+      // Validation for offerPrice or discountPercentage
+      if (!offerPrice && !discountPercentage) {
+        return res.status(400).json({
+          success: false,
+          message: "Either offerPrice or discountPercentage is required.",
+        });
+      }
+  
+      // Validation for discountPercentage with maxDiscountAmount
+      if (discountPercentage && !maxDiscountAmount) {
+        return res.status(400).json({
+          success: false,
+          message: "maxDiscountAmount is required when discountPercentage is provided.",
+        });
+      }
+  
+      const data = {
+        name: couponName,
+        startDate: new Date(startDate + "T00:00:00"),
+        expireOn: new Date(endDate + "T00:00:00"),
+        offerPrice: offerPrice ? parseInt(offerPrice) : null,
+        discountPercentage: discountPercentage ? parseInt(discountPercentage) : null,
+        maxDiscountAmount: maxDiscountAmount ? parseInt(maxDiscountAmount) : null,
+        minimumPrice: parseInt(minimumPrice),
+      };
+  
+      const existingCoupon = await Coupon.find({
+        name: { $regex: `^${data.name}$`, $options: 'i' },
+      });
+  
+      if (existingCoupon.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Coupon with this name already exists.",
+        });
+      }
+  
+      const newCoupon = new Coupon(data);
+      const savedCoupon = await newCoupon.save();
+  
+      if (savedCoupon) {
+        return res.status(200).json({
+          success: true,
+          message: "Coupon added successfully!",
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Failed to add coupon.",
+        });
+      }
     } catch (error) {
-        next(error);
+      next(error);
     }
-}
+  };
 
 
-const editCoupon = async(req,res,next)=>{
+  const editCoupon = async (req, res, next) => {
     try {
-       
-       const couponId = req.query.id;
-
-       const data = {
-        name:req.body.name,
-        startDate:new Date(req.body.createdOn+"T00:00:00"),
-        endDate:new Date(req.body.expireOn+"T00:00:00"),
-        offerPrice:parseInt(req.body.offerPrice),
-        minimumPrice:parseInt(req.body.minimumPrice)
-     }
-     
-     const existingCoupon = await Coupon.find({name: data.name, _id: { $ne: couponId }});
-     if(existingCoupon.length>0){
-        return res.status(400).json({success:false, message:"Coupon with this name already exists"})
-     }
-
-     const newCoupon = {
-        name:data.name,
-        createdOn:data.startDate,
-        expireOn:data.endDate,
-        offerPrice:data.offerPrice,
-        minimumPrice:data.minimumPrice
-    }
-    const  updatedCoupon = await Coupon.findByIdAndUpdate(couponId,newCoupon,{new:true});
-    if(updatedCoupon){
-        return res.status(200).json({success:true,message:"Coupon updated Successfully."})
-    } else {
-        return res.status(400).json({success:false, message:"Failed to update."})
-    }
+      const couponId = req.query.id;
+  
+      const name = req.body.name?.trim();
+      const startDate = new Date(req.body.createdOn + "T00:00:00");
+      const endDate = new Date(req.body.expireOn + "T00:00:00");
+      const offerPrice = req.body.offerPrice ? parseFloat(req.body.offerPrice) : null;
+      const discountPercentage = req.body.discountPercentage ? parseFloat(req.body.discountPercentage) : null;
+      const maxDiscountAmount = req.body.maxDiscountAmount ? parseFloat(req.body.maxDiscountAmount) : null;
+      const minimumPrice = parseFloat(req.body.minimumPrice);
+  
+      // Validation
+    //   if (!name || !startDate || !endDate || !minimumPrice || isNaN(minimumPrice)) {
+    //     return res.status(StatusCodes.BAD_REQUEST).json({
+    //       success: false,
+    //       message: Messages.INVALID_COUPON_DATA,
+    //     });
+    //   }
+  
+    //   if (endDate <= startDate) {
+    //     return res.status(StatusCodes.BAD_REQUEST).json({
+    //       success: false,
+    //       message: Messages.COUPON_DATE_INVALID,
+    //     });
+    //   }
+  
+    //   if (!offerPrice && !discountPercentage) {
+    //     return res.status(StatusCodes.BAD_REQUEST).json({
+    //       success: false,
+    //       message: Messages.COUPON_DISCOUNT_REQUIRED,
+    //     });
+    //   }
+  
+    //   if (discountPercentage && !maxDiscountAmount) {
+    //     return res.status(StatusCodes.BAD_REQUEST).json({
+    //       success: false,
+    //       message: Messages.COUPON_MAX_AMOUNT_REQUIRED,
+    //     });
+    //   }
+  
+    //   if (offerPrice && discountPercentage) {
+    //     return res.status(StatusCodes.BAD_REQUEST).json({
+    //       success: false,
+    //       message: Messages.COUPON_TYPE_CONFLICT,
+    //     });
+    //   }
+  
+      // Check if coupon name already exists
+      const existingCoupon = await Coupon.find({
+        name: { $regex: `^${name}$`, $options: 'i' },
+        _id: { $ne: couponId },
+      });
+  
+      if (existingCoupon.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message:"Coupon already exists.",
+        });
+      }
+  
+      const newCoupon = {
+        name,
+        createdOn: startDate,
+        expireOn: endDate,
+        offerPrice: offerPrice || null,
+        discountPercentage: discountPercentage || null,
+        maxDiscountAmount: discountPercentage ? maxDiscountAmount : null,
+        minimumPrice,
+      };
+  
+      const updatedCoupon = await Coupon.findByIdAndUpdate(couponId, newCoupon, {
+        new: true,
+      });
+  
+      if (updatedCoupon) {
+        return res.status(200).json({
+          success: true,
+          message: "Coupon updated successfully",
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Coupon updation failed",
+        });
+      }
     } catch (error) {
-        next(error);
+      next(error);
     }
-}
+  };
 
 const deleteCoupon = async(req,res,next)=>{
     try {

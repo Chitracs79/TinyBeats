@@ -300,13 +300,30 @@ function validateAndSubmit() {
             })
             return false;
         }
+        const existingImageElements = document.querySelectorAll(".sub-container img");
+        const form = document.forms[0];
+        // Remove previous if any
+        const prevInputs = form.querySelectorAll("input[name='remainingImages']");
+        prevInputs.forEach(el => el.remove());
 
+        existingImageElements.forEach(img => {
+            const src = img.getAttribute("src");
+            if (src) {
+                const filename = src.split("/").pop();
+                const hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "remainingImages";
+                hiddenInput.value = filename;
+                form.appendChild(hiddenInput);
+            }
+        });
         // Prepare the form data
-        let form = document.forms[0];
+        // let form = document.forms[0];
         let formData = new FormData(form);
 
-        // Log submission to the console for debugging
-        console.log("Submitting form via fetch...");
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
 
         // Use fetch to submit the form asynchronously
         fetch(form.action, {
@@ -399,14 +416,14 @@ function validateAndSubmit() {
                 isValid = false;
             }
            
-            let existingImages = document.querySelectorAll('.sub-container img').length;
-            let newImages = document.getElementById("imageInput").files.length;
-            let croppedImages = document.querySelectorAll("input[name='croppedImages']").length;
+            // let existingImages = document.querySelectorAll('.sub-container img').length;
+            // let newImages = document.getElementById("imageInput").files.length;
+            // let croppedImages = document.querySelectorAll("input[name='croppedImages']").length;
 
-            if (existingImages === 0 ) {
-                errorMessage += "At least one product image is required.\n";
-                isValid = false;
-            }
+            // if (existingImages === 0 ) {
+            //     errorMessage += "At least one product image is required.\n";
+            //     isValid = false;
+            // }
 
            
 
