@@ -142,41 +142,7 @@ const addCoupon = async (req, res, next) => {
       const maxDiscountAmount = req.body.maxDiscountAmount ? parseFloat(req.body.maxDiscountAmount) : null;
       const minimumPrice = parseFloat(req.body.minimumPrice);
   
-      // Validation
-    //   if (!name || !startDate || !endDate || !minimumPrice || isNaN(minimumPrice)) {
-    //     return res.status(StatusCodes.BAD_REQUEST).json({
-    //       success: false,
-    //       message: Messages.INVALID_COUPON_DATA,
-    //     });
-    //   }
-  
-    //   if (endDate <= startDate) {
-    //     return res.status(StatusCodes.BAD_REQUEST).json({
-    //       success: false,
-    //       message: Messages.COUPON_DATE_INVALID,
-    //     });
-    //   }
-  
-    //   if (!offerPrice && !discountPercentage) {
-    //     return res.status(StatusCodes.BAD_REQUEST).json({
-    //       success: false,
-    //       message: Messages.COUPON_DISCOUNT_REQUIRED,
-    //     });
-    //   }
-  
-    //   if (discountPercentage && !maxDiscountAmount) {
-    //     return res.status(StatusCodes.BAD_REQUEST).json({
-    //       success: false,
-    //       message: Messages.COUPON_MAX_AMOUNT_REQUIRED,
-    //     });
-    //   }
-  
-    //   if (offerPrice && discountPercentage) {
-    //     return res.status(StatusCodes.BAD_REQUEST).json({
-    //       success: false,
-    //       message: Messages.COUPON_TYPE_CONFLICT,
-    //     });
-    //   }
+    
   
       // Check if coupon name already exists
       const existingCoupon = await Coupon.find({

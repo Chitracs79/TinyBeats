@@ -74,7 +74,8 @@ const orderModel = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','returned','returning']
+        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','returned','returning','Failed'],
+        default:"Pending",
     },
     requestStatus:{
       type:String,
@@ -128,7 +129,7 @@ const orderModel = new Schema({
     paymentStatus: {
       type: String,
       enum: ['Pending', 'Success', 'Failed'],
-      default: 'Pending'
+      default: 'Failed'
     }
 });
 

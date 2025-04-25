@@ -897,13 +897,13 @@
                                 <small class="text-muted">PAYMENT METHOD</small><br>
                                 <% if (order.paymentMethod==='cod' ) { %>
                                     CASH ON DELIVERY
-                                    <% } else if (order.paymentMethod==='online payment' ) { %>
+                                    <% } else if (order.paymentMethod==='online payment'&& order.paymentStatus==='Success' ) { %>
                                         ONLINE PAYMENT
                                         <% } else if (order.paymentMethod==='wallet' ) { %>
                                             WALLET PAYMENT
-                                            <% } else { %>
-                                                UNKNOWN PAYMENT METHOD
-                                                <% } %>
+                                            <% } else if(order.paymentStatus === "Failed"){ %>
+                                              <a href="/retryPayment?orderId=<%=order.orderId%>" class="btn btn-primary">Retry Payment</a>
+                                            <% } %>
                             </div>
 
                             <div class="col-md-3 text-end d-flex">

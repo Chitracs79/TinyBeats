@@ -384,6 +384,9 @@ function validateAndSubmit() {
             if (productName === "") {
                 errorMessage += "Product name is required.\n";
                 isValid = false;
+            }else if (!/^[A-za-z0-9]{3,30}$/.test(productName)) {
+                 errorMessage += "Product name must start with alphabets , should have 3 characters atleast\n";
+                isValid = false;
             }
             if (productDescription === "") {
                 errorMessage += "Product description is required.\n";
@@ -391,6 +394,9 @@ function validateAndSubmit() {
             }
             if (productColor === "") {
                 errorMessage += "Product color is required.\n";
+                isValid = false;
+            }else if (!/^[A-Za-z\s]+$/.test(productColor)) {
+                 errorMessage += "Product color must contain alphabets only.\n";
                 isValid = false;
             }
             if (productBrand === "Select") {

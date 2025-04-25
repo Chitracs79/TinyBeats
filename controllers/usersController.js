@@ -542,6 +542,7 @@ const signup = async (req, res) => {
       
         //session handling
         req.session.userOtp = otp;
+        req.session.otpCreatedAt = Date.now();
         req.session.userData = { name, email, phone, password,referral };
 
         res.render("users/verifyOtp");
@@ -595,6 +596,12 @@ const verifyOtp = async (req, res) => {
         
         const { otp } = req.body;
         console.log("Otp Verified:",otp);
+        const otpCreatedAt = req.session.otpCreatedAt;
+
+        const now = Date.now();
+        if (!otpCreatedAt || now - otpCreatedAt > 30 * 1000) {
+            return res.status(400).json({ success: false, message: "OTP has expired. Please request a new one." });
+        }
 
         if (otp === req.session.userOtp) {
             const user = req.session.userData
@@ -656,6 +663,7 @@ const resendOtp = async (req, res) => {
 
         const otp = generateOtp();
         req.session.userOtp = otp;
+        req.session.otpCreatedAt = Date.now();
 
         const emailSent = await sendVerificationEmail(email, otp);
         if (emailSent) {

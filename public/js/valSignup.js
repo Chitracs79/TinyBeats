@@ -8,7 +8,7 @@ const cpasswordError = document.getElementById("confirmPassword-error");
 const submitError = document.getElementById("submit-error");
 
 //Regular Expressions
-const nameRegex = /^[A-za-z0-9]{3,20}$/;
+const nameRegex = /^[A-za-z0-9\s]{3,20}$/;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^[6-9][\d]{9}$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;

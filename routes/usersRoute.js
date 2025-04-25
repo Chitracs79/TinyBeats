@@ -7,6 +7,7 @@ const cartController = require('../controllers/cartController');
 const checkoutController = require('../controllers/checkoutController');
 const orderController = require('../controllers/orderController');
 const walletController = require('../controllers/walletController');
+const retryPaymentController = require('../controllers/retryPaymentController');
 const passport = require('passport');
 const {userAuth,redirect,isBlocked} = require("../middlewares/auth");
 const multer  = require("multer");
@@ -118,9 +119,14 @@ router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 //razorPay
 router.post("/order/createOrder",userAuth,orderController.createOrder)
 router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
-router.get('/paymentFailure',userAuth,orderController.loadPaymentFailure);
-// router.get('/order/retry/:orderId', userAuth, orderController.retryOrderPayment);
 
+//retry payment
+router.get("/paymentFailure",userAuth,retryPaymentController .loadPaymentFailure)
+router.get("/retryPayment",userAuth,retryPaymentController .loadRetryPayment)
+router.put("/retryPayment/cod",userAuth,retryPaymentController .retryPaymentCod)
+router.put('/retryPayment/wallet',userAuth,retryPaymentController.retryPaymentWallet)
+router.post('/retryPayment/online',userAuth,retryPaymentController.retryPaymentOnline)
+router.post('/retryPayment/verifyPayment',userAuth,retryPaymentController.verifyPayment)
 
 //logout routing
 router.get('/logout',userAuth,userController.logout);
