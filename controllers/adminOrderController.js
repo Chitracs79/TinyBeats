@@ -1,9 +1,10 @@
 const Product = require('../models/productModel');
 const User = require('../models/userModel');
 const Order = require('../models/orderModel');
-const userModel = require('../models/userModel');
 const Address = require('../models/addressModel');
 const Wallet = require('../models/walletModel');
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 
 const loadOrderPage = async (req, res) => {
@@ -52,7 +53,7 @@ const loadOrderPage = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(StatusCodes.SUCCESS).send("Internal Server Error");
   }
 };
 
@@ -85,9 +86,9 @@ const updateStatus = async(req,res)=>{
     const  order = await Order.findByIdAndUpdate(orderId,{$set:{status:status}},{new:true});
 
     if(order){
-      res.status(200).json({success:true,message:"Order updated successfully!"});
+      res.status(StatusCodes.SUCCESS).json({success:true,message:"Order updated successfully!"});
     } else {
-      res.status(400).json({success:false,message:"Order not found"});
+      res.status(StatusCodes.NOT_FOUND).json({success:false,message:"Order not found"});
     }
     
   } catch (error) {

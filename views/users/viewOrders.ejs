@@ -924,7 +924,7 @@
                                             Cancel Return Request
                                         </button>
                                         <% } else if (!['delivered', 'cancelled' , 'return requested'
-                                            , 'returning' , 'returned' ].includes(order.status)) { %>
+                                            , 'returning' , 'returned','Pending' ].includes(order.status)) { %>
                                             <button onclick="cancelOrder('<%= order._id %>')"
                                                 class="btn btn-outline-danger btn-sm mt-2">
                                                 Cancel Order

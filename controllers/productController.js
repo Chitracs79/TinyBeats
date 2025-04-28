@@ -6,14 +6,14 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require("mongoose");
+const StatusCodes = require('../helpers/StatusCodes');
+const Messages = require('../helpers/Message');
 
 
 
 const loadProductpage = async (req, res) => {
     try {
 
-
-        //search
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
@@ -85,7 +85,7 @@ const addProduct = async (req, res) => {
     try {
 
         if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: "No files uploaded!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: "No files uploaded!" });
         }
 
         const products = { ...req.body };
@@ -95,7 +95,7 @@ const addProduct = async (req, res) => {
         const existProduct = await productModel.findOne({ name: new RegExp(`^${name}$`, "i") });
 
         if (existProduct) {
-            return res.status(400).json({ success: false, message: "Product already exists, try another name!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Product already exists, try another name!" });
         }
 
         const outputDir = path.join(__dirname, "../public/uploads/re-image");
@@ -139,12 +139,12 @@ const addProduct = async (req, res) => {
 
         const brandData = await brandModel.findOne({ name: products.brand })
         if (!brandData) {
-            return res.status(400).json({ error: `Brand "${products.brand}" not found` });
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: `Brand "${products.brand}" not found` });
         }
 
         const categoryData = await categoryModel.findOne({ name: products.category }, { _id: 1, offer: 1 });
         if (!categoryData) {
-            return res.status(400).send("Invalid Category name");
+            return res.status(StatusCodes.BAD_REQUEST).send("Invalid Category name");
         }
 
         let discountAmount;
@@ -197,7 +197,7 @@ const addProductOffer = async (req, res) => {
         res.json({ status: true });
     } catch (error) {
 
-        res.status(500).json({ status: false, message: "Internal Server Error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
     }
 }
 
@@ -217,7 +217,7 @@ const removeProductOffer = async (req, res) => {
         await product.save();
         res.json({ status: true });
     } catch (error) {
-        res.status(500).json({ status: false, message: "Internal Server Error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
     }
 }
 
@@ -228,7 +228,7 @@ const productBlocked = async (req, res) => {
 
         return res.json({ status: true });
     } catch (error) {
-        return res.status(500).json({ status: false, message: "Internal Server Error" });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
     }
 }
 
@@ -240,7 +240,7 @@ const productUnblocked = async (req, res) => {
 
         return res.json({ status: true });
     } catch (error) {
-        return res.status(500).json({ status: false, message: "Internal Server Error" });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
     }
 }
 
@@ -269,13 +269,13 @@ const editProduct = async (req, res, next) => {
 
         const product = await productModel.findById(productId);
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found!" });
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Product not found!" });
         }
 
         if (data.name.trim() !== product.name.trim()) {
             const existingProduct = await productModel.findOne({ name: data.name.trim(), _id: { $ne: productId } });
             if (existingProduct) {
-                return res.status(400).json({ success: false, message: "Product with this name already exists!" });
+                return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Product with this name already exists!" });
             }
         }        
         
@@ -331,7 +331,7 @@ const editProduct = async (req, res, next) => {
         console.log('All:', allImages);
 
         if (allImages.length === 0) {
-            return res.status(400).json({ success: false, message: "At least one image is required." });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "At least one image is required." });
         }
 
 
@@ -362,11 +362,8 @@ const editProduct = async (req, res, next) => {
             image:allImages,
         }
 
-        // if (images.length > 0) {
-        //     updatedFields.image = images;
-        // }
         await productModel.findByIdAndUpdate(productId, updatedFields, { new: true });
-        return res.status(200).json({ success: true, message: "Product updated Successfully!" });
+        return res.status(StatusCodes.SUCCESS).json({ success: true, message: "Product updated Successfully!" });
     } catch (error) {
         next(error);
     }
@@ -403,12 +400,12 @@ const softDeleteProducts = async (req, res) => {
 
 
         if (!mongoose.Types.ObjectId.isValid(productId)) {
-            return res.status(400).json({ success: false, message: "Invalid category ID!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid category ID!" });
         }
 
         const product = await productModel.findById(productId);
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found." });
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Product not found." });
         }
 
         await productModel.findByIdAndUpdate(productId, { isDeleted: true });
@@ -417,7 +414,7 @@ const softDeleteProducts = async (req, res) => {
     } catch (error) {
 
         console.error("Error soft deleting product", error);
-        return res.status(500).json({ success: false, message: "Failed to delete category." })
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to delete product." })
     }
 }
 const loadInventory = async (req, res) => {
@@ -474,9 +471,9 @@ const updateInventory = async (req, res, next) => {
         const newQuantity = await productModel.findByIdAndUpdate(productId, { $set: { stock: stock } }, { new: true });
 
         if (newQuantity) {
-            return res.status(200).json({ success: true, message: "Stock updated Successfully." })
+            return res.status(StatusCodes.SUCCESS).json({ success: true, message: "Stock updated Successfully." })
         } else {
-            return res.status(400).json({ success: false, message: "Stock updation failed." })
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Stock updation failed." })
         }
 
     } catch (error) {

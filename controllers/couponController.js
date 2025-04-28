@@ -1,25 +1,19 @@
 const { redirect } = require('../middlewares/auth');
 const Coupon = require('../models/couponModel');
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
+
 
 const loadCouponPage = async(req,res,next)=>{
     try {
         
         let coupons = await Coupon.find();
-     
-
         //search
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
         const limit = 5 ;
         const skip = (page -1) * limit;
         let serialNumber = (page - 1) * limit + 1;
-        
-        // let searchFilter = {
-        //     isDeleted: false,
-        //     name: { $regex: search, $options: "i" } , // Case-insensitive search          
-            
-        // };
-
 
         for (let coupon of coupons) {
           if (coupon.expireOn < new Date() || coupon.createdOn > new Date()) {
@@ -75,7 +69,7 @@ const addCoupon = async (req, res, next) => {
   
       // Validation for offerPrice or discountPercentage
       if (!offerPrice && !discountPercentage) {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: "Either offerPrice or discountPercentage is required.",
         });
@@ -83,7 +77,7 @@ const addCoupon = async (req, res, next) => {
   
       // Validation for discountPercentage with maxDiscountAmount
       if (discountPercentage && !maxDiscountAmount) {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: "maxDiscountAmount is required when discountPercentage is provided.",
         });
@@ -104,7 +98,7 @@ const addCoupon = async (req, res, next) => {
       });
   
       if (existingCoupon.length > 0) {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: "Coupon with this name already exists.",
         });
@@ -114,12 +108,12 @@ const addCoupon = async (req, res, next) => {
       const savedCoupon = await newCoupon.save();
   
       if (savedCoupon) {
-        return res.status(200).json({
+        return res.status(StatusCodes.SUCCESS).json({
           success: true,
           message: "Coupon added successfully!",
         });
       } else {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: "Failed to add coupon.",
         });
@@ -151,7 +145,7 @@ const addCoupon = async (req, res, next) => {
       });
   
       if (existingCoupon.length > 0) {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message:"Coupon already exists.",
         });
@@ -172,12 +166,12 @@ const addCoupon = async (req, res, next) => {
       });
   
       if (updatedCoupon) {
-        return res.status(200).json({
+        return res.status(StatusCodes.SUCCESS).json({
           success: true,
           message: "Coupon updated successfully",
         });
       } else {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: "Coupon updation failed",
         });
@@ -194,9 +188,9 @@ const deleteCoupon = async(req,res,next)=>{
      const deletedCoupon = await Coupon.findByIdAndDelete(couponId);
      
      if(deletedCoupon){
-        return res.status(200).json({success:true, message:"Coupon deleted Successfully."})
+        return res.status(StatusCodes.SUCCESS).json({success:true, message:"Coupon deleted Successfully."})
      } else {
-        return res.status(400).json({success:false, message: "Failed to delete Coupon"})
+        return res.status(StatusCodes.BAD_REQUEST).json({success:false, message: "Failed to delete Coupon"})
      }
     } catch (error) {
        next(error) 

@@ -1,5 +1,6 @@
 const Order= require("../models/orderModel")
 
+
 const loadSales = async (req, res, next) => {
   try {
     const range = req.query.range || "daily";

@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt');
 const nodemailer = require("nodemailer");
 const mongoose = require('mongoose');
 const passport = require("passport");
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 
 //-----------------------------------------Filter --------------------------------------------------------------------------------------
@@ -460,7 +462,7 @@ const loadHomePage = async (req, res) => {
 
     } catch (error) {
         console.error("Error loading home page:", error);
-        return res.status(500).send("Server error");
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server error");
     }
 };
 
@@ -471,7 +473,7 @@ const loadSignupPage = async (req, res) => {
         // const { tab } = req.query; // tab=signin or signup
         res.render('users/signup', { tab: 'signup' });
     } catch (error) {
-        res.status(500).send("Server error");
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server error");
     }
 }
 
@@ -529,7 +531,7 @@ const signup = async (req, res) => {
         const referralCode = referral.toUpperCase();
         const referredUser = await userModel.findOne({referralCode:referralCode})
             if(!referredUser){
-            return res.status(400).json({success:false,message:"Invalid referral code."})
+            return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:"Invalid referral code."})
              }
          }
         const otp = generateOtp();
@@ -575,7 +577,7 @@ const loadVerifyOtp = async (req, res) => {
     try {
         return res.render('users/verifyOtp')
     } catch (error) {
-        res.status(500).send("Internal server error");
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Internal server error");
     }
 }
 
@@ -600,7 +602,7 @@ const verifyOtp = async (req, res) => {
 
         const now = Date.now();
         if (!otpCreatedAt || now - otpCreatedAt > 30 * 1000) {
-            return res.status(400).json({ success: false, message: "OTP has expired. Please request a new one." });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "OTP has expired. Please request a new one." });
         }
 
         if (otp === req.session.userOtp) {
@@ -644,12 +646,12 @@ const verifyOtp = async (req, res) => {
            
             res.json({ success: true, redirectUrl: "/" })
         } else {
-            res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
+            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid OTP, Please try again" });
         }
 
     } catch (error) {
         console.log("Error Verifying OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error " });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error " });
     }
 }
 
@@ -658,7 +660,7 @@ const resendOtp = async (req, res) => {
          const { email } = req.session.userData;
        
         if (!email) {
-            return res.status(400).json({ success: false, message: "Email not found in session" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Email not found in session" });
         }
 
         const otp = generateOtp();
@@ -668,14 +670,14 @@ const resendOtp = async (req, res) => {
         const emailSent = await sendVerificationEmail(email, otp);
         if (emailSent) {
             console.log("Resend OTP is ", otp);
-            res.status(200).json({ success: true, message: "OTP Resend Successfully" });
+            res.status(StatusCodes.SUCCESS).json({ success: true, message: "OTP Resend Successfully" });
         } else {
-            res.status(500).json({ succes: false, message: "Failed to resend OTP, Please try again" });
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ succes: false, message: "Failed to resend OTP, Please try again" });
         }
 
     } catch (error) {
         console.error("Error resending OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error, Please try again" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error, Please try again" });
 
     }
 

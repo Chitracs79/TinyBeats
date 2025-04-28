@@ -1,6 +1,8 @@
 const brandModel = require('../models/brandModel');
 const productModel = require('../models/productModel');
 const mongoose = require("mongoose");
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 const getBrandpage = async (req, res) => {
     try {
@@ -32,7 +34,7 @@ const getBrandpage = async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching brands:", error);
-        res.status(500).json({ success: false, message: "Error getting brand page" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Error getting brand page" });
     }
 }
 //-------------------------add Brand-------------------------------------------------
@@ -50,10 +52,10 @@ const addBrand = async (req, res) => {
            
             res.json({ success: true, redirectUrl:"/admin/brand" });
         } else {
-            res.status(400).json({ success: false, message: "Brand already exists!" });
+            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Brand already exists!" });
         }
     } catch (error) {
-        res.status(500).json({ success: false, message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
       
     }
 }

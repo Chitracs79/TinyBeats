@@ -9,8 +9,7 @@ const multer = require('multer');
 const middleware = require('./middlewares/middleware');
 const usersRouter = require('./routes/usersRoute');
 const adminRouter = require('./routes/adminRoute');
-const connectDB = require('./config/connectDB')
-// const {syncUser} = require("./middlewares/auth");
+const connectDB = require('./config/connectDB');
 const { error } = require('console');
 
 const app = express();
@@ -33,7 +32,7 @@ app.use(flash());
 app.use(middleware.flashMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(syncUser);
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));

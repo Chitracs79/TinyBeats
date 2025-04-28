@@ -85,7 +85,7 @@ const placeOrder = async (req, res) => {
 
     await Cart.findOneAndUpdate({ userId }, { $set: { products: [], discount: 0 } });
 
-    return res.status(200).json({ success: true, message: 'Order Placed Successfully' })
+    return res.status(StatusCodes.SUCCESS).json({ success: true, message: 'Order Placed Successfully' })
   } catch (error) {
 
   }
@@ -132,11 +132,11 @@ const placeWalletOrder = async (req, res, next) => {
 
     const wallet = await Wallet.findOne({ userId: userId });
     if (!wallet) {
-      return res.status(400).json({ success: false, message: "Wallet not found" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Wallet not found" });
     }
 
     if (wallet.balance < finalAmount) {
-      return res.status(400).json({ success: false, message: "Insufficient Balance" })
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Insufficient Balance" })
     }
     wallet.balance -= parseInt(finalAmount);
 
@@ -180,7 +180,7 @@ const placeWalletOrder = async (req, res, next) => {
 
     await Cart.findOneAndUpdate({ userId }, { $set: { products: [], discount: 0 } });
    
-    return res.status(200).json({ success: true, message: 'Order Placed Successfully' });
+    return res.status(StatusCodes.SUCCESS).json({ success: true, message: 'Order Placed Successfully' });
   } catch (error) {
     next(error);
   }
@@ -272,11 +272,8 @@ const createOrder = async (req, res, next) => {
 
 
     await Cart.findOneAndUpdate({ userId }, { $set: { products: [],discount:0 } });
-
-
     
-    
-    res.status(200).json({
+    res.status(StatusCodes.SUCCESS).json({
       
       id: order.id, 
       amount: options.amount, 
@@ -299,7 +296,7 @@ const verifyPayment = async (req, res, next) => {
         { razorpayOrderId: razorpay_order_id },
         { $set: { status: "Pending", paymentStatus: "Failed" } }
       );
-      return res.status(200).json({ success: false });
+      return res.status(StatusCodes.SUCCESS).json({ success: false });
     }
 
     const generatedSignature = crypto
@@ -312,7 +309,7 @@ const verifyPayment = async (req, res, next) => {
         { razorpayOrderId: razorpay_order_id },
         { $set: { status: "Pending", paymentStatus: "Failed" } }
       );
-      return res.status(200).json({ success: false });
+      return res.status(StatusCodes.SUCCESS).json({ success: false });
     }
 
     await Order.findOneAndUpdate(
@@ -334,7 +331,7 @@ const verifyPayment = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Payment verification error:", error);
-    res.status(500).json({ success: false });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -490,10 +487,10 @@ const requestReturn = async (req, res, next) => {
         }
       })
     } else {
-      return res.status(400).json({ success: false, message: "No order found!" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "No order found!" });
     }
 
-    res.status(200).json({ success: true, message: "Return request successfull." })
+    res.status(StatusCodes.SUCCESS).json({ success: true, message: "Return request successfull." })
   } catch (error) {
     next(error)
   }
@@ -543,7 +540,7 @@ const cancelReturnRequest = async (req, res, next) => {
         .json({ success: false, message: "Order not Found" });
     }
 
-    return res.status(200).json({ success: true, message: "return request cancelled" });
+    return res.status(StatusCodes.SUCCESS).json({ success: true, message: "return request cancelled" });
   } catch (error) {
     console.error(error);
     res.render("/pageNotFound");

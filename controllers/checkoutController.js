@@ -7,6 +7,8 @@ const walletModel = require('../models/walletModel');
 const Coupon = require("../models/couponModel");
 const mongoose = require("mongoose");
 const coupon = require("../models/couponModel");
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 
 
@@ -39,7 +41,7 @@ const loadCheckoutPage = async (req, res) => {
       const addressData = await addressModel.findOne({ userId: userId });
 
       if (!user) {
-          return res.status(404).send("User not found");
+          return res.status(StatusCodes.NOT_FOUND).send("User not found");
       }
 
       // Adjust cart qty based on current product stock
@@ -167,11 +169,11 @@ const applyCoupon = async(req,res,next)=>{
        }
 
        if(coupon.minimumPrice > subtotal){
-        return res.status(400).json({success:false,message:`you need to have items worth ${coupon.minimumPrice} to apply this coupon`});
+        return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:`you need to have items worth ${coupon.minimumPrice} to apply this coupon`});
        }
 
        if(coupon.usedBy.includes(userId)){
-        return res.status(400).json({success:false,message:"You have already used this coupon."});
+        return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:"You have already used this coupon."});
        }
 
        let discount = 0;
@@ -190,7 +192,7 @@ const applyCoupon = async(req,res,next)=>{
      }
 
        await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:discount}},{new:true});
-       res.status(200).json({success:true, message:"Coupon applied", coupon});
+       res.status(StatusCodes.SUCCESS).json({success:true, message:"Coupon applied", coupon});
        
     } catch (error) {
         next(error)
@@ -201,7 +203,7 @@ const removeCoupon = async(req,res,next)=>{
     try {
         const userId = req.session.user;
         await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:0}},{new:true});
-        res.status(200).json({success:true,message:'Coupon removed successfully'});
+        res.status(StatusCodes.SUCCESS).json({success:true,message:'Coupon removed successfully'});
     } catch (error) {
         next(error);
     }
@@ -258,7 +260,7 @@ const checkStock = async (req, res) => {
         });
     } catch (error) {
         console.error("Error checking stock:", error);
-        res.status(500).json({
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Error checking stock availability"
         });

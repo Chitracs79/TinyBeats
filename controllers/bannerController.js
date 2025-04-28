@@ -2,6 +2,8 @@ const Banner = require("../models/bannerModel");
 const mongoose = require("mongoose");
 const path = require('path');
 const fs = require('fs');
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 //------------------Loading Banner Page---------------------------
 const loadBannerpage = async (req, res) => {
@@ -14,7 +16,7 @@ const loadBannerpage = async (req, res) => {
         });
     } catch (error) {
        // res.redirect("/pageError");
-       res.status(500).json({ success: false, message: "Error loading banner page" });
+       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Error loading banner page" });
     }
 }
 
@@ -39,7 +41,7 @@ const addBanner = async(req,res) =>{
       
     } catch (error) {
         console.error("Error adding banner :",error);
-        res.status(500).json({ success: false, message: "Internal server error. Please try again." });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error. Please try again." });
     }
 }
 

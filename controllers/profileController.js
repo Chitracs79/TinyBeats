@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const fs = require('fs');
 const path = require('path');
+const StatusCodes = require('../helpers/StatusCodes');
+const Messages = require('../helpers/Message');
 
 // Functn to generate a 6-digit OTP
 function generateOtp(length = 6) {
@@ -81,7 +83,7 @@ const loadverifyForgotPassOtp = async (req, res) => {
     try {
         return res.render('users/verifyForgotPassOtp')
     } catch (error) {
-        res.status(500).send("Internal server error");
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Internal server error");
     }
 }
 const verifyForgotPassOtp = async (req, res) => {
@@ -95,12 +97,12 @@ const verifyForgotPassOtp = async (req, res) => {
              
             res.json({ success: true, redirectUrl: '/resetPassword' })
         } else {
-            res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
+            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid OTP, Please try again" });
         }
 
     } catch (error) {
         console.log("Error Verifying OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error " });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error " });
     }
 }
 //----------------------------------Resend OTP-----------------------------------------------------------
@@ -108,7 +110,7 @@ const resendOtp = async (req, res) => {
     try {
         const { email } = req.session.userData;
         if (!email) {
-            return res.status(400).json({ success: false, message: "Email not found in session" });
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Email not found in session" });
         }
 
         const otp = generateOtp();
@@ -117,14 +119,14 @@ const resendOtp = async (req, res) => {
         const emailSent = await sendVerificationEmail(email, otp);
         if (emailSent) {
             console.log("Resend OTP is ", otp);
-            res.status(200).json({ success: true, message: "OTP Resend Successfully" });
+            res.status(StatusCodes.SUCCESS).json({ success: true, message: "OTP Resend Successfully" });
         } else {
-            res.status(500).json({ succes: false, message: "Failed to resend OTP, Please try again" });
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ succes: false, message: "Failed to resend OTP, Please try again" });
         }
 
     } catch (error) {
         console.error("Error resending OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error, Please try again" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error, Please try again" });
 
     }
 
@@ -192,7 +194,7 @@ const loadProfilePage = async (req, res) => {
 const uploadProfile = async (req, res, next) => {
     try {
         if (!req.file) {
-            return res.status(400).send("No file uploaded.");
+            return res.status(StatusCodes.BAD_REQUEST).send("No file uploaded.");
         }
         const updatedUser = await userModel.findByIdAndUpdate(
             req.session.user,
@@ -238,19 +240,19 @@ const changeEmail = async (req, res) => {
       ;
 
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
         }
 
         if (user.email !== currentEmail) {
-            return res.status(400).json({ message: "Email doesnot match" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Email doesnot match" });
         }
 
         user.email = newEmail;
         await user.save();
-        res.status(200).json({ message: "Email updated successfully" });
+        res.status(StatusCodes.SUCCESS).json({ message: "Email updated successfully" });
     } catch (error) {
         console.log("Error updating user email");
-        res.status(500).json({ error: "Failed to update email" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to update email" });
     }
 }
 
@@ -273,19 +275,19 @@ const changePassword = async (req, res) => {
         const match = await bcrypt.compare(currentPassword,user.password);
 
         if(!match){
-            return res.status(400).json({ success: false, message: "Incorrect current password" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Incorrect current password" });
         }
 
         if (password !== confirmPassword) {
-            return res.status(400).json({ success: false, message: "Passwords do not match" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Passwords do not match" });
         }
 
         const passwordHash = await securePassword(password);
         await userModel.updateOne({ _id: userId }, { $set: { password: passwordHash } });
 
-        res.status(200).json({ success: true, message: "Password updated successfully" });
+        res.status(StatusCodes.SUCCESS).json({ success: true, message: "Password updated successfully" });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
     }
 }
 
@@ -402,13 +404,13 @@ const loadEditAddress = async (req, res) => {
             const currentAddress = await addressModel.findOne({ "address._id": addressId });
 
             if (!currentAddress) {
-                return res.status(404).send("Address not found");
+                return res.status(StatusCodes.NOT_FOUND).send("Address not found");
             }
 
             const addressData = currentAddress.address.find(addr => addr._id == addressId);
           
             if (!addressData) {
-                return res.status(404).send("Address not found");
+                return res.status(StatusCodes.NOT_FOUND).send("Address not found");
             }
 
             res.render('users/editAddress', { user, address: addressData });
@@ -416,7 +418,7 @@ const loadEditAddress = async (req, res) => {
         }
     } catch (error) {
         console.error("Error fetching address:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
 };
 
@@ -428,22 +430,22 @@ const editAddress = async (req, res) => {
         const updatedData = req.body;   
 
         if (!addressId) {
-            return res.status(400).json({ message: "Address ID is required" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Address ID is required" });
         }
 
         if (!mongoose.isValidObjectId(addressId)) {
-            return res.status(400).json({ message: "Invalid address ID" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Invalid address ID" });
         }
 
         if (!updatedData || Object.keys(updatedData).length === 0) {
-            return res.status(400).json({ message: "No update data provided" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "No update data provided" });
         }
 
         // Find the user address document
         const addressDocument = await addressModel.findOne({ "address._id": addressId });
 
         if (!addressDocument) {
-            return res.status(404).json({ message: "Address not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "Address not found" });
         }
 
         // Update the specific address inside the array
@@ -468,15 +470,15 @@ const editAddress = async (req, res) => {
         );
 
         if (updatedAddress.modifiedCount === 0) {
-            return res.status(400).json({ message: "No changes were made" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "No changes were made" });
         }
 
         console.log("Address updated successfully");
-        res.status(200).json({ message: "Address updated successfully!" });
+        res.status(StatusCodes.SUCCESS).json({ message: "Address updated successfully!" });
 
     } catch (error) {
         console.error(" Error editing address:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
     }
 };
 
@@ -488,7 +490,7 @@ const deleteAddress = async(req,res,next)=>{
         const addressId = req.query.id;
         
         if (!addressId) {
-            return res.status(400).json({ message: "Address ID is required" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Address ID is required" });
         }
         const updatedDocument = await addressModel.findOneAndUpdate(
             {"address._id":addressId},
@@ -497,11 +499,11 @@ const deleteAddress = async(req,res,next)=>{
         )
         
         if (!updatedDocument) {
-            return res.status(404).json({ message: "Address not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "Address not found" });
         }
 
         console.log("Address deleted successfully");
-        res.status(200).json({ message: "Address deleted successfully!" });
+        res.status(StatusCodes.SUCCESS).json({ message: "Address deleted successfully!" });
 
 
     } catch (error) {
@@ -509,14 +511,6 @@ const deleteAddress = async(req,res,next)=>{
         next(error);
     }
 }
-
-
-
-
-
-
-
-
 
 
 //------------------------Exporting modules---------------------------------------------------------

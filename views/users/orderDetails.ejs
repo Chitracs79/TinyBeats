@@ -281,9 +281,12 @@
                             </div>
                         </div>
 
-                       
+                        <% if(!(order.status === "Pending")) { %>
                             <a href="/downloadInvoice?orderId=<%= order.orderId %>" class="btn btn-primary mt-2">View Invoice</a>
-                     
+                        <% } %>  
+                        <% if((order.status === "Pending")) { %>
+                            <a href="/retryPayment?orderId=<%=order.orderId%>" class="btn btn-primary mt-3">Retry Payment</a>
+                        <% } %>   
 
                         <!-- Order Actions -->
                         <div class="order-actions mt-4">
@@ -295,7 +298,7 @@
                                 <button class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">
                                     Cancel Return Request
                                 </button>
-                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
+                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned','Pending' ].includes(order.status)) { %>
                                 <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">
                                     Cancel Order
                                 </button>

@@ -4,7 +4,8 @@ const productModel = require("../models/productModel")
 const brandModel = require("../models/brandModel");
 const mongoose = require('mongoose');
 const category = require("../models/categoryModel");
-
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 const loadCart = async (req, res) => {
     try {
@@ -46,7 +47,7 @@ const loadCart = async (req, res) => {
 
     } catch (error) {
         console.error("Error fetching cart:", error);
-        res.status(500).send("Server Error");
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
     }
 };
 
@@ -62,7 +63,7 @@ const addToCart = async (req, res) => {
         const product = await productModel.findById(productId);
        
         if (!product || product.category.isDeleted) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "Product not found" });
         }
       
 
@@ -74,11 +75,11 @@ const addToCart = async (req, res) => {
 
             if (itemIndex > -1) {
                 if((cart.products[itemIndex].quantity + quantity) > product.stock){
-                    return res.status(400).json({ success: false, message: `We have only ${product.stock} in stock` }) ; 
+                    return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: `We have only ${product.stock} in stock` }) ; 
                 }
                 
                 if (cart.products[itemIndex].quantity + quantity > 5) {
-                    return res.status(400).json({ success: false, message: "You have reached the maximum limit for this product in your cart." })
+                    return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "You have reached the maximum limit for this product in your cart." })
                 } else {
                     cart.products[itemIndex].quantity += quantity;
                     cart.products[itemIndex].totalPrice =
@@ -116,11 +117,11 @@ const addToCart = async (req, res) => {
             await userModel.findByIdAndUpdate(userId, { $set: { cart: [cart._id] } }, { new: true });
         }
 
-        res.status(200).json({ success: true, message: "Product added to cart", cart });
+        res.status(StatusCodes.SUCCESS).json({ success: true, message: "Product added to cart", cart });
 
     } catch (error) {
         console.error("Error adding to cart:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
     }
 };
 
@@ -138,7 +139,7 @@ const changeQuantity = async (req, res) => {
         });
 
         if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
         }
 
         //  specific item in the cart
@@ -147,7 +148,7 @@ const changeQuantity = async (req, res) => {
         );
 
         if (!specificItem) {
-            return res.status(404).json({ message: "Product not found in cart" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "Product not found in cart" });
         }
 
         // Update the quantity
@@ -172,7 +173,7 @@ const changeQuantity = async (req, res) => {
         }, 0);
 
         
-        res.status(200).json({
+        res.status(StatusCodes.SUCCESS).json({
             success: true,
             message: "Updated successfully",
             cartData,
@@ -181,7 +182,7 @@ const changeQuantity = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
     }
 };
 
@@ -207,7 +208,7 @@ const removeFromCart = async (req, res, next) => {
             { $pull: { products: { productId: productId } } }
         );
 
-        return res.status(200).json({ success: true, message: "Product removed successfully!" });
+        return res.status(StatusCodes.SUCCESS).json({ success: true, message: "Product removed successfully!" });
     } catch (error) {
         console.error("Error deleting product from cart", error);
         next(error);

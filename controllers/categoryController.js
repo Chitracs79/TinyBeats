@@ -1,6 +1,8 @@
 const categoryModel = require("../models/categoryModel");
 const productModel = require("../models/productModel");
 const mongoose = require("mongoose");
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 const categoryInfo = async(req, res) => {
     try {
@@ -53,7 +55,7 @@ const addCategory = async(req,res) => {
        
         const existingCategory = await categoryModel.findOne({name:new RegExp(`^${name}$`, 'i')});
         if(existingCategory){
-            return res.status(400).json({error: "Category name already exists ."});
+            return res.status(StatusCodes.BAD_REQUEST).json({error: "Category name already exists ."});
         }
        
         const newCategory = new categoryModel({
@@ -80,7 +82,7 @@ const updateCategory = async (req, res) => {
         const categoryId = req.params.id;
 
         if (!name || !description) {
-            return res.status(400).json({ success: false, message: "All fields are required!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "All fields are required!" });
         }
 
         const existingCategory = await categoryModel.findOne({
@@ -89,7 +91,7 @@ const updateCategory = async (req, res) => {
         })
         
         if(existingCategory){
-            return res.status(400).json({error:"Category name already exists."})
+            return res.status(StatusCodes.BAD_REQUEST).json({error:"Category name already exists."})
         }
 
         await categoryModel.findByIdAndUpdate(categoryId, { name, description });
@@ -98,7 +100,7 @@ const updateCategory = async (req, res) => {
 
     } catch (error) {
         console.error("Error updating category:", error);
-        return res.status(500).json({ success: false, message: "Failed to update category." });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to update category." });
     }
 };
 
@@ -109,13 +111,13 @@ const softDeleteCategory = async(req,res) => {
        
 
         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-            return res.status(400).json({ success: false, message: "Invalid category ID!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid category ID!" });
         }
 
         const category = await categoryModel.findById(categoryId);
       
         if(!category){
-            return res.status(404).json({success:false,message : "Category not found."});
+            return res.status(StatusCodes.NOT_FOUND).json({success:false,message : "Category not found."});
         }
 
         await categoryModel.findByIdAndUpdate(categoryId,{isDeleted:true});
@@ -124,7 +126,7 @@ const softDeleteCategory = async(req,res) => {
     } catch (error) {
         console.error("Error soft deleting category",error);
         return res.redirect('/admin/category?error=Failed to delete category');
-        // return res.status(500).json({success:false,message:"Failed to delete category."})
+     
     }
 }
 
@@ -133,14 +135,14 @@ const addCategoryOffer = async(req,res,next)=>{
         const{categoryId,percentage} = req.body;
         
         if (!percentage || !categoryId) {
-            return res.status(400).json({
+            return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
               message: "Percentage and category ID are required.",
             });
           }
       
           if (percentage < 1 || percentage > 100) {
-            return res.status(400).json({
+            return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
               message: "Percentage must be between 1 and 100.",
             });
@@ -149,7 +151,7 @@ const addCategoryOffer = async(req,res,next)=>{
           const category = await categoryModel.findById(categoryId);
       
           if(!category){
-              return res.status(404).json({status:false,message : "Category not found."});
+              return res.status(StatusCodes.NOT_FOUND).json({status:false,message : "Category not found."});
           }
 
           const products = await productModel.find({category:categoryId});
@@ -158,7 +160,7 @@ const addCategoryOffer = async(req,res,next)=>{
             (product) => product.discount > percentage
           );
           if (hasProductsOffer) {
-            return res.status(400).json({
+            return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
               message:
                 "Products within this category already have a product-specific offer greater than the category offer.",
@@ -177,7 +179,7 @@ const addCategoryOffer = async(req,res,next)=>{
             await product.save();
            
           }
-          return res.status(200).json({
+          return res.status(StatusCodes.SUCCESS).json({
             status: true,
             message: `Offer of ${percentage}% added successfully.`,
           });
@@ -192,7 +194,7 @@ const removeCategoryOffer = async(req,res,next)=>{
         const {categoryId} = req.body;
 
         if (!categoryId) {
-            return res.status(400).json({
+            return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
               message: "category ID is required.",
             });
@@ -201,7 +203,7 @@ const removeCategoryOffer = async(req,res,next)=>{
         const category = await categoryModel.findById(categoryId);
         
         if(!category){
-            return res.status(404).json({status:false,message : "Category not found."});
+            return res.status(StatusCodes.NOT_FOUND).json({status:false,message : "Category not found."});
         }
 
         await categoryModel.updateOne({_id:categoryId},{$set:{offer:0}});
@@ -220,7 +222,7 @@ const removeCategoryOffer = async(req,res,next)=>{
             await product.save();
            
           }
-          return res.status(200).json({
+          return res.status(StatusCodes.SUCCESS).json({
             status: true,
             message: `Offer removed successfully.`,
           });

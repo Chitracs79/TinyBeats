@@ -25,7 +25,10 @@ const loadRetryPayment = async (req, res, next) => {
     const user = await User.findById(userId);
     const orderId = req.query.orderId;
     const orderData = await Order.findOne({ orderId: orderId });
-    const wallet = await Wallet.findOne({ userId: user._id });
+    let wallet = await Wallet.findOne({ userId: user._id });
+    if (!wallet) {
+      wallet = new Wallet({ userId:user._id, balance: 0, transactions: [] });
+    }
     res.render("users/retryPayment", { user, order: orderData, wallet });
   } catch (error) {
     next(error);
@@ -168,7 +171,7 @@ const retryPaymentOnline = async (req, res, next) => {
         { $set: { razorpayOrderId: order.id } }
       );
   
-      res.status(200).json({
+      res.status(StatusCodes.SUCCESS).json({
         id: order.id,
         amount: options.amount,
         currency: options.currency,
@@ -195,7 +198,7 @@ const verifyPayment = async (req, res, next) => {
         { razorpayOrderId: razorpay_order_id },
         { $set: { status: "Pending", paymentStatus: "Failed" } }
       );
-      return res.status(200).json({ success: false });
+      return res.status(StatusCodes.SUCCESS).json({ success: false });
     }
 
     const generatedSignature = crypto
@@ -208,7 +211,7 @@ const verifyPayment = async (req, res, next) => {
         { razorpayOrderId: razorpay_order_id },
         { $set: { status: "Pending", paymentStatus: "Failed" } }
       );
-      return res.status(200).json({ success: false });
+      return res.status(StatusCodes.SUCCESS).json({ success: false });
     }
 
     await Order.findOneAndUpdate(
@@ -229,7 +232,7 @@ const verifyPayment = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Payment verification error:", error);
-    res.status(500).json({ success: false });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
