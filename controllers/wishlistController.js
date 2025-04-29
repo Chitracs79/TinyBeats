@@ -59,10 +59,12 @@ const addToWishlist = async(req,res,next)=>{
                 { path: "category", model: "category" }
             ]
         });
-
-        const specificItem = cart.products.find(item =>
-            item.productId && item.productId._id.toString() === productId.toString()
-        );
+        if(cart.length > 0){
+            const specificItem = cart.products.find(item =>
+                item.productId && item.productId._id.toString() === productId.toString()
+            );
+        }
+       
 
         if(specificItem){
            
