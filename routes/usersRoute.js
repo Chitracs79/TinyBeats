@@ -41,8 +41,9 @@ router.post('/resendOtp',userController.resendOtp)
 
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.get(
-    "/auth/google/callback",redirect,
+    "/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "/signup" }),
+    redirect,
     userController.googleSession, 
   );
 
