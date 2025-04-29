@@ -267,11 +267,14 @@ const checkStock = async (req, res) => {
     }
 };
 
+  
+
 module.exports = {
     loadCheckoutPage,
     loadCheckoutAddressPage,
     saveCheckoutAddress,
     applyCoupon,removeCoupon,
     checkStock,
+  
 
 };

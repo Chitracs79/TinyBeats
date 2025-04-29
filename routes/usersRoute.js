@@ -71,6 +71,7 @@ router.post('/cart/:productId',userAuth,cartController.addToCart);
 router.get('/cart',userAuth,cartController.loadCart);
 router.put('/cart',userAuth,cartController.changeQuantity);
 router.delete('/cart',userAuth,cartController.removeFromCart);
+router.get('/cart/validateCheckout',userAuth, cartController.validateCheckout);
 
 // Forgot Password OTP verification page
 router.get("/verifyForgotPassOtp", profileController.loadverifyForgotPassOtp);

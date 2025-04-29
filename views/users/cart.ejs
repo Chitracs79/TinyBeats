@@ -279,9 +279,10 @@
                             </table>
                         </div>
                         <% if(data.length > 0) { %>
-                            <a href="/checkout?userId=" class="btn btn-danger w-100" style="background-color: #fe4c50;color:#fff">
-                                <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
-                            </a>
+                            
+                            <button  id="proceedCheckoutBtn" class ="btn w-100" style="background-color: #fe4c50;color:#fff">
+                                <i class="fas fa-shopping-bag me-2"></i>Proceed to Checkout
+                            </button>
                         <% } %>
                     </div>
                 </div>
@@ -302,7 +303,7 @@
     let currentQuantity = parseInt(quantityInput.val()) || 0; 
     let newQuantity = currentQuantity + count;
 
-    if(newQuantity > maxStock){
+    if(count>0 &&newQuantity > maxStock){
         swal.fire({
             icon:"warning",
             title:"Stock limit reached",
@@ -415,4 +416,32 @@ async function confirmRemove(productId) {
         }
     }
 </script>
+<script>
+    document.getElementById("proceedCheckoutBtn").addEventListener("click", async () => {
+      try {
+        const response = await fetch("/cart/validateCheckout", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+  
+        const result = await response.json();
+  
+        if (result.status) {
+          window.location.href = "/checkout"; 
+        } else {
+          Swal.fire({
+            icon: "warning",
+            title: "Cart Issue",
+            text: result.message || "Some items are not available in requested quantity.",
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Something went wrong. Please try again later.",
+        });
+      }
+    });
+  </script>
 <%- include("../partials/user/footer") %>

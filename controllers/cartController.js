@@ -215,10 +215,37 @@ const removeFromCart = async (req, res, next) => {
     }
 }
 
+const validateCheckout = async (req, res, next) => {
+    try {
+      const userId = req.session.user;
+      const cart = await cartModel.findOne({ userId }).populate("products.productId");
+  
+      if (!cart || !cart.products.length) {
+        return res.status(400).json({ status: false, message: "Your cart is empty." });
+      }
+  
+      for (let item of cart.products) {
+        const product = item.productId;
+        if (!product || product.isBlocked || product.stock < item.quantity) {
+          return res.status(400).json({
+            status: false,
+            message: `The product "${product?.name || 'Unknown'}" has only ${product.stock} items in stock. Please adjust quantity.`,
+          });
+        }
+      }
+  
+      return res.status(200).json({ status: true });
+  
+    } catch (error) {
+      next(error);
+    }
+  };
+  
 module.exports = {
     loadCart, 
     addToCart, 
     changeQuantity, 
     removeFromCart,
+    validateCheckout
 
 }

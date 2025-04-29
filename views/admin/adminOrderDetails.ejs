@@ -239,9 +239,11 @@
                            <% } else if (!['cancelled', 'returned', 'return requested', 'returning', 'delivered'].includes(order.status)) { %>
                                <div class="mb-4">
                                    <h6>Order Status Actions</h6>
+                                   <% if(order.status != 'Pending'){%>
                                    <button onclick="updateStatus('<%= order._id %>')" class="btn btn-primary me-2">
                                        Update Status
                                    </button>
+                                   <%}%>
                                    <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">
                                        Cancel Order
                                    </button>

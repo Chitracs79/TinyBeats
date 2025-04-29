@@ -59,10 +59,10 @@
 
     }
 
-    timerCountdown(30);
+    timerCountdown(60);
 
     document.getElementById('resend').onclick = function () {
-        timerCountdown(30);
+        timerCountdown(60);
         $.ajax({
             type:"POST",
             url:"/resendOtp",

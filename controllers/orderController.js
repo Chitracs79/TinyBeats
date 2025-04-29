@@ -30,16 +30,29 @@ const placeOrder = async (req, res) => {
 
     const userData = await User.findById(userId);
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("products.productId");
 
-    const cartItems = await Promise.all(cart.products.map(async (item) => {
-      const product = await Product.findById(item.productId).lean();
-      return {
+    if (!cart || !cart.products.length) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+    }
+    
+    let cartItems = [];
+    for (let item of cart.products) {
+      const product = item.productId;
+    
+      if (!product || product.isBlocked || product.stock < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+        });
+      }
+    
+      cartItems.push({
         product: product,
         quantity: item.quantity,
         price: item.totalPrice,
-      };
-    }));
+      });
+    }
 
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
@@ -112,16 +125,29 @@ const placeWalletOrder = async (req, res, next) => {
 
     const userData = await User.findById(userId);
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("products.productId");
 
-    const cartItems = await Promise.all(cart.products.map(async (item) => {
-      const product = await Product.findById(item.productId).lean();
-      return {
+    if (!cart || !cart.products.length) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+    }
+    
+    let cartItems = [];
+    for (let item of cart.products) {
+      const product = item.productId;
+    
+      if (!product || product.isBlocked || product.stock < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+        });
+      }
+    
+      cartItems.push({
         product: product,
         quantity: item.quantity,
         price: item.totalPrice,
-      };
-    }));
+      });
+    }
 
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
@@ -193,13 +219,29 @@ const createOrder = async (req, res, next) => {
 
 
     const userData = await User.findById(userId);
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("products.productId");
 
-    const cartItems = cart.products.map((item) => ({
-      product: item.productId,
-      quantity: item.stock,
-      price: item.totalPrice,
-    }));
+    if (!cart || !cart.products.length) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+    }
+    
+    let cartItems = [];
+    for (let item of cart.products) {
+      const product = item.productId;
+    
+      if (!product || product.isBlocked || product.stock < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+        });
+      }
+    
+      cartItems.push({
+        product: product,
+        quantity: item.quantity,
+        price: item.totalPrice,
+      });
+    }
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
     let finalAmount = totalPrice < 1000 ? totalPrice + 50 - cart.discount: totalPrice - cart.discount;
