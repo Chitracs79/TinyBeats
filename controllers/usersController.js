@@ -602,7 +602,7 @@ const verifyOtp = async (req, res) => {
 
         const now = Date.now();
         if (!otpCreatedAt || now - otpCreatedAt > 60 * 1000) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "OTP has expired. Please request a new one." });
+            return res.status(StatusCodes.SUCCESS).json({ success: false, message: "OTP has expired. Please request a new one." });
         }
 
         if (otp === req.session.userOtp) {
