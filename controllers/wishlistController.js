@@ -59,12 +59,14 @@ const addToWishlist = async(req,res,next)=>{
                 { path: "category", model: "category" }
             ]
         });
-        if(cart.length > 0){
-            const specificItem = cart.products.find(item =>
+        
+        let specificItem = null;
+        if(cart && cart.products.length > 0){
+             specificItem = cart.products.find(item =>
                 item.productId && item.productId._id.toString() === productId.toString()
             );
         }
-       
+      
 
         if(specificItem){
            
@@ -78,7 +80,8 @@ const addToWishlist = async(req,res,next)=>{
         await user.save();
 
         return res.status(200).json({status:true,message:'Product added to wishlist'});
-    } catch (error) {
+    } 
+        catch (error) {
         console.log("Error adding products to wishlist",error);
         next(error);
     }
