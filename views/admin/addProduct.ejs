@@ -353,7 +353,7 @@ function validateAndSubmit() {
             if (productName === "") {
                 errorMessage += "Product name is required.\n";
                 isValid = false;
-            }else if (!/^[A-Za-z][A-Za-z0-9\- ]{2,29}$/.test(productName)) {
+            }else if (!/^[a-zA-Z][a-zA-Z0-9\/\-\s]*$/.test(productName)) {
                  errorMessage += "Product name must start with alphabets , should have 3 characters atleast\n";
                 isValid = false;
             }
