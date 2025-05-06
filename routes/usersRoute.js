@@ -104,6 +104,7 @@ router.post('/placeOrder',userAuth,orderController.placeOrder);
 router.post('/placeWalletOrder',userAuth,orderController.placeWalletOrder);
 router.get('/orders',userAuth,orderController.orders);
 router.get('/orderDetails',userAuth,orderController.loadOrderDetails);
+router.put('/cancelProduct',userAuth,orderController.cancelProduct);
 router.put('/cancelOrder',userAuth,orderController.cancelOrder);
 router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth, uploads.array('images', 3), orderController.requestReturn);

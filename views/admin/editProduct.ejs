@@ -231,7 +231,7 @@
         }
 
         function cropAndSave(index) {
-            const croppedCanvas = croppers[index].getCroppedCanvas({ width: 200, height: 200 });
+            const croppedCanvas = croppers[index].getCroppedCanvas();
             const croppedImagesContainer = document.getElementById("croppedImagesContainer");
 
             // croppedCanvas.toBlob(blob => {
@@ -288,43 +288,77 @@
 
 function validateAndSubmit() {
     // Validate the form first
-    
     if (validateForm()) {
-
         // Check if all images are cropped before submitting
         if (Object.keys(croppers).length > 0) {
             Swal.fire({
-                icon:"warning",
-                title:"Cropping Validation",
-                text:"Please crop all images before submission",
-            })
+                icon: "warning",
+                title: "Cropping Validation",
+                text: "Please crop all images before submission",
+            });
             return false;
         }
-        const existingImageElements = document.querySelectorAll(".sub-container img");
+
         const form = document.forms[0];
-        // Remove previous if any
+        
+        // FIXED: Clear previous remaining images inputs to prevent duplicates
         const prevInputs = form.querySelectorAll("input[name='remainingImages']");
         prevInputs.forEach(el => el.remove());
+        
+        // FIXED: Get the container that holds existing product images
+        // First find all sub-containers
+        const subContainers = document.querySelectorAll(".p-5.mt-3.sub-container");
+        let existingImageContainer = null;
 
-        existingImageElements.forEach(img => {
-            const src = img.getAttribute("src");
-            if (src) {
-                const filename = src.split("/").pop();
-                const hiddenInput = document.createElement("input");
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "remainingImages";
-                hiddenInput.value = filename;
-                form.appendChild(hiddenInput);
+        // Find the one with the "Preview Images" header
+        for (let container of subContainers) {
+            const header = container.querySelector('h5');
+            if (header && header.textContent.trim() === 'Preview Images') {
+                existingImageContainer = container;
+                break;
             }
-        });
-        // Prepare the form data
-        // let form = document.forms[0];
-        let formData = new FormData(form);
-
-        for (let [key, value] of formData.entries()) {
+        }
+        
+        if (existingImageContainer) {
+            const existingImageElements = existingImageContainer.querySelectorAll("img");
+            console.log("Found existing images:", existingImageElements.length);
+            
+            // Create an array to store the actual filenames
+            const remainingImageFilenames = [];
+            
+            existingImageElements.forEach(img => {
+                const src = img.getAttribute("src");
+                if (src) {
+                    // Extract just the filename from the path
+                    const filename = src.split("/").pop();
+                    remainingImageFilenames.push(filename);
+                    
+                    // Create hidden input for each remaining image
+                    const hiddenInput = document.createElement("input");
+                    hiddenInput.type = "hidden";
+                    hiddenInput.name = "remainingImages";
+                    hiddenInput.value = filename;
+                    form.appendChild(hiddenInput);
+                    
+                    console.log("Added remaining image:", filename);
+                }
+            });
+            
+            console.log("Remaining images:", remainingImageFilenames);
+        } else {
+            console.warn("Could not find the container with existing images");
+        }
+        
+        // Debug: Check all form data before submission
+        const formDataDebug = new FormData(form);
+        console.log("Form data before submission:");
+        for (let [key, value] of formDataDebug.entries()) {
             console.log(`${key}: ${value}`);
         }
-
+        
+        // Prepare the form data
+        let formData = new FormData(form);
+        
         // Use fetch to submit the form asynchronously
         fetch(form.action, {
             method: "POST",
@@ -334,116 +368,111 @@ function validateAndSubmit() {
         .then(data => {
             if(data.success){
                 Swal.fire({
-                icon :"success",
-                title : "product updated successfully",
-            }).then(()=>{
-                window.location.href="/admin/products"
-            })
-            }else {
+                    icon: "success",
+                    title: "Product updated successfully",
+                }).then(() => {
+                    window.location.href = "/admin/products";
+                });
+            } else {
                 Swal.fire({
-                    icon:'error',
-                    title:'product already exists'
-            })
-                
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'Product update failed'
+                });
             }
-           
-           console.log("Success:", data);
-            // After fetch success, submit the form normally
-            console.log("Form submission successful, now submitting the form normally...");
-            // document.forms[0].submit();
+            console.log("Success:", data);
         })
         .catch(error => {
             console.error("Error:", error);
-            alert("There was an error submitting the form.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error submitting the form.'
+            });
         });
     }
 }
 
-
-
         // From Validation
-        function validateForm() {
+        // Fix for validateForm() function
+function validateForm() {
+    let isValid = true;
+    let errorMessage = "";
 
-            // e.preventDefault();
+    // Get form values
+    let productName = document.getElementById("productName").value.trim();
+    let productDescription = document.getElementById("productDescription").value.trim();
+    let productColor = document.getElementById("productColor").value.trim();
+    let productBrand = document.querySelector("select[name='brand']").value;
+    let productCategory = document.querySelector("select[name='category']").value;
+    let basePrice = document.getElementById("basePrice").value.trim();
+    let salesPrice = document.getElementById("salesPricing").value.trim();
+    let stock = document.getElementById("productStock").value.trim();
+   
+    // Validate required fields
+    if (productName === "") {
+        errorMessage += "Product name is required.\n";
+        isValid = false;
+    } else if (!/^[A-za-z0-9]{3,30}$/.test(productName)) {
+        errorMessage += "Product name must start with alphabets, should have 3 characters at least.\n";
+        isValid = false;
+    }
+    if (productDescription === "") {
+        errorMessage += "Product description is required.\n";
+        isValid = false;
+    }
+    if (productColor === "") {
+        errorMessage += "Product color is required.\n";
+        isValid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(productColor)) {
+        errorMessage += "Product color must contain alphabets only.\n";
+        isValid = false;
+    }
+    if (productBrand === "Select") {
+        errorMessage += "Please select a product brand.\n";
+        isValid = false;
+    }
+    if (productCategory === "Select") {
+        errorMessage += "Please select a product category.\n";
+        isValid = false;
+    }
 
-            let isValid = true;
-            let errorMessage = "";
+    // Validate numerical inputs
+    if (basePrice === "" || isNaN(basePrice) || Number(basePrice) <= 0) {
+        errorMessage += "Enter a valid base price.\n";
+        isValid = false;
+    }
+    if (salesPrice === "" || isNaN(salesPrice) || Number(salesPrice) <= 0) {
+        errorMessage += "Enter a valid sales price.\n";
+        isValid = false;
+    }
+    if (stock === "" || isNaN(stock) || Number(stock) < 0) {
+        errorMessage += "Enter a valid stock quantity.\n";
+        isValid = false;
+    }
+   
+    // Check for existing images - include both existing product images and any new/cropped ones
+    const existingImages = document.querySelectorAll('.p-5.mt-3.sub-container:first-of-type img').length;
+    const newImages = document.getElementById("imageInput").files.length;
+    const croppedImages = document.querySelectorAll("#croppedImagesContainer img").length;
 
-            // Get form values
-            let productName = document.getElementById("productName").value.trim();
-            let productDescription = document.getElementById("productDescription").value.trim();
-            let productColor = document.getElementById("productColor").value.trim();
-            let productBrand = document.querySelector("select[name='brand']").value;
-            let productCategory = document.querySelector("select[name='category']").value;
-            let basePrice = document.getElementById("basePrice").value.trim();
-            let salesPrice = document.getElementById("salesPricing").value.trim();
-            let stock = document.getElementById("productStock").value.trim();
-           
+    // Only validate images if there are no existing images, no new images, and no cropped images
+    if (existingImages === 0 && newImages === 0 && croppedImages === 0) {
+        errorMessage += "At least one product image is required.\n";
+        isValid = false;
+    }
 
-            // Validate required fields
-            if (productName === "") {
-                errorMessage += "Product name is required.\n";
-                isValid = false;
-            }else if (!/^[A-za-z0-9]{3,30}$/.test(productName)) {
-                 errorMessage += "Product name must start with alphabets , should have 3 characters atleast\n";
-                isValid = false;
-            }
-            if (productDescription === "") {
-                errorMessage += "Product description is required.\n";
-                isValid = false;
-            }
-            if (productColor === "") {
-                errorMessage += "Product color is required.\n";
-                isValid = false;
-            }else if (!/^[A-Za-z\s]+$/.test(productColor)) {
-                 errorMessage += "Product color must contain alphabets only.\n";
-                isValid = false;
-            }
-            if (productBrand === "Select") {
-                errorMessage += "Please select a product brand.\n";
-                isValid = false;
-            }
-            if (productCategory === "Select") {
-                errorMessage += "Please select a product category.\n";
-                isValid = false;
-            }
+    // Show error messages if validation fails
+    if (!isValid) {
+        Swal.fire({
+            icon: "warning",
+            title: "Validation Error",
+            html: errorMessage.replace(/\n/g, "<br>"), 
+        });
+    }
 
-            // Validate numerical inputs
-            if (basePrice === "" || isNaN(basePrice) || Number(basePrice) <= 0) {
-                errorMessage += "Enter a valid base price.\n";
-                isValid = false;
-            }
-            if (salesPrice === "" || isNaN(salesPrice) || Number(salesPrice) <= 0) {
-                errorMessage += "Enter a valid sales price.\n";
-                isValid = false;
-            }
-            if (stock === "" || isNaN(stock) || Number(stock) < 0) {
-                errorMessage += "Enter a valid stock quantity.\n";
-                isValid = false;
-            }
-           
-            // let existingImages = document.querySelectorAll('.sub-container img').length;
-            // let newImages = document.getElementById("imageInput").files.length;
-            // let croppedImages = document.querySelectorAll("input[name='croppedImages']").length;
-
-            // if (existingImages === 0 ) {
-            //     errorMessage += "At least one product image is required.\n";
-            //     isValid = false;
-            // }
-
-           
-
-            // Show error messages if validation fails
-            if (!isValid) {
-              Swal.fire({
-                icon:"warning",
-                title:"Validation Error",
-                html: errorMessage.replace(/\n/g, "<br>"), 
-              })
-            }
-
-            return isValid;
-        }
+    return isValid;
+}
         document.querySelector(".addbtn").addEventListener("click", function () {
     console.log("Submit button clicked!");
 });       
@@ -451,21 +480,64 @@ function validateAndSubmit() {
 
 //deleting single image
 function deleteSingleImage(imageId, productId) {
-    $.ajax({
-        url: '/admin/deleteImage',
-        method: 'DELETE', 
-        data: { imageNameToServer: imageId, productIdToServer: productId },
-        success: function(response) {
-            if (response.status === true) {
-                location.reload(); 
-            } else {
-                console.error("Failed to delete image:", response.message);
-                alert("Error deleting image: " + (response.message || "Unknown error"));
+    // Show confirmation dialog before deleting
+    Swal.fire({
+        title: 'Delete Image',
+        text: 'Are you sure you want to delete this image?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Find and remove the image element from the DOM immediately for better UX
+            const imageToRemove = document.querySelector(`img[src="/uploads/re-image/${imageId}"]`);
+            const deleteButton = imageToRemove?.nextElementSibling;
+            
+            if (imageToRemove) {
+                if (deleteButton) deleteButton.remove();
+                imageToRemove.remove();
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            alert("Server error: Unable to delete the image.");
+            
+            // Send the AJAX request to delete on the server
+            $.ajax({
+                url: '/admin/deleteImage',
+                method: 'DELETE', 
+                data: { imageNameToServer: imageId, productIdToServer: productId },
+                success: function(response) {
+                    if (response.status === true) {
+                        // Show success message without reloading the page
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Image deleted successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        console.error("Failed to delete image:", response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: "Error deleting image: " + (response.message || "Unknown error")
+                        });
+                        
+                        // Reload to restore the image if server deletion failed
+                        setTimeout(() => location.reload(), 2000);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: "Unable to delete the image. Please try again."
+                    });
+                    
+                    // Reload to restore the image if server deletion failed
+                    setTimeout(() => location.reload(), 2000);
+                }
+            });
         }
     });
 }

@@ -4,6 +4,8 @@ const productModel = require("../models/productModel")
 const mongoose = require('mongoose');
 const category = require("../models/categoryModel");
 const cartModel = require("../models/cartModel");
+const StatusCodes = require("../helpers/StatusCodes");
+const Messages = require("../helpers/Message");
 
 const wishlist = async(req,res,next)=>{
  
@@ -59,7 +61,7 @@ const addToWishlist = async(req,res,next)=>{
                 { path: "category", model: "category" }
             ]
         });
-        
+
         let specificItem = null;
         if(cart && cart.products.length > 0){
              specificItem = cart.products.find(item =>
@@ -70,16 +72,16 @@ const addToWishlist = async(req,res,next)=>{
 
         if(specificItem){
            
-            return res.status(200).json({status:false,message:"Product already in cart!"});
+            return res.status(StatusCodes.SUCCESS).json({status:false,message:"Product already in cart!"});
             
         } else if(user.wishlist.includes(productId)){
-            return res.status(200).json({status:false,message:"Product already in wishlist!"});
+            return res.status(StatusCodes.SUCCESS).json({status:false,message:"Product already in wishlist!"});
         } 
 
         user.wishlist.push(productId);
         await user.save();
 
-        return res.status(200).json({status:true,message:'Product added to wishlist'});
+        return res.status(StatusCodes.SUCCESS).json({status:true,message:'Product added to wishlist'});
     } 
         catch (error) {
         console.log("Error adding products to wishlist",error);
@@ -99,7 +101,7 @@ const removeFromWishlist = async(req,res,next)=>{
 
          await user.save();
          console.log("product removed successfully from wishlist");
-        return res.status(200).json({success:true, message: "Product removed successfully!" });
+        return res.status(StatusCodes.SUCCESS).json({success:true, message: "Product removed successfully!" });
     } catch (error) {
         console.error("Error deleting product from wishlist", error);
         next(error);

@@ -237,27 +237,35 @@
             </table>
             </div>
             </div>
-            <!-- Pagination -->
-            <div class="pagination">
-                <% if (currentPage> 1) { %>
-                    <a href="/admin/category?page=<%= currentPage - 1 %>">
-                        <i class="fa-solid fa-backward"></i>
-                    </a>
-                    <% } %>
+             <!-- Pagination -->
+         <%
+         let startPage = Math.max(1, currentPage-1)
+         let endPage = Math.min(totalPages,startPage+2)
+         if(endPage - startPage < 2){
+            startPage = Math.max(1,endPage-2)
+         }
+         %>
+        <div class="pagination">
+            <% if (currentPage> 1) { %>
+                <a href="/admin/order?page=<%= currentPage - 1 %>">
+                    <i class="fa-solid fa-backward"></i>
+                </a>
+                <% } %>
 
-                        <% for (let i=1; i <=totalPages; i++) { %>
-                            <a href="/admin/category?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
-                                <%= i %>
-                            </a>
-                            <% } %>
+                    <% for (let i=startPage; i <=endPage; i++) { %>
+                        <a href="/admin/order?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                        <% } %>
 
-                                <% if (currentPage < totalPages) { %>
-                                    <a href="/admin/category?page=<%= currentPage + 1 %>">
-                                        <i class="fa-solid fa-forward"></i>
-                                    </a>
-                                    <% } %>
-            </div>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/admin/order?page=<%= currentPage + 1 %>">
+                                    <i class="fa-solid fa-forward"></i>
+                                </a>
+                                <% } %>
         </div>
+    </div>
+
 
         <!-- Bootstrap Modal for Adding Category -->
         <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryLabel"
@@ -321,7 +329,7 @@
     </style>
     <script>
          const existingCategories = <%- JSON.stringify(categories.map(cat => cat.name)) %>;
-        document.getElementById("addCategoryForm").addEventListener("submit", function (event) {
+         document.getElementById("addCategoryForm").addEventListener("submit", function (event) {
             event.preventDefault(); 
             
             const nameInput = document.getElementById("categoryName").value.trim();
@@ -430,7 +438,7 @@
         confirmButtonText: "Add Offer",
         cancelButtonText: "Cancel",
         inputValidator: (value) => {
-          if (!value || value < 1 || value > 100) {
+          if (!value || value < 1 || value > 99) {
             return "Please enter a valid percentage between 1 and 100";
           }
         },

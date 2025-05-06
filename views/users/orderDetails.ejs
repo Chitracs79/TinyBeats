@@ -210,6 +210,9 @@
                                         <p class="mb-1">Quantity: <%= order.orderedItems[i].quantity %></p>
                                         <p class="mb-1">Price: ₹ <%= order.orderedItems[i].product.salesPrice*order.orderedItems[i].quantity %></p>
                                         <p class="mb-0">Status: 
+                                        <% if(order.orderedItems[i].productStatus == 'cancelled'){%>
+                                            <span class="badge bg-danger text-white">cancelled</span>
+                                        <%} else {%>    
                                             <span class="badge <%= 
                                                 order.status === 'delivered' ? 'bg-success' :
                                                 order.status === 'cancelled' ? 'bg-danger' :
@@ -219,6 +222,7 @@
                                                 <%= order.status.toUpperCase() %>
                                             </span>
                                         </p>
+                                        <%}%>
                                     </div>
                                 </div>
                             </div>
@@ -298,7 +302,8 @@
                                 <button class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">
                                     Cancel Return Request
                                 </button>
-                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned','Pending' ].includes(order.status)) { %>
+                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned' ].includes(order.status)) { %>
+                                
                                 <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">
                                     Cancel Order
                                 </button>

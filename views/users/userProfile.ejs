@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
     <link rel="stylesheet" type="text/css" href="styles/responsive.css">
     <link rel="stylesheet" href="/styles/userprofile_style.css">
+    <%- include("../../views/partials/user/header") %>
     <style>
       :root {
         --primary-color: #3a86ff;
@@ -357,12 +358,7 @@
 						<nav class="navbar">
 							<ul class="navbar_menu">
 								<li><a href="/shop">Shop</a></li>
-								<li><a href="#">Clothes</a></li>
-								<li><a href="#">Essentials</a></li>
-								<li><a href="#">Feeding</a></li>
-								<li><a href="#">Playtime</a></li>
-								<li><a href="#">Travel</a></li>
-								<li><a href="contact.html">contact</a></li>
+								<li><a href="/">Home</a></li>								
 							</ul>
 							<ul class="navbar_user">
 								<!-- <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li> -->
@@ -415,7 +411,7 @@
 				<li class="menu_item has-children">
 					<a href="#">
 						<% if (typeof user !== 'undefined' && user)  { %>
-							<%= user.name %> <!-- Show user name when logged in -->
+							<%= user.name %> 
 						<% } else { %>
 							My Account
 						<% } %>
@@ -432,12 +428,8 @@
 					</ul>
 				</li>
 				<li class="menu_item"><a href="/shop">Shop</a></li>
-				<li class="menu_item"><a href="#">Clothes</a></li>
-				<li class="menu_item"><a href="#">Essentials</a></li>
-				<li class="menu_item"><a href="#">Feeding</a></li>
-				<li class="menu_item"><a href="#">Playtime</a></li>
-				<li class="menu_item"><a href="#">Travel</a></li>              
-				<li class="menu_item"><a href="#">Contact</a></li>
+				<li class="menu_item"><a href="/">Home</a></li>
+			
 			</ul>
 		</div>
 	</div>

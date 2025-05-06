@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const { v4: uuidv4 } = require("uuid");
+
 
 const orderModel = new Schema({
   orderId: {
     type: String,
-    default: () => uuidv4(),
     unique: true,
+    required: true,
   },
   userId:{
     type : Schema.Types.ObjectId,
@@ -41,6 +41,15 @@ const orderModel = new Schema({
         type: Number,
         default: 0,
       },
+      productStatus:{
+        type: String,
+        enum:['active','cancelled'],
+        default:'active'
+      },
+      productCancelReason:{
+        type:String,
+        
+      }
     }],
     totalPrice:{
         type:Number,

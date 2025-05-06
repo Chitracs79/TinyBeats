@@ -1,9 +1,11 @@
 const Messages = {
+  
     REQUIRED_FIELDS: "Percentage and category ID are required.",
     PRODUCT_EXISTS: "Product with this name already exists. Please try another name.",
     INVALID_CREDENTIALS: "Invalid username or password.",
     USER_NOT_FOUND: "User not found.",
     UNAUTHORIZED_ACCESS: "You are not authorized to perform this action.",
+    INTERNAL_SERVER_ERROR: "Internal server error. Please try again.",
 
     //category
     NAME_DESCRIPTION_REQUIRED: "Name and description are required",
@@ -17,6 +19,7 @@ const Messages = {
     CATEGORY_ID_REQUIRED: "Category ID is required.",
     OFFER_REMOVED_SUCCESSFULLY: "Offer removed successfully.",
     CATEGORY_UPDATED_SUCCESSFULLY: "Category updated successfully",
+    CATEGORYID_INVALID:"Invalid category ID!",
 
     //coupon
     COUPON_EXISTS: "Coupon with this name already exists",
@@ -31,8 +34,13 @@ const Messages = {
     COUPON_TYPE_CONFLICT: "Choose either fixed or percentage discount, not both",
     COUPON_DATE_INVALID: "Expire date must be after created date",
     INVALID_COUPON_DATA: "All required fields must be filled correctly",
+    COUPON_APPLIED:"Coupon applied",
+    COUPON_REMOVED:"Coupon removed successfully",
 
-    
+    //banner controller
+     BANNER_LOAD_ERROR: "Error loading banner page.",
+     BANNER_DELETED: "Banner deleted successfully",
+
     //admin order controller
     ORDER_NOT_FOUND: "Order not found",
     ORDER_UPDATED_SUCCESSFULLY: "Order updated successfully",
@@ -40,6 +48,7 @@ const Messages = {
     RETURN_SUCCESSFUL: "Returning successfully",
     ORDER_NOT_FOUND: "Order not found",
     RETURNED_SUCCESSFULLY: "Returned successfully",
+    RETURN_REQUEST_REJECTED: "Return request rejected.",
 
     //product controller
     ONLY_IMAGE_FILES_ALLOWED: "Only image files are allowed.",
@@ -62,9 +71,11 @@ const Messages = {
     CART_UPDATED: "Updated successfully",
     PRODUCT_NOT_IN_CART: "Product not found in cart",
     PRODUCT_REMOVED: "Product removed successfully",
+    PRODUCT_DELETED_SUCCESSFULLY:"Product deleted Successfully",
+    PRODUCT_DELETION_FAILED:"Failed to delete product." ,
 
     //brand conroller
-    BANNER_DELETED: "Banner deleted successfully",
+    BRAND_LOAD_ERROR: "Error loading brand page.",
     BRAND_ALREADY_EXISTS: "Brand already exists.",
     BRAND_ADDED: "Brand added successfully!",
     BRAND_NOT_FOUND: "Brand not found",
@@ -73,21 +84,34 @@ const Messages = {
 
     //checkout controller
     INVALID_COUPON_CODE: "Invalid coupon code",
+    COUPON_MINIMUM_PRICE: (minPrice) => `You need to have items worth ${minPrice} to apply this coupon.`,
+    COUPON_USED_ALREADY:"You have already used this coupon.",
 
 
 
     //order controller
     ORDER_PLACED: "Order placed successfully",
-    COD_LIMIT_EXCEEDED: "Cash on delivery is not applicable for amount above ₹15000!",
+    COD_LIMIT_EXCEEDED: "Cash on delivery is not applicable for amount above ₹1000!",
     INSUFFICIENT_WALLET_BALANCE: (balance) => `You only have ₹ ${balance} in your wallet!`,
     WALLET_NOT_FOUND: "Wallet not found",
     ORDER_NOT_FOUND: "Order not Found",
     RETURN_REQUEST_CANCELLED: "Return request cancelled",
     INVALID_PAYMENT_SIGNATURE: "Invalid payment signature",
     PAYMENT_SUCCESSFUL: "Payment successful",
-    PAYMENT_FAILED:'Payment failed'
-
-
+    PAYMENT_FAILED:'Payment failed',
+    CART_EMPTY:"Your cart is empty",
+    CART_PRODUCT_UNAVAILABLE: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+    RETURN_REQUEST_SUCCESS: "Return request successful.",
+    PAYMENT_SERVICE_UNAVAILABLE: "Payment service temporarily unavailable. Please try again later.",
+    INSUFFICIENT_STOCK: (name, qty) => `The product "${name}" has only ${qty} items in stock.`,
+    PRODUCT_CANCELLED_SUCCESSFULLY: "Product Cancelled Successfully",
+   
+    //profile controller
+    OTP_SEND_FAILED:"Failed to send OTP ,Please try again" ,
+    OTP_INVALID:"Invalid OTP, Please try again",
+    EMAIL_NOT_FOUND:"Email not found in session",
+    OTP_RESEND_SUCCESSFULL:"OTP Resend Successfully" ,
+    OTP_RESEND_FAILED:"Failed to resend OTP, Please try again" 
   };
   
   module.exports = Messages;

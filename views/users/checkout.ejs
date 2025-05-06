@@ -426,6 +426,7 @@ document.getElementById("applyCouponBtn").addEventListener("click", function () 
         alert("Please select a coupon before proceeding!");
     }
 });
+
 function clearCouponSelection() {
     const selectedRadio = document.querySelector('input[name="selectedCoupon"]:checked');
     if (selectedRadio) {
@@ -686,7 +687,14 @@ function processWalletOrder(orderData) {
   });
 
   const order = await response.json();
-
+  if (!response.ok || order.success === false) {
+      Swal.fire({
+        icon: "error",
+        title: "Order Creation Failed",
+        text: order.message || "Something went wrong while creating your order. Please try again.",
+      });
+      return;
+    }
   const options = {
     key: "<%= process.env.RAZORPAY_KEY_ID %>",
     amount: order.amount,

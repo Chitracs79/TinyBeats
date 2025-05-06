@@ -51,6 +51,16 @@ const retryPaymentCod = async (req, res, next) => {
       quantity: item.quantity,
     }));
 
+    for (let item of orderedItems) {
+      const product = await Product.findById(item.product._id);
+      if (!product || product.isBlocked || product.stock < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          status: false,
+          message: Messages.INSUFFICIENT_STOCK(product?.name || 'Unknown', product.stock),
+        });        
+      }
+    }
+
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product._id, {
         $inc: { stock: -orderedItems[i].quantity },
@@ -86,7 +96,7 @@ const retryPaymentWallet = async (req, res, next) => {
   try {
     const userId = req.session.user;
     const orderId = req.query.orderId;
-    console.log(orderId);
+   
     const orderData = await Order.findOne({ orderId: orderId });
     const userData = await User.findById(userId);
 
@@ -119,6 +129,15 @@ const retryPaymentWallet = async (req, res, next) => {
       product: item.product,
       quantity: item.quantity,
     }));
+    for (let item of orderedItems) {
+      const product = await Product.findById(item.product._id);
+      if (!product || product.isBlocked || product.stock < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          status: false,
+          message: Messages.INSUFFICIENT_STOCK(product?.name || 'Unknown', product.stock),
+        });        
+      }
+    }
 
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product._id, {

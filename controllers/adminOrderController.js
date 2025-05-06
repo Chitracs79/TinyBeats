@@ -86,9 +86,9 @@ const updateStatus = async(req,res)=>{
     const  order = await Order.findByIdAndUpdate(orderId,{$set:{status:status}},{new:true});
 
     if(order){
-      res.status(StatusCodes.SUCCESS).json({success:true,message:"Order updated successfully!"});
+      res.status(StatusCodes.SUCCESS).json({success:true,message:Messages.ORDER_UPDATED_SUCCESSFULLY});
     } else {
-      res.status(StatusCodes.NOT_FOUND).json({success:false,message:"Order not found"});
+      res.status(StatusCodes.NOT_FOUND).json({success:false,message:Messages.ORDER_NOT_FOUND});
     }
     
   } catch (error) {
@@ -102,7 +102,7 @@ const orderCancel = async(req,res)=>{
 
     const order = await Order.findById(orderId);
 
-      if (order.paymentMethod != "cod") {
+      if (order.paymentMethod != "cod" && order.paymentStatus != 'Failed') {
       let wallet = await Wallet.findOne({ userId: order.userId });
       if (!wallet) {
         wallet = new Wallet({ userId: order.userId , balance: 0, transactions: [] });
@@ -134,7 +134,7 @@ const orderCancel = async(req,res)=>{
 
     return res
       .status(200)
-      .json({ success: true, message: "Order cancelled successfully" });
+      .json({ success: true, message:Messages.ORDER_CANCELLED_SUCCESSFULLY});
   } catch (error) {
     console.error(error);
     res.redirect("/pageError");
@@ -155,11 +155,11 @@ const handleReturn = async(req,res,next)=>{
       if (order) {
         return res
           .status(200)
-          .json({ success: true, message: "return approved successfully" });
+          .json({ success: true, message:Messages.RETURN_SUCCESSFUL });
       } else {
         return res
           .status(400)
-          .json({ success: false, message: "order not found" });
+          .json({ success: false, message:Messages.ORDER_NOT_FOUND});
       }
     } else if (action === "rejected") {
       const { orderId, category, message } = req.body;
@@ -178,11 +178,11 @@ const handleReturn = async(req,res,next)=>{
       if (order) {
         return res
           .status(200)
-          .json({ success: true, message: "return request rejected" });
+          .json({ success: true, message:Messages.RETURN_REQUEST_REJECTED});
       } else {
         return res
           .status(400)
-          .json({ success: false, message: "order not found" });
+          .json({ success: false, message:Messages.ORDER_NOT_FOUND});
       }
     }
   } catch (error) {
@@ -205,11 +205,11 @@ const updateReturnStatus = async(req,res,next)=>{
       if (order) {
         return res
           .status(200)
-          .json({ success: true, message: "returning successfully" });
+          .json({ success: true, message:Messages.RETURN_SUCCESSFUL });
       } else {
         return res
           .status(400)
-          .json({ success: false, message: "order not found" });
+          .json({ success: false, message: Messages.ORDER_NOT_FOUND });
       }
     } else if (status === "returned") {
       
@@ -262,11 +262,11 @@ const updateReturnStatus = async(req,res,next)=>{
       if (order) {
         return res
           .status(200)
-          .json({ success: true, message: " returned successfully" });
+          .json({ success: true, message: Messages.RETURNED_SUCCESSFULLY});
       } else {
         return res
           .status(400)
-          .json({ success: false, message: "order not found" });
+          .json({ success: false, message: Messages.ORDER_NOT_FOUND});
       }
     }
   } catch (error) {

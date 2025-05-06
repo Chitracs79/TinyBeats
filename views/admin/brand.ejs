@@ -193,26 +193,31 @@
                     </div>
                 </div>
                 <!-- Pagination -->
-                <div class="pagination">
-                    <% if (currentPage> 1) { %>
-                        <a href="/admin/brand?page=<%= currentPage - 1 %>">
-                            <i class="fa-solid fa-backward"></i>
-                        </a>
-                        <% } %>
+                <% let startPage=Math.max(1, currentPage-1);
+                 let endPage=Math.min(totalPages,startPage+2) ;
+                 if(endPage - startPage < 2){ startPage=Math.max(1,endPage-2) } %>
+                    <div class="pagination">
+                        <% if (currentPage> 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>">
+                                <i class="fa-solid fa-backward"></i>
+                            </a>
+                            <% } %>
 
-                            <% for (let i=1; i <=totalPages; i++) { %>
-                                <a href="/admin/brand?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
-                                    <%= i %>
-                                </a>
-                                <% } %>
+                                <% for (let i= startPage; i <= endPage; i++) { %>
+                                    <a href="?page=<%= i %>"
+                                        class="<%= currentPage === i ? 'active' : '' %>">
+                                        <%= i %>
+                                    </a>
+                                    <% } %>
 
-                                    <% if (currentPage < totalPages) { %>
-                                        <a href="/admin/brand?page=<%= currentPage + 1 %>">
-                                            <i class="fa-solid fa-forward"></i>
-                                        </a>
-                                        <% } %>
-                </div>
+                                        <% if (currentPage < totalPages) { %>
+                                            <a href="?page=<%= currentPage + 1 %>">
+                                                <i class="fa-solid fa-forward"></i>
+                                            </a>
+                                            <% } %>
+                    </div>
             </div>
+
         </div>
 
         <!-- Bootstrap Modal for Adding Brands -->
@@ -275,7 +280,7 @@
                             Swal.fire({
                                 icon: "error",
                                 title: "Brand Error",
-                                text: "Error occurred while adding the banner. Please try again.",
+                                text: response.message,
                             });
                         }
                     },

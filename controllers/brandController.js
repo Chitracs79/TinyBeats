@@ -34,7 +34,7 @@ const getBrandpage = async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching brands:", error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Error getting brand page" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message:Messages.BRAND_LOAD_ERROR});
     }
 }
 //-------------------------add Brand-------------------------------------------------
@@ -44,7 +44,7 @@ const addBrand = async (req, res) => {
 
         const { name } = req.body;
         const image = req.file ? req.file.filename : "default.png";
-        const findBrand = await brandModel.findOne({ name });
+        const findBrand = await brandModel.findOne({ name: new RegExp(`^${name}$`, 'i') });
 
         if (!findBrand) {
             const newBrand = new brandModel({name,image})
@@ -52,10 +52,10 @@ const addBrand = async (req, res) => {
            
             res.json({ success: true, redirectUrl:"/admin/brand" });
         } else {
-            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Brand already exists!" });
+            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.BRAND_ALREADY_EXISTS });
         }
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message:Messages.INTERNAL_SERVER_ERROR });
       
     }
 }

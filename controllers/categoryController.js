@@ -64,7 +64,7 @@ const addCategory = async(req,res) => {
       
         await newCategory.save();
        
-        return res.json({ success: true, message: "Category added successfully!" });
+        return res.json({ success: true, message: Messages.CATEGORY_ADDED });
 
     } catch (error) {
         console.error("Error adding categories ",error)
@@ -82,7 +82,7 @@ const updateCategory = async (req, res) => {
         const categoryId = req.params.id;
 
         if (!name || !description) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "All fields are required!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message:Messages.NAME_DESCRIPTION_REQUIRED});
         }
 
         const existingCategory = await categoryModel.findOne({
@@ -96,11 +96,11 @@ const updateCategory = async (req, res) => {
 
         await categoryModel.findByIdAndUpdate(categoryId, { name, description });
       
-        return res.json({ success: true, message: "Category updated successfully!" });
+        return res.json({ success: true, message:Messages.CATEGORY_UPDATED_SUCCESSFULLY });
 
     } catch (error) {
         console.error("Error updating category:", error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to update category." });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: Messages.INTERNAL_SERVER_ERROR});
     }
 };
 
@@ -111,13 +111,13 @@ const softDeleteCategory = async(req,res) => {
        
 
         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid category ID!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message:Messages.CATEGORYID_INVALID });
         }
 
         const category = await categoryModel.findById(categoryId);
       
         if(!category){
-            return res.status(StatusCodes.NOT_FOUND).json({success:false,message : "Category not found."});
+            return res.status(StatusCodes.NOT_FOUND).json({success:false,message :Messages.CATEGORY_NOT_FOUND});
         }
 
         await categoryModel.findByIdAndUpdate(categoryId,{isDeleted:true});
@@ -137,21 +137,21 @@ const addCategoryOffer = async(req,res,next)=>{
         if (!percentage || !categoryId) {
             return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
-              message: "Percentage and category ID are required.",
+              message:Messages.REQUIRED_FIELDS,
             });
           }
       
           if (percentage < 1 || percentage > 100) {
             return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
-              message: "Percentage must be between 1 and 100.",
+              message: Messages. PERCENTAGE_RANGE,
             });
           }
         
           const category = await categoryModel.findById(categoryId);
       
           if(!category){
-              return res.status(StatusCodes.NOT_FOUND).json({status:false,message : "Category not found."});
+              return res.status(StatusCodes.NOT_FOUND).json({status:false,message :Messages.CATEGORY_NOT_FOUND});
           }
 
           const products = await productModel.find({category:categoryId});
@@ -163,7 +163,7 @@ const addCategoryOffer = async(req,res,next)=>{
             return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
               message:
-                "Products within this category already have a product-specific offer greater than the category offer.",
+               Messages.PRODUCT_OFFER_CONFLICT,
             });
           }
           await categoryModel.updateOne({_id:categoryId},{$set:{offer:percentage}});
@@ -181,7 +181,7 @@ const addCategoryOffer = async(req,res,next)=>{
           }
           return res.status(StatusCodes.SUCCESS).json({
             status: true,
-            message: `Offer of ${percentage}% added successfully.`,
+            message:Messages. OFFER_ADDED_SUCCESSFULLY(percentage),
           });
     } catch (error) {
         
@@ -196,14 +196,14 @@ const removeCategoryOffer = async(req,res,next)=>{
         if (!categoryId) {
             return res.status(StatusCodes.BAD_REQUEST).json({
               status: false,
-              message: "category ID is required.",
+              message: Messages.CATEGORY_ID_REQUIRED,
             });
           }
         
         const category = await categoryModel.findById(categoryId);
         
         if(!category){
-            return res.status(StatusCodes.NOT_FOUND).json({status:false,message : "Category not found."});
+            return res.status(StatusCodes.NOT_FOUND).json({status:false,message : Messages.CATEGORY_NOT_FOUND});
         }
 
         await categoryModel.updateOne({_id:categoryId},{$set:{offer:0}});
@@ -224,7 +224,7 @@ const removeCategoryOffer = async(req,res,next)=>{
           }
           return res.status(StatusCodes.SUCCESS).json({
             status: true,
-            message: `Offer removed successfully.`,
+            message: Messages.OFFER_REMOVED_SUCCESSFULLY,
           });
 
     } catch (error) {

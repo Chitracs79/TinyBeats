@@ -16,7 +16,7 @@ const loadBannerpage = async (req, res) => {
         });
     } catch (error) {
        // res.redirect("/pageError");
-       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Error loading banner page" });
+       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: Messages.BANNER_LOAD_ERROR });
     }
 }
 
@@ -41,7 +41,7 @@ const addBanner = async(req,res) =>{
       
     } catch (error) {
         console.error("Error adding banner :",error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error. Please try again." });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message:Messages.INTERNAL_SERVER_ERROR });
     }
 }
 

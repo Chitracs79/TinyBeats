@@ -63,7 +63,7 @@ const addToCart = async (req, res) => {
         const product = await productModel.findById(productId);
        
         if (!product || product.category.isDeleted) {
-            return res.status(StatusCodes.NOT_FOUND).json({ message: "Product not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: Messages.PRODUCT_NOT_FOUND });
         }
       
 
@@ -75,11 +75,11 @@ const addToCart = async (req, res) => {
 
             if (itemIndex > -1) {
                 if((cart.products[itemIndex].quantity + quantity) > product.stock){
-                    return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: `We have only ${product.stock} in stock` }) ; 
+                    return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message:Messages.ONLY_STOCK_AVAILABLE(product.stock) }) ; 
                 }
                 
                 if (cart.products[itemIndex].quantity + quantity > 5) {
-                    return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "You have reached the maximum limit for this product in your cart." })
+                    return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message:Messages.MAX_CART_LIMIT_REACHED })
                 } else {
                     cart.products[itemIndex].quantity += quantity;
                     cart.products[itemIndex].totalPrice =
@@ -117,11 +117,11 @@ const addToCart = async (req, res) => {
             await userModel.findByIdAndUpdate(userId, { $set: { cart: [cart._id] } }, { new: true });
         }
 
-        res.status(StatusCodes.SUCCESS).json({ success: true, message: "Product added to cart", cart });
+        res.status(StatusCodes.SUCCESS).json({ success: true, message:Messages.PRODUCT_ADDED_TO_CART, cart });
 
     } catch (error) {
         console.error("Error adding to cart:", error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message:Messages.INTERNAL_SERVER_ERROR });
     }
 };
 
@@ -139,7 +139,7 @@ const changeQuantity = async (req, res) => {
         });
 
         if (!cart) {
-            return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: Messages.CART_NOT_FOUND });
         }
 
         //  specific item in the cart
@@ -148,7 +148,7 @@ const changeQuantity = async (req, res) => {
         );
 
         if (!specificItem) {
-            return res.status(StatusCodes.NOT_FOUND).json({ message: "Product not found in cart" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: Messages.PRODUCT_NOT_IN_CART });
         }
 
         // Update the quantity
@@ -175,14 +175,14 @@ const changeQuantity = async (req, res) => {
         
         res.status(StatusCodes.SUCCESS).json({
             success: true,
-            message: "Updated successfully",
+            message:  "Updated successfully",
             cartData,
             grandTotal
         });
 
     } catch (error) {
         console.error(error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message:Messages.INTERNAL_SERVER_ERROR });
     }
 };
 
@@ -208,7 +208,7 @@ const removeFromCart = async (req, res, next) => {
             { $pull: { products: { productId: productId } } }
         );
 
-        return res.status(StatusCodes.SUCCESS).json({ success: true, message: "Product removed successfully!" });
+        return res.status(StatusCodes.SUCCESS).json({ success: true, message: Messages.PRODUCT_REMOVED });
     } catch (error) {
         console.error("Error deleting product from cart", error);
         next(error);
@@ -221,7 +221,7 @@ const validateCheckout = async (req, res, next) => {
       const cart = await cartModel.findOne({ userId }).populate("products.productId");
   
       if (!cart || !cart.products.length) {
-        return res.status(400).json({ status: false, message: "Your cart is empty." });
+        return res.status(400).json({ status: false, message:Messages.CART_EMPTY });
       }
   
       for (let item of cart.products) {

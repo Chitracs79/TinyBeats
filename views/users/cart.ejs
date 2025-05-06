@@ -101,7 +101,7 @@
                                 <% if (data.length> 0) { %>
                                     <% var x=0 %>
                                     <% for (let i=0; i < data.length;i++) { %>
-                                        <tr>
+                                        <tr data-product-id="<%= data[i].productDetails._id %>">
                                             <td class="image product-thumbnail">
                                                 <img src="/uploads/re-image/<%= data[i].productDetails.image[0] %>" 
                                                     style="width:100px;height:100px;" alt="#" />
@@ -240,6 +240,7 @@
                                                 <%= data[i].productDetails.salesPrice * data[i].quantity %>
                                             </text></span>
                                         </div>
+                                        
                                         <div class="text-end mt-3">
                                             <a class="btn btn-sm btn-outline-danger" 
                                                 href="#" onclick="confirmRemove('<%= data[i].productDetails._id %>')">
@@ -405,7 +406,17 @@ async function confirmRemove(productId) {
 
                 if (response.ok) {
                     await Swal.fire("Success", data.message, "success");
-                    location.reload();
+                    //  location.reload();
+                    // Remove desktop cart row
+                    const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+                    if (row) row.remove();
+
+                    // Remove mobile cart card
+                    const mobileCard = document.querySelector(`.mobile-cart-card[data-product-id="${productId}"]`);
+                    if (mobileCard) mobileCard.remove();
+
+                    // Recalculate grand total
+                    recalculateTotal();
                 } else {
                     Swal.fire("Error", data.error || "Failed to remove product.");
                 }
@@ -415,6 +426,16 @@ async function confirmRemove(productId) {
             }
         }
     }
+
+    function recalculateTotal() {
+    let total = 0;
+    document.querySelectorAll("text[id^='subTotal']").forEach(span => {
+        const value = parseFloat(span.textContent.trim());
+        if (!isNaN(value)) total += value;
+    });
+    document.getElementById("total").textContent = total.toFixed(2);
+    }
+
 </script>
 <script>
     document.getElementById("proceedCheckoutBtn").addEventListener("click", async () => {

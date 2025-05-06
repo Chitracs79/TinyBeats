@@ -218,7 +218,11 @@
                             
                             <img src="uploads/re-image/<%= item.product.image[0] %>" alt="<%= item.product.name %>" class="product-image">
                         </td>
-                        <td><%= item.product.name %></td>
+                        <td><%= item.product.name %>
+                        <% if(item.productStatus == 'cancelled' && order.status != 'cancelled'){%>
+                            <br><span class="badge bg-danger text-white">cancelled</span>
+                        <% } %>    
+                        </td>
                         <td><%= item.quantity %></td>
                         <td>₹<%= item.product.salesPrice.toFixed(2) %></td>
                         <td>₹<%= item.price.toFixed(2) %></td>

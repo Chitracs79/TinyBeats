@@ -50,32 +50,38 @@ const login = async(req,res) => {
 //---------------------------------------------------------------------------------------
 
 const getTopBrands = async (matchStage) => {
-    const brandStats = await Order.aggregate([
-      { $match: matchStage },
-      { $unwind: "$orderedItems" },
-      {
-        $group: {
-          _id: "$orderedItems.product.brand",
-          totalQuantity: { $sum: "$orderedItems.quantity" },
-        },
+  const brandStats = await Order.aggregate([
+    { $match: matchStage },
+    { $unwind: "$orderedItems" },
+    { $match: { "orderedItems.product.brand": { $exists: true, $ne: null } } },
+    {
+      $group: {
+        _id: "$orderedItems.product.brand",
+        totalQuantity: { $sum: "$orderedItems.quantity" },
       },
-      { $sort: { totalQuantity: -1 } },
-      { $limit: 10 }
-    ]);
-  
-    const populatedBrands = await Promise.all(
-      brandStats.map(async (brand) => {
-        const brandDoc = await Brand.findById(brand._id).lean();
-        return {
-          brandId: brand._id,
-          brandName: brandDoc?.name || "Unknown Brand",
-          totalQuantity: brand.totalQuantity,
-        };
-      })
-    );
-  
-    return populatedBrands;
-  };
+    },
+    {
+      $lookup: {
+        from: "brands",
+        localField: "_id",
+        foreignField: "_id",
+        as: "brand",
+      },
+    },
+    { $unwind: { path: "$brand", preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        brandId: "$_id",
+        brandName: { $ifNull: ["$brand.name", "Unknown Brand"] },
+        totalQuantity: 1,
+      },
+    },
+    { $sort: { totalQuantity: -1 } },
+    { $limit: 10 },
+  ]);
+
+  return brandStats;
+};
   
   
   const loadDashboard = async (req, res, next) => {

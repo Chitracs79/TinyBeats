@@ -67,7 +67,7 @@ const forgotEmailValid = async (req, res) => {
                 console.log("OTP Send from FEV", otp)
 
             } else {
-                return res.json({ success: false, message: "Failed to send OTP ,Please try again" });
+                return res.json({ success: false, message: Messages.OTP_SEND_FAILED});
             }
         } else {
             return res.redirect(`/forgotPassword?error=User does not exist`);
@@ -86,7 +86,7 @@ const loadverifyForgotPassOtp = async (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Internal server error");
     }
 }
-const verifyForgotPassOtp = async (req, res) => {
+const verifyForgotPassOtp = async (req, res, next) => {
     try {
        
         const { otp } = req.body;
@@ -97,20 +97,19 @@ const verifyForgotPassOtp = async (req, res) => {
              
             res.json({ success: true, redirectUrl: '/resetPassword' })
         } else {
-            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid OTP, Please try again" });
+            res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.OTP_INVALID });
         }
 
     } catch (error) {
-        console.log("Error Verifying OTP", error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error " });
+        next(error);
     }
 }
 //----------------------------------Resend OTP-----------------------------------------------------------
-const resendOtp = async (req, res) => {
+const resendOtp = async (req, res,next) => {
     try {
         const { email } = req.session.userData;
         if (!email) {
-            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Email not found in session" });
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: Messages.EMAIL_NOT_FOUND });
         }
 
         const otp = generateOtp();
@@ -119,15 +118,13 @@ const resendOtp = async (req, res) => {
         const emailSent = await sendVerificationEmail(email, otp);
         if (emailSent) {
             console.log("Resend OTP is ", otp);
-            res.status(StatusCodes.SUCCESS).json({ success: true, message: "OTP Resend Successfully" });
+            res.status(StatusCodes.SUCCESS).json({ success: true, message: Messages.OTP_RESEND_SUCCESSFULL});
         } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ succes: false, message: "Failed to resend OTP, Please try again" });
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ succes: false, message: Messages.OTP_RESEND_FAILED});
         }
 
     } catch (error) {
-        console.error("Error resending OTP", error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error, Please try again" });
-
+      next(error);
     }
 
 }

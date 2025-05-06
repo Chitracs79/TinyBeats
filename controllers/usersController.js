@@ -620,7 +620,7 @@ const verifyOtp = async (req, res) => {
                     wallet = new walletModel({ userId:referredUser._id, balance: 0, transactions: [] });
                   }
               
-                  wallet.balance += 100;
+                  wallet.balance += 500;
             
                   wallet.transactions.push({ amount:500, type: "credit", description: "Referral Reward" });
               
@@ -642,6 +642,28 @@ const verifyOtp = async (req, res) => {
             })
 
             await saveUserData.save();
+
+            if (referral && referral.trim()) {
+                let wallet = await walletModel.findOne({ userId: saveUserData._id });
+                if (!wallet) {
+                  wallet = new walletModel({
+                    userId: saveUserData._id,
+                    balance: 0,
+                    transactions: [],
+                  });
+                }
+        
+                wallet.balance += 200;
+        
+                wallet.transactions.push({
+                  amount: 200,
+                  type: "credit",
+                  description: "Referral Reward",
+                });
+        
+                await wallet.save();
+              }
+              
             req.session.user = saveUserData._id;
            
             res.json({ success: true, redirectUrl: "/" })

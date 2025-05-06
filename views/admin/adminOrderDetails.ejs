@@ -193,14 +193,16 @@
                                <tr> 
                                   
                                    <td>
-                                       <div class="d-flex align-items-center">
+                                       <div >
                                           
                                            <img src="/uploads/re-image/<%= order.orderedItems[i].product.image[0] %>" 
                                                 alt="<%= order.orderedItems[i].productName %>"
                                                 style="width: 50px; height: 50px; object-fit: cover;"
                                                 class="me-2">
                                            <span><%= order.orderedItems[i].product.name %></span>
-                                           
+                                           <% if(order.orderedItems[i].productStatus === 'cancelled') {%>  
+                                           <br><span class="badge bg-danger text-white">CANCELLED BY CUSTOMER</span>
+                                          <%}%>
                                        </div>
                                    </td>
                                    <td>₹<%= order.orderedItems[i].product.salesPrice %></td>
@@ -386,7 +388,7 @@ async function updateStatus(orderId) {
        title: 'Update Order Status',
        input: 'select',
        inputOptions: {
-           'pending': 'Pending',
+           'Pending': 'Pending',
            'confirmed': 'Confirmed',
            'shipped': 'Shipped',
            'delivered': 'delivered'

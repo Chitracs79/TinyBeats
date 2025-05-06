@@ -165,15 +165,15 @@ const applyCoupon = async(req,res,next)=>{
        const coupon  = await Coupon.findOne({name:couponCode,isListed:true});
 
        if(!coupon){
-        return res.json({success:false, message:'Invalid coupon code'});
+        return res.json({success:false, message:Messages.INVALID_COUPON_CODE});
        }
 
        if(coupon.minimumPrice > subtotal){
-        return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:`you need to have items worth ${coupon.minimumPrice} to apply this coupon`});
+        return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:Messages. COUPON_MINIMUM_PRICE(coupon.minimumPrice)});
        }
 
        if(coupon.usedBy.includes(userId)){
-        return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:"You have already used this coupon."});
+        return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:Messages.COUPON_USED_ALREADY});
        }
 
        let discount = 0;
@@ -192,7 +192,7 @@ const applyCoupon = async(req,res,next)=>{
      }
 
        await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:discount}},{new:true});
-       res.status(StatusCodes.SUCCESS).json({success:true, message:"Coupon applied", coupon});
+       res.status(StatusCodes.SUCCESS).json({success:true, message:Messages.COUPON_APPLIED, coupon});
        
     } catch (error) {
         next(error)
@@ -203,78 +203,20 @@ const removeCoupon = async(req,res,next)=>{
     try {
         const userId = req.session.user;
         await cartModel.findOneAndUpdate({userId:userId},{$set:{discount:0}},{new:true});
-        res.status(StatusCodes.SUCCESS).json({success:true,message:'Coupon removed successfully'});
+        res.status(StatusCodes.SUCCESS).json({success:true,message:Messages.COUPON_REMOVED});
     } catch (error) {
         next(error);
     }
 }
 
-const checkStock = async (req, res) => {
-    try {
-        const userId = req.session.user;
-        const user = await User.findById(userId).populate({
-            path: "cart.productId",
-            model: "Product"
-        });
-
-        if (!user || !user.cart.length) {
-            return res.json({
-                success: false,
-                message: "Cart is empty"
-            });
-        }
-
-        const stockChanges = user.cart.map(item => {
-            const product = item.productId;
-            const requestedQty = item.quantity;
-            const availableQty = product.quantity;
-            
-            return {
-                productId: product._id,
-                stockChanged: requestedQty > availableQty,
-                availableQty: availableQty,
-                requestedQty: requestedQty
-            };
-        });
-
-        // Update cart quantities if needed
-        for (const item of stockChanges) {
-            if (item.stockChanged) {
-                await User.updateOne(
-                    { 
-                        _id: userId,
-                        "cart.productId": item.productId 
-                    },
-                    {
-                        $set: {
-                            "cart.$.quantity": item.availableQty
-                        }
-                    }
-                );
-            }
-        }
-
-        res.json({
-            success: true,
-            items: stockChanges
-        });
-    } catch (error) {
-        console.error("Error checking stock:", error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            success: false,
-            message: "Error checking stock availability"
-        });
-    }
-};
-
-  
+ 
 
 module.exports = {
     loadCheckoutPage,
     loadCheckoutAddressPage,
     saveCheckoutAddress,
     applyCoupon,removeCoupon,
-    checkStock,
+    
   
 
 };

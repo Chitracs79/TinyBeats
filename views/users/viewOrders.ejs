@@ -680,12 +680,7 @@
               <nav class="navbar">
                 <ul class="navbar_menu">
                   <li><a href="/shop">Shop</a></li>
-                  <li><a href="#">Clothes</a></li>
-                  <li><a href="#">Essentials</a></li>
-                  <li><a href="#">Feeding</a></li>
-                  <li><a href="#">Playtime</a></li>
-                  <li><a href="#">Travel</a></li>
-                  <li><a href="contact.html">contact</a></li>
+                  <li><a href="/">Home</a></li>								
                 </ul>
                 <ul class="navbar_user">
                   <li><a href="/userProfile"><i class="fa fa-user" aria-hidden="true"></i></a></li>
@@ -752,12 +747,7 @@
             </ul>
           </li>
           <li class="menu_item"><a href="/shop">Shop</a></li>
-          <li class="menu_item"><a href="#">Clothes</a></li>
-          <li class="menu_item"><a href="#">Essentials</a></li>
-          <li class="menu_item"><a href="#">Feeding</a></li>
-          <li class="menu_item"><a href="#">Playtime</a></li>
-          <li class="menu_item"><a href="#">Travel</a></li>              
-          <li class="menu_item"><a href="#">Contact</a></li>
+          <li class="menu_item"><a href="/">Homes</a></li>        
         </ul>
       </div>
     </div>
@@ -874,8 +864,9 @@
                                 <%= order.orderId %>
                             </div>
                             <div class="col-md-1">
-                                <small class="text-muted">STATUS</small><br>
-                                <span class="status-badge <%= 
+                                <small class="text-muted"> ORDER STATUS</small><br>
+                                <span  style="color:#fff;padding:0px 5px;border-radius: 5px;" 
+                                class="status-badge <%= 
                             order.status === 'delivered' ? 'bg-success' :
                             order.status === 'cancelled' ? 'bg-danger' :
                             order.status === 'shipped' ? 'bg-info' :
@@ -901,9 +892,11 @@
                                         ONLINE PAYMENT
                                         <% } else if (order.paymentMethod==='wallet' ) { %>
                                             WALLET PAYMENT
-                                            <% } else if(order.paymentStatus === "Failed"){ %>
+                                            <% } else if(order.paymentStatus === "Failed" && order.status != 'cancelled'){ %>
                                               <a href="/retryPayment?orderId=<%=order.orderId%>" class="btn btn-primary">Retry Payment</a>
-                                            <% } %>
+                                            <% } else { %>
+                                                PAYMENT FAILED
+                                              <% } %>
                             </div>
 
                             <div class="col-md-3 text-end d-flex">
@@ -924,7 +917,7 @@
                                             Cancel Return Request
                                         </button>
                                         <% } else if (!['delivered', 'cancelled' , 'return requested'
-                                            , 'returning' , 'returned','Pending' ].includes(order.status)) { %>
+                                            , 'returning' , 'returned' ].includes(order.status)) { %>
                                             <button onclick="cancelOrder('<%= order._id %>')"
                                                 class="btn btn-outline-danger btn-sm mt-2">
                                                 Cancel Order
@@ -954,9 +947,17 @@
                                             order.orderedItems[i].product.salesPrice*order.orderedItems[i].quantity
                                             %>
                                     </p>
+                                    <% if (['Processing','Pending'].includes(order.status) && order.orderedItems.length > 1 && order.orderedItems[i].productStatus === 'active' && order.paymentStatus != 'Failed') { %>
+                                      <button onclick="cancelProduct('<%= order._id%>','<%= i%>')"
+                                        class="btn btn-sm mt-1" style="font-size: 12px; background-color: #fe4c50;color: white;font-weight: bold;">
+                                        Cancel Product
+                                    </button>
+                                    <%}%>
+                                    <% if(order.orderedItems[i].productStatus === 'cancelled') {%>  
+                                      <span class="badge bg-danger text-white">PRODUCT CANCELLED</span>
+                                    <%}%>
                                 </div>
-
-
+                               
                             </div>
 
                         </div>
@@ -1243,22 +1244,76 @@ async function cancelOrder(orderId) {
     }
 }
 
-function confirmLogout(event) {
-    event.preventDefault();
-    Swal.fire({
-        title: "Are you sure?",
-        text: "You will be logged out!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, Logout"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "/logout";
-        }
+async function cancelProduct(orderId,index) {
+    const { value: reasonOption } = await Swal.fire({
+        title: 'Cancel Product',
+        input: 'select',
+        inputLabel: 'Select a reason for cancellation',
+        inputOptions: {
+            'Ordered by mistake': 'Ordered by mistake',
+            'Found a better price': 'Found a better price',
+            'Item no longer needed': 'Item no longer needed',
+            'Changed my mind': 'Changed my mind',
+            'Wrong item ordered': 'Wrong item ordered',
+            'Other': 'Other'
+        },
+        showCancelButton: true
     });
+
+    if (!reasonOption) return;
+
+    let finalReason = reasonOption;
+
+    if (reasonOption === 'Other') {
+        const { value: otherReason } = await Swal.fire({
+            title: 'Cancel Product',
+            input: 'textarea',
+            inputLabel: 'Please provide a reason for cancellation',
+            inputPlaceholder: 'Type your reason here...',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to provide a reason!';
+                }
+            }
+        });
+
+        if (!otherReason) return;
+        finalReason = otherReason;
+    }
+
+    try {
+        const response = await fetch('/cancelProduct', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId, index, reason: finalReason }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message,
+                timer: 1500
+            });
+            location.reload();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Failed to cancel product'
+        });
+    }
 }
+
       document.addEventListener("DOMContentLoaded", () => {
         // Toggle sidebar functionality
         const body = document.body;

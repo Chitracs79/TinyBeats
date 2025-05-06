@@ -95,7 +95,7 @@ const addProduct = async (req, res) => {
         const existProduct = await productModel.findOne({ name: new RegExp(`^${name}$`, "i") });
 
         if (existProduct) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Product already exists, try another name!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message:Messages.PRODUCT_EXISTS });
         }
 
         const outputDir = path.join(__dirname, "../public/uploads/re-image");
@@ -171,7 +171,7 @@ const addProduct = async (req, res) => {
         });
 
         await newProduct.save();
-        res.json({ success: true, message: "Product added successfully!" });
+        res.json({ success: true, message:Messages.PRODUCT_ADDED_SUCCESSFULLY });
 
 
     } catch (error) {
@@ -181,14 +181,14 @@ const addProduct = async (req, res) => {
 };
 
 
-const addProductOffer = async (req, res) => {
+const addProductOffer = async (req, res, next) => {
     try {
         const { percentage, productId } = req.body;
         const product = await productModel.findOne({ _id: productId });
 
         const category = await categoryModel.findOne({ _id: product.category });
         if (category.offer >= percentage) {
-            return res.json({ status: false, message: `This product already has ${category.offer}% category offer !` })
+            return res.json({ status: false, message:Messages.PRODUCT_HAS_CATEGORY_OFFER(category.offer) })
         }
         product.salesPrice = product.basePrice - Math.floor(product.basePrice * (percentage / 100))
 
@@ -197,11 +197,11 @@ const addProductOffer = async (req, res) => {
         res.json({ status: true });
     } catch (error) {
 
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
+       next(error);
     }
 }
 
-const removeProductOffer = async (req, res) => {
+const removeProductOffer = async (req, res,next) => {
     try {
         const { productId } = req.body;
         const product = await productModel.findOne({ _id: productId });
@@ -217,22 +217,22 @@ const removeProductOffer = async (req, res) => {
         await product.save();
         res.json({ status: true });
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
+        next(error);
     }
 }
 
-const productBlocked = async (req, res) => {
+const productBlocked = async (req, res, next) => {
     try {
         let id = req.query.id;
         await productModel.updateOne({ _id: id }, { $set: { isBlocked: true } });
 
         return res.json({ status: true });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
+       next(error);
     }
 }
 
-const productUnblocked = async (req, res) => {
+const productUnblocked = async (req, res, next) => {
     try {
         let id = req.query.id;
 
@@ -240,11 +240,11 @@ const productUnblocked = async (req, res) => {
 
         return res.json({ status: true });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
+        next(error);
     }
 }
 
-const loadEditProductPage = async (req, res) => {
+const loadEditProductPage = async (req, res, next) => {
     try {
         const id = req.query.id;
         const product = await productModel.findOne({ _id: id }).populate({ path: "brand" }).populate({ path: "category" });
@@ -258,7 +258,7 @@ const loadEditProductPage = async (req, res) => {
         })
 
     } catch (error) {
-        res.redirect('/pageError');
+        next(error);
     }
 }
 
@@ -269,13 +269,13 @@ const editProduct = async (req, res, next) => {
 
         const product = await productModel.findById(productId);
         if (!product) {
-            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Product not found!" });
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: Messages.PRODUCT_NOT_FOUND});
         }
 
-        if (data.name.trim() !== product.name.trim()) {
+        if (data.name && data.name.trim() !== product.name.trim()) {
             const existingProduct = await productModel.findOne({ name: data.name.trim(), _id: { $ne: productId } });
             if (existingProduct) {
-                return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Product with this name already exists!" });
+                return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.PRODUCT_EXISTS});
             }
         }        
         
@@ -297,11 +297,20 @@ const editProduct = async (req, res, next) => {
                 let filename = `cropped_${Date.now()}_${i}.png`;
                 let filePath = path.join(outputDir, filename);
 
-
-                await sharp(buffer)
-                    .resize(500, 500) // Resize to 500x500 (Change as needed)
-                    .toFormat("png")
-                    .toFile(filePath);
+                const sharpImage = sharp(buffer);
+                const metadata = await sharpImage.metadata();
+                
+                if (metadata.width > 500 || metadata.height > 500) {
+                    await sharpImage
+                        .resize({ width: 500, height: 500, fit: "inside" }) // preserves aspect ratio
+                        .toFormat("png")
+                        .toFile(filePath);
+                } else {
+                    await sharpImage
+                        .toFormat("png")
+                        .toFile(filePath);
+                }
+                
 
                 console.log("Cropped and resized image saved:", filePath);
                 console.log("Cropped image saved:", filename);
@@ -312,27 +321,37 @@ const editProduct = async (req, res, next) => {
 
         //---------------------------------------------------------------------
 
-        const updatedImages = req.files?.map((file) => file.filename) || [];
-
-        // const existingImages = product.image;
+        // Get remaining images - ensure we always have an array, even if empty
         let remainingImages = [];
         if (data.remainingImages) {
-            remainingImages = Array.isArray(data.remainingImages)
-                ? data.remainingImages
-                : data.remainingImages.split(","); // Convert comma-separated string to array
+            remainingImages = Array.isArray(data.remainingImages) 
+                ? data.remainingImages 
+                : [data.remainingImages];
         }
-
+        
+        // If no remaining images were sent in the request, but we're not uploading any new ones,
+        // keep the existing images from the product
+        const hasNewImages = (req.files && req.files.length > 0) || croppedImagePaths.length > 0;
+        
+        if (remainingImages.length === 0 && !hasNewImages) {
+            // Keep existing images
+            remainingImages = product.image;
+            console.log("Keeping existing images:", remainingImages);
+        }
+        
+        const updatedImages = req.files?.map((file) => file.filename) || [];
+        const allImages = [...remainingImages, ...croppedImagePaths];
+        
         console.log('Remaining:', remainingImages);
         console.log('Updated:', updatedImages);
         console.log('Cropped:', croppedImagePaths);
-       
-
-        const allImages = [...remainingImages, ...updatedImages, ...croppedImagePaths];
         console.log('All:', allImages);
 
+        // Only require images if we don't have any
         if (allImages.length === 0) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "At least one image is required." });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.IMAGE_UPLOAD_REQUIRED });
         }
+
 
 
         const categoryData = await categoryModel.findOne({ name: data.category }, { _id: 1, offer: 1 })
@@ -363,7 +382,7 @@ const editProduct = async (req, res, next) => {
         }
 
         await productModel.findByIdAndUpdate(productId, updatedFields, { new: true });
-        return res.status(StatusCodes.SUCCESS).json({ success: true, message: "Product updated Successfully!" });
+        return res.status(StatusCodes.SUCCESS).json({ success: true, message: Messages.PRODUCT_EDITED_SUCCESSFULLY});
     } catch (error) {
         next(error);
     }
@@ -372,25 +391,47 @@ const editProduct = async (req, res, next) => {
 const deleteSingleImage = async (req, res) => {
     try {
         const { imageNameToServer, productIdToServer } = req.body;
-        const product = await productModel.findByIdAndUpdate(productIdToServer, {
+        
+        // Validate inputs
+        if (!imageNameToServer || !productIdToServer) {
+            return res.status(400).json({ status: false, message: "Image name and product ID are required" });
+        }
+        
+        // Find the product first to verify it exists
+        const product = await productModel.findById(productIdToServer);
+        if (!product) {
+            return res.status(404).json({ status: false, message: "Product not found" });
+        }
+        
+        // Make sure the image exists in the product
+        if (!product.image.includes(imageNameToServer)) {
+            return res.status(400).json({ status: false, message: "Image not found in product" });
+        }
+        
+        // Update the product by removing the image from the array
+        await productModel.findByIdAndUpdate(productIdToServer, {
             $pull: { image: imageNameToServer },
         });
+        
+        // Delete the image file if it exists
         const imagePath = path.join(
             "public",
             "uploads",
             "re-image",
             imageNameToServer
         );
+        
         if (fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
             console.log(`Image ${imageNameToServer} deleted`);
         } else {
-            console.log(`image ${imageNameToServer} not found`);
+            console.log(`Image ${imageNameToServer} not found in filesystem`);
         }
-        res.send({ status: true });
+        
+        res.status(200).json({ status: true, message: "Image deleted successfully" });
     } catch (error) {
-        console.error(error);
-        res.redirect("/pageerror");
+        console.error("Error deleting image:", error);
+        res.status(500).json({ status: false, message: "Internal server error" });
     }
 };
 
@@ -400,21 +441,21 @@ const softDeleteProducts = async (req, res) => {
 
 
         if (!mongoose.Types.ObjectId.isValid(productId)) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid category ID!" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.CATEGORYID_INVALID});
         }
 
         const product = await productModel.findById(productId);
         if (!product) {
-            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Product not found." });
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: Messages.PRODUCT_NOT_FOUND });
         }
 
         await productModel.findByIdAndUpdate(productId, { isDeleted: true });
-        return res.json({ success: true, message: "Product deleted successfully!" });
+        return res.json({ success: true, message: Messages.PRODUCT_DELETED_SUCCESSFULLY });
 
     } catch (error) {
 
         console.error("Error soft deleting product", error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to delete product." })
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message:Messages.PRODUCT_DELETION_FAILED})
     }
 }
 const loadInventory = async (req, res) => {
@@ -471,9 +512,9 @@ const updateInventory = async (req, res, next) => {
         const newQuantity = await productModel.findByIdAndUpdate(productId, { $set: { stock: stock } }, { new: true });
 
         if (newQuantity) {
-            return res.status(StatusCodes.SUCCESS).json({ success: true, message: "Stock updated Successfully." })
+            return res.status(StatusCodes.SUCCESS).json({ success: true, message:Messages.STOCK_UPDATED })
         } else {
-            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Stock updation failed." })
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message:Messages.STOCK_UPDATE_FAILED })
         }
 
     } catch (error) {

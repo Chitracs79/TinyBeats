@@ -71,7 +71,7 @@ const addCoupon = async (req, res, next) => {
       if (!offerPrice && !discountPercentage) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
-          message: "Either offerPrice or discountPercentage is required.",
+          message:Messages.COUPON_DISCOUNT_REQUIRED,
         });
       }
   
@@ -79,7 +79,7 @@ const addCoupon = async (req, res, next) => {
       if (discountPercentage && !maxDiscountAmount) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
-          message: "maxDiscountAmount is required when discountPercentage is provided.",
+          message: Messages.COUPON_MAX_AMOUNT_REQUIRED,
         });
       }
   
@@ -100,7 +100,7 @@ const addCoupon = async (req, res, next) => {
       if (existingCoupon.length > 0) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
-          message: "Coupon with this name already exists.",
+          message:Messages.COUPON_EXISTS,
         });
       }
   
@@ -110,12 +110,12 @@ const addCoupon = async (req, res, next) => {
       if (savedCoupon) {
         return res.status(StatusCodes.SUCCESS).json({
           success: true,
-          message: "Coupon added successfully!",
+          message: Messages.COUPON_ADDED_SUCCESSFULLY,
         });
       } else {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
-          message: "Failed to add coupon.",
+          message: Messages.COUPON_ADD_FAILED,
         });
       }
     } catch (error) {
@@ -147,7 +147,7 @@ const addCoupon = async (req, res, next) => {
       if (existingCoupon.length > 0) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
-          message:"Coupon already exists.",
+          message:Messages.COUPON_EXISTS,
         });
       }
   
@@ -168,12 +168,12 @@ const addCoupon = async (req, res, next) => {
       if (updatedCoupon) {
         return res.status(StatusCodes.SUCCESS).json({
           success: true,
-          message: "Coupon updated successfully",
+          message: Messages.COUPON_UPDATED_SUCCESSFULLY
         });
       } else {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
-          message: "Coupon updation failed",
+          message: Messages.COUPON_UPDATE_FAILED,
         });
       }
     } catch (error) {
@@ -188,9 +188,9 @@ const deleteCoupon = async(req,res,next)=>{
      const deletedCoupon = await Coupon.findByIdAndDelete(couponId);
      
      if(deletedCoupon){
-        return res.status(StatusCodes.SUCCESS).json({success:true, message:"Coupon deleted Successfully."})
+        return res.status(StatusCodes.SUCCESS).json({success:true, message:Messages.COUPON_DELETED})
      } else {
-        return res.status(StatusCodes.BAD_REQUEST).json({success:false, message: "Failed to delete Coupon"})
+        return res.status(StatusCodes.BAD_REQUEST).json({success:false, message:Messages.COUPON_DELETE_FAILED})
      }
     } catch (error) {
        next(error) 

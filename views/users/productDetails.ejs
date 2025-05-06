@@ -17,32 +17,53 @@
 <link rel="stylesheet" type="text/css" href="styles/single_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/single_responsive.css">
 <style>
-    .single_product_image_background {
+   .single_product_image_background {
     position: relative;
     width: 100%;
     height: 500px; /* Adjust based on your layout */
     background-size: cover;
     background-position: center;
     cursor: zoom-in;
+    transition: background-size 0.2s ease-out;
+    overflow: hidden;
+    background-repeat: no-repeat;
 }
 
 .single_product_image_background.zoom {
-    background-size: 200%; /* Increase zoom level */
+    /* Background-size is now set by JS for better control */
     cursor: zoom-out;
 }
 
+.single_product_image_background.fixed-zoom {
+    /* Added for accessibility - keeps zoom fixed on double-click */
+    cursor: default;
+}
+
+/* Optional loading state to ensure high-res image is loaded */
+.single_product_image_background.loading::after {
+    content: "Loading high resolution...";
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* Rest of your styles */
 .qty-btn{
-	background-color: transparent;
-	border:none;
-	display: flex;
+    background-color: transparent;
+    border: none;
+    display: flex;
 }
 
 .qty-input{
-	outline:none;
-	border:none;
-	width: 35px; 
-	padding-left:12px
-
+    outline: none;
+    border: none;
+    width: 35px; 
+    padding-left: 12px;
 }
 
 </style>
@@ -306,7 +327,7 @@
 	
     <!-- Similar Products -->
 
-	<div class="container">
+	<div class="container mt-5">
 		<div class="row">
 			<div class="col p-3 mb-5">
 				<div class="section_title new_arrivals_title">
@@ -480,51 +501,60 @@
 <script src="plugins/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
 <script src="js/single_custom.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(function () { // Ensuring other scripts don't override this
-        const thumbnails = document.querySelectorAll(".thumbnails_col ul li img");
-        const mainImage = document.querySelector(".singleProduct");
 
-        if (thumbnails.length > 0 && mainImage) {
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener("click", function (event) {
-                    event.preventDefault(); // Prevent default behavior if any
-                    const newSrc = this.getAttribute("data-image");
-
-                    if (newSrc) {
-                        mainImage.setAttribute("src", newSrc);
-                    }
-                });
-            });
-        } else {
-            console.error("Thumbnails or main image not found!");
-        }
-    }, 100); // Delay to override potential conflicts
-});
-
-
-</script> -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const mainImageContainer = document.querySelector(".single_product_image_background");
 
     if (mainImageContainer) {
+        // Track if we're currently zoomed
+        let isZoomed = false;
+        
+        // Configure zoom settings
+        const zoomLevel = 150; // Reduced from 200% for better clarity
+        
         mainImageContainer.addEventListener("mousemove", function (event) {
+            if (!isZoomed) return;
+            
             const rect = this.getBoundingClientRect();
             const x = ((event.clientX - rect.left) / rect.width) * 100;
             const y = ((event.clientY - rect.top) / rect.height) * 100;
 
-            this.style.backgroundPosition = `${x}% ${y}%`;
+            // Smooth movement with requestAnimationFrame for better performance
+            requestAnimationFrame(() => {
+                this.style.backgroundPosition = `${x}% ${y}%`;
+            });
         });
 
         mainImageContainer.addEventListener("mouseenter", function () {
+            isZoomed = true;
+            this.style.backgroundSize = `${zoomLevel}%`;
             this.classList.add("zoom");
         });
 
         mainImageContainer.addEventListener("mouseleave", function () {
-            this.classList.remove("zoom");
+            isZoomed = false;
+            this.style.backgroundSize = "cover";
             this.style.backgroundPosition = "center";
+            this.classList.remove("zoom");
+        });
+        
+        // Double click to toggle fixed zoom level (accessibility feature)
+        mainImageContainer.addEventListener("dblclick", function(event) {
+            if (this.classList.contains("fixed-zoom")) {
+                // Exit fixed zoom mode
+                this.classList.remove("fixed-zoom");
+                this.style.backgroundSize = "cover";
+            } else {
+                // Enter fixed zoom mode
+                const rect = this.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width) * 100;
+                const y = ((event.clientY - rect.top) / rect.height) * 100;
+                
+                this.classList.add("fixed-zoom");
+                this.style.backgroundSize = `${zoomLevel}%`;
+                this.style.backgroundPosition = `${x}% ${y}%`;
+            }
         });
     }
 });
