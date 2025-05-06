@@ -321,7 +321,18 @@
         }
     }
 </style>
-
+<style>
+    .sidebar_section {
+      margin-bottom: 20px;
+    }
+    .sidebar_title {
+      margin-bottom: 10px;
+    }
+    .form-select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
 <section>
     <div class="container product_section_container">
         <div class="row">
@@ -358,31 +369,44 @@
             
                 <!-- Sidebar -->
                 <div class="sidebar" id="sidebar">
-                    <div class="sidebar_section">
-                        <div class="sidebar_title collapsible-title">
-                            <h5>Categories</h5>
-                            <i class="fa fa-chevron-down d-md-none"></i>
-                        </div>
-                        <ul class="sidebar_categories collapsible-content">
-                            <% categories.forEach(category =>{ %>
-                            <li class="<%= selectedCategory === category._id.toString() ? 'active' : '' %>">
-                                <a href="/filter?category=<%= category._id %>"><%= category.name %></a>
-                            </li>
-                            <% }) %>
-                        </ul>
-                    </div>
-                    <div class="sidebar_section">
-                        <div class="sidebar_title collapsible-title">
-                            <h5>Brands</h5>
-                            <i class="fa fa-chevron-down d-md-none"></i>
-                        </div>
-                        <ul class="sidebar_categories collapsible-content">
-                            <% brands.forEach(brand =>{ %>
-                            <li class="<%= selectedBrand === brand._id.toString() ? 'active' : '' %>">
-                                <a href="/filter?brand=<%= brand._id %>"><%= brand.name %></a></li>
-                            <% }) %>
-                        </ul>
-                    </div>
+                   <!-- Categories Dropdown -->
+<div class="sidebar_section">
+    <div class="sidebar_title">
+      <h5>Categories</h5>
+    </div>
+    <div class="dropdown w-full mb-4">
+      <select class="form-select w-full p-2 border rounded" id="categoryDropdown" onchange="window.location.href=this.value">
+        <option value="">Select Category</option>
+        <% categories.forEach(category => { %>
+          <option value="/filter?category=<%= category._id %>" 
+                  <%= selectedCategory === category._id.toString() ? 'selected' : '' %>>
+            <%= category.name %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Brands Dropdown -->
+  <div class="sidebar_section">
+    <div class="sidebar_title">
+      <h5>Brands</h5>
+    </div>
+    <div class="dropdown w-full">
+      <select class="form-select w-full p-2 border rounded" id="brandDropdown" onchange="window.location.href=this.value">
+        <option value="">Select Brand</option>
+        <% brands.forEach(brand => { %>
+          <option value="/filter?brand=<%= brand._id %>" 
+                  <%= selectedBrand === brand._id.toString() ? 'selected' : '' %>>
+            <%= brand.name %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+  
+ 
+
 
                     <!-- Price Range Filtering -->
                     <div class="sidebar_section">
