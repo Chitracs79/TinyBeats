@@ -313,6 +313,7 @@ const createOrder = async (req, res, next) => {
       discount:cart.discount,
       razorpayOrderId:order.id,
       orderId,
+      paymentStatus:'Pending',
     });
     await orderSchema.save();
 

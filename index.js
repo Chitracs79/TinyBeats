@@ -5,6 +5,7 @@ const nocache = require("nocache")
 const session = require("express-session");
 const passport = require("./config/passport");
 const flash = require("connect-flash");
+const globalCounts = require('./middlewares/globalCounts');
 const multer = require('multer');
 const middleware = require('./middlewares/middleware');
 const usersRouter = require('./routes/usersRoute');
@@ -32,7 +33,7 @@ app.use(flash());
 app.use(middleware.flashMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(globalCounts);
 
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));

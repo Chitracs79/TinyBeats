@@ -138,7 +138,7 @@ const orderModel = new Schema({
     paymentStatus: {
       type: String,
       enum: ['Pending', 'Success', 'Failed'],
-      default: 'Failed'
+      default: 'Success'
     }
 });
 

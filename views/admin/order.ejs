@@ -171,7 +171,7 @@
                                 </button>
                             <% } else if (!['cancelled', 'delivered', 'returned', 'return requested', 'returning'].includes(order.status)) { %>
                                 <div class="mt-2">
-                                    <% if(order.status != 'Pending'){%>
+                                    <% if(order.paymentStatus == 'Success'){%>
                                     <button onclick="updateStatus('<%= order._id %>')" 
                                             class="btn  btn-sm">
                                             <i class="fa-solid fa-pen-to-square icon-style " style="color:rgb(219, 179, 47)"></i>

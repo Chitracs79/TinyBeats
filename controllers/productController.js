@@ -449,6 +449,10 @@ const softDeleteProducts = async (req, res) => {
             return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: Messages.PRODUCT_NOT_FOUND });
         }
 
+        await productModel.findAndDelete({productId,$ne:{categoryOffer}}
+           
+        )
+
         await productModel.findByIdAndUpdate(productId, { isDeleted: true });
         return res.json({ success: true, message: Messages.PRODUCT_DELETED_SUCCESSFULLY });
 

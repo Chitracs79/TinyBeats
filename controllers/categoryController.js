@@ -120,6 +120,7 @@ const softDeleteCategory = async(req,res) => {
             return res.status(StatusCodes.NOT_FOUND).json({success:false,message :Messages.CATEGORY_NOT_FOUND});
         }
 
+        
         await categoryModel.findByIdAndUpdate(categoryId,{isDeleted:true});
         return res.redirect('/admin/category?message=Category deleted successfully');
         // return res.json({success:true, message:"Category deleted successfully!"});
